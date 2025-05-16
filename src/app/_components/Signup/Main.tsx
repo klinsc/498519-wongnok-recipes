@@ -96,7 +96,7 @@ export default function SignUp(props: {
       setTimeout(() => {
         // Send the user to the login page
         void router.push('/signin')
-      }, 3000) // 2 seconds delay
+      }, 3000) // 3 seconds delay
     },
     onError: (error) => {
       console.error('Error creating user:', error)
