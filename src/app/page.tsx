@@ -4,6 +4,7 @@ import Blog from './_components/Blog/Main'
 
 export default async function Home() {
   const session = await auth()
+  console.log('session', session)
 
   if (session?.user) {
     void api.post.getLatest.prefetch()

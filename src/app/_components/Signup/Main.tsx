@@ -14,6 +14,7 @@ import { api } from '~/trpc/react'
 import NotiAlert from '../NotiAlert'
 import { useCallback, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import { Divider, Link } from '@mui/material'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -272,41 +273,41 @@ export default function SignUp(props: {
               Sign up
             </Button>
           </Box>
-          {/* <Divider>
+          <Divider>
             <Typography sx={{ color: 'text.secondary' }}>
-              or
+              หรือ
             </Typography>
-          </Divider> */}
-          {/* <Box
+          </Divider>
+          <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
               gap: 2,
             }}>
-            <Button
+            {/* <Button
               fullWidth
               variant="outlined"
               onClick={() => alert('Sign up with Google')}
               startIcon={<GoogleIcon />}>
               Sign up with Google
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               fullWidth
               variant="outlined"
               onClick={() => alert('Sign up with Facebook')}
               startIcon={<FacebookIcon />}>
               Sign up with Facebook
-            </Button>
+            </Button> */}
             <Typography sx={{ textAlign: 'center' }}>
-              Already have an account?{' '}
+              มีบัญชีอยู่แล้ว?{' '}
               <Link
-                href="/material-ui/getting-started/templates/sign-in/"
+                href="/signin"
                 variant="body2"
                 sx={{ alignSelf: 'center' }}>
-                Sign in
+                ลงชื่อเข้าใช้
               </Link>
             </Typography>
-          </Box> */}
+          </Box>
         </Card>
       </SignUpContainer>
     </AppTheme>

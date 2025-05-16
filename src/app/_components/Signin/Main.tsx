@@ -1,6 +1,6 @@
 'use client'
 
-import { CssBaseline } from '@mui/material'
+import { CssBaseline, Divider, Link } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard from '@mui/material/Card'
@@ -260,6 +260,41 @@ export default function Main(props: {
               sx={{ alignSelf: 'center' }}>
               ลืมรหัสผ่าน?
             </Link> */}
+            <Divider>
+              <Typography sx={{ color: 'text.secondary' }}>
+                หรือ
+              </Typography>
+            </Divider>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+              }}>
+              {/* <Button
+                          fullWidth
+                          variant="outlined"
+                          onClick={() => alert('Sign up with Google')}
+                          startIcon={<GoogleIcon />}>
+                          Sign up with Google
+                        </Button> */}
+              {/* <Button
+                          fullWidth
+                          variant="outlined"
+                          onClick={() => alert('Sign up with Facebook')}
+                          startIcon={<FacebookIcon />}>
+                          Sign up with Facebook
+                        </Button> */}
+              <Typography sx={{ textAlign: 'center' }}>
+                ยังไม่มีบัญชี?{' '}
+                <Link
+                  href="/signup"
+                  variant="body2"
+                  sx={{ alignSelf: 'center' }}>
+                  สมัครสมาชิก
+                </Link>
+              </Typography>
+            </Box>
           </Box>
         </Card>
       </SignInContainer>
