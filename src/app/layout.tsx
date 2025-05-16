@@ -4,6 +4,8 @@ import { type Metadata } from 'next'
 import { Noto_Sans_Thai } from 'next/font/google'
 
 import { TRPCReactProvider } from '~/trpc/react'
+import { SessionProvider } from 'next-auth/react'
+import { auth } from '~/server/auth'
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -16,13 +18,17 @@ const notoSansThai = Noto_Sans_Thai({
   variable: '--font-noto-sans-thai',
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth()
+
   return (
     <html lang="en">
       <body className={notoSansThai.className}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <SessionProvider session={session}>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </SessionProvider>
       </body>
     </html>
   )
