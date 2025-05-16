@@ -42,7 +42,7 @@ export default function AppAppBar() {
   return (
     <AppBar
       position="fixed"
-      //   enableColorOnDark
+      enableColorOnDark
       sx={{
         boxShadow: 0,
         bgcolor: 'transparent',
