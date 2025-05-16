@@ -1,20 +1,18 @@
 'use client'
 
-import * as React from 'react'
+import GitHubIcon from '@mui/icons-material/GitHub'
+import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import TwitterIcon from '@mui/icons-material/X'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import InputLabel from '@mui/material/InputLabel'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import GitHubIcon from '@mui/icons-material/GitHub'
-import LinkedInIcon from '@mui/icons-material/LinkedIn'
-import TwitterIcon from '@mui/icons-material/X'
-import SitemarkIcon from './SitemarkIcon'
+import * as React from 'react'
+import SiteIcon from '../SiteIcon'
 
 function Copyright() {
   const currentYear = new Date().getFullYear()
@@ -61,7 +59,7 @@ export default function Footer() {
               minWidth: { xs: '100%', sm: '60%' },
             }}>
             <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
-              <SitemarkIcon />
+              <SiteIcon />
               <Typography
                 variant="body2"
                 gutterBottom
