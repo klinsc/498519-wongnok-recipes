@@ -8,6 +8,7 @@ import AppAppBar from './AppAppBar'
 import MainContent from './MainContent'
 import Latest from './Lastest'
 import Footer from './Footer'
+import Breadcrumb from '../Breadcrumb'
 
 export default function Blog(props: {
   disableCustomTheme?: boolean
@@ -27,6 +28,7 @@ export default function Blog(props: {
             my: 16,
             gap: 4,
           }}>
+          <Breadcrumb />
           <MainContent />
           <Latest />
         </Container>

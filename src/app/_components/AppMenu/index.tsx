@@ -8,6 +8,7 @@ export const MENU_ITEMS = [
   { label: 'หน้าหลัก', path: '/' },
   { label: 'เมนูโปรด', path: '/favorite' },
   { label: 'สูตรของฉัน', path: '/my-recipes' },
+  { label: 'บัญชีของฉัน', path: '/profile' },
 ]
 
 export default function AppMenu() {
