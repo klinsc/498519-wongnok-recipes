@@ -1,28 +1,24 @@
 'use client'
 
+import { CssBaseline } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard from '@mui/material/Card'
 import Checkbox from '@mui/material/Checkbox'
-import CssBaseline from '@mui/material/CssBaseline'
-import Divider from '@mui/material/Divider'
 import FormControl from '@mui/material/FormControl'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormLabel from '@mui/material/FormLabel'
-import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import * as React from 'react'
+import { useCallback, useState, type FormEvent } from 'react'
 import AppTheme from '~/app/_components/shared-theme/AppTheme'
-// import ColorModeSelect from '~/app/_components/shared-theme/ColorModeSelect'
-import {
-  FacebookIcon,
-  GoogleIcon,
-  SitemarkIcon,
-} from '~/app/_components/Signin/CustomIcons'
+import { SitemarkIcon } from '~/app/_components/Signin/CustomIcons'
 import ForgotPassword from '~/app/_components/Signin/ForgotPassword'
+import { signIn } from 'next-auth/react'
+import NotiAlert from '../NotiAlert'
+import { useRouter } from 'next/navigation'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -69,33 +65,76 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function Main(props: {
   disableCustomTheme?: boolean
 }) {
-  const [emailError, setEmailError] = React.useState(false)
-  const [emailErrorMessage, setEmailErrorMessage] =
-    React.useState('')
-  const [passwordError, setPasswordError] = React.useState(false)
-  const [passwordErrorMessage, setPasswordErrorMessage] =
-    React.useState('')
-  const [open, setOpen] = React.useState(false)
+  // router
+  const router = useRouter()
 
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
+  const [emailError, setEmailError] = useState(false)
+  const [emailErrorMessage, setEmailErrorMessage] = useState('')
+  const [passwordError, setPasswordError] = useState(false)
+  const [passwordErrorMessage, setPasswordErrorMessage] =
+    useState('')
+  const [open, setOpen] = useState(false)
 
   const handleClose = () => {
     setOpen(false)
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
+  // callback: handleCloseNotistack
+  const handleCloseNotistack = useCallback(() => {
+    setNotistack((prev) => ({ ...prev, open: false }))
+  }, [])
+  // state: notistack
+  const [notistack, setNotistack] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error',
+  })
+
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault()
-      return
-    }
-    const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    })
-  }
+
+      if (emailError || passwordError) {
+        event.preventDefault()
+        return
+      }
+      const data = new FormData(event.currentTarget)
+      console.log({
+        email: data.get('email'),
+        password: data.get('password'),
+      })
+
+      // Add nextauth credential login here
+      try {
+        await signIn('credentials', {
+          redirect: false,
+          email: data.get('email'),
+          password: data.get('password'),
+        })
+
+        setNotistack({
+          open: true,
+          message: 'Signing in...',
+          severity: 'success',
+        })
+
+        // Redirect to the home page after successful sign-in
+        setTimeout(() => {
+          // Send the user to the login page
+          void router.push('/')
+        }, 3000) // 3 seconds delay
+      } catch (error) {
+        console.error('Error signing in:', error)
+
+        setNotistack({
+          open: true,
+          message: 'Error signing in',
+          severity: 'error',
+        })
+      }
+    },
+    [emailError, passwordError, router],
+  )
 
   const validateInputs = () => {
     const email = document.getElementById(
@@ -132,7 +171,14 @@ export default function Main(props: {
 
   return (
     <AppTheme {...props}>
-      {/* <CssBaseline enableColorScheme={false} /> */}
+      <CssBaseline />
+      <NotiAlert
+        open={notistack.open}
+        message={notistack.message}
+        serverity={notistack.severity}
+        handleClose={handleCloseNotistack}
+      />
+
       <SignInContainer
         direction="column"
         justifyContent="space-between">
