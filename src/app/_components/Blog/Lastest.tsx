@@ -1,3 +1,5 @@
+'use client'
+
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import * as React from 'react'
 import Avatar from '@mui/material/Avatar'
