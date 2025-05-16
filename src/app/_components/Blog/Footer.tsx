@@ -17,6 +17,8 @@ import TwitterIcon from '@mui/icons-material/X'
 import SitemarkIcon from './SitemarkIcon'
 
 function Copyright() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <Typography
       variant="body2"
@@ -26,7 +28,7 @@ function Copyright() {
         Sitemark
       </Link>
       &nbsp;
-      {new Date().getFullYear()}
+      {currentYear}
     </Typography>
   )
 }
@@ -74,31 +76,6 @@ export default function Footer() {
               <InputLabel htmlFor="email-newsletter">
                 Email
               </InputLabel>
-              <Stack direction="row" spacing={1} useFlexGap>
-                <TextField
-                  id="email-newsletter"
-                  hiddenLabel
-                  size="small"
-                  variant="outlined"
-                  fullWidth
-                  aria-label="Enter your email address"
-                  placeholder="Your email address"
-                  slotProps={{
-                    htmlInput: {
-                      autoComplete: 'off',
-                      'aria-label': 'Enter your email address',
-                    },
-                  }}
-                  sx={{ width: '250px' }}
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  sx={{ flexShrink: 0 }}>
-                  Subscribe
-                </Button>
-              </Stack>
             </Box>
           </Box>
           <Box
