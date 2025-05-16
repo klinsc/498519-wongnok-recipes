@@ -148,7 +148,7 @@ export default function Main(props: {
               width: '100%',
               fontSize: 'clamp(2rem, 10vw, 2.15rem)',
             }}>
-            Sign in
+            ลงชื่อเข้าใช้
           </Typography>
           <Box
             component="form"
@@ -161,7 +161,7 @@ export default function Main(props: {
               gap: 2,
             }}>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email">อีเมล์</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
@@ -178,7 +178,7 @@ export default function Main(props: {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password">รหัสผ่าน</FormLabel>
               <TextField
                 error={passwordError}
                 helperText={passwordErrorMessage}
@@ -204,47 +204,16 @@ export default function Main(props: {
               fullWidth
               variant="contained"
               onClick={validateInputs}>
-              Sign in
+              เข้าสู่ระบบ
             </Button>
-            <Link
+            {/* <Link
               component="button"
               type="button"
               onClick={handleClickOpen}
               variant="body2"
               sx={{ alignSelf: 'center' }}>
-              Forgot your password?
-            </Link>
-          </Box>
-          <Divider>or</Divider>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Google')}
-              startIcon={<GoogleIcon />}>
-              Sign in with Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Facebook')}
-              startIcon={<FacebookIcon />}>
-              Sign in with Facebook
-            </Button>
-            <Typography sx={{ textAlign: 'center' }}>
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/material-ui/getting-started/templates/sign-in/"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}>
-                Sign up
-              </Link>
-            </Typography>
+              ลืมรหัสผ่าน?
+            </Link> */}
           </Box>
         </Card>
       </SignInContainer>
