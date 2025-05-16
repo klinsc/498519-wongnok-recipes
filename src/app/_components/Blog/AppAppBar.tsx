@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import AppAvatar from '../AppAvatar'
 import SiteIcon from '../SiteIcon'
+import SearchBar from '../SearchBar'
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -78,33 +79,13 @@ export default function AppAppBar() {
               px: 0,
             }}>
             <SiteIcon />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" color="info" size="small">
-                Features
-              </Button>
-              <Button variant="text" color="info" size="small">
-                Testimonials
-              </Button>
-              <Button variant="text" color="info" size="small">
-                Highlights
-              </Button>
-              <Button variant="text" color="info" size="small">
-                Pricing
-              </Button>
-              <Button
-                variant="text"
-                color="info"
-                size="small"
-                sx={{ minWidth: 0 }}>
-                FAQ
-              </Button>
-              <Button
-                variant="text"
-                color="info"
-                size="small"
-                sx={{ minWidth: 0 }}>
-                Blog
-              </Button>
+            <Box
+              sx={{
+                display: { xs: 'flex', md: 'flex' },
+                flexGrow: 1,
+                justifyContent: 'center',
+              }}>
+              <SearchBar />
             </Box>
           </Box>
           <Box
@@ -163,12 +144,9 @@ export default function AppAppBar() {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <MenuItem>Features</MenuItem>
-                <MenuItem>Testimonials</MenuItem>
-                <MenuItem>Highlights</MenuItem>
-                <MenuItem>Pricing</MenuItem>
-                <MenuItem>FAQ</MenuItem>
-                <MenuItem>Blog</MenuItem>
+                <MenuItem>หน้าหลัก</MenuItem>
+                <MenuItem>เมนูโปรด</MenuItem>
+                <MenuItem>รายการของฉัน</MenuItem>
                 <Divider sx={{ my: 3 }} />
                 {!session?.user?.name && (
                   <>
