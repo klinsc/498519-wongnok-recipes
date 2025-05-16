@@ -8,9 +8,12 @@ import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import * as React from 'react'
 import AppTheme from '../shared-theme/AppTheme'
 import { SitemarkIcon } from './CustomIcons'
+import { api } from '~/trpc/react'
+import NotiAlert from '../NotiAlert'
+import { useCallback, useState, type FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -57,14 +60,53 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 export default function SignUp(props: {
   disableCustomTheme?: boolean
 }) {
-  const [emailError, setEmailError] = React.useState(false)
-  const [emailErrorMessage, setEmailErrorMessage] =
-    React.useState('')
-  const [passwordError, setPasswordError] = React.useState(false)
+  // router
+  const router = useRouter()
+
+  const [emailError, setEmailError] = useState(false)
+  const [emailErrorMessage, setEmailErrorMessage] = useState('')
+  const [passwordError, setPasswordError] = useState(false)
   const [passwordErrorMessage, setPasswordErrorMessage] =
-    React.useState('')
-  const [nameError, setNameError] = React.useState(false)
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('')
+    useState('')
+  const [nameError, setNameError] = useState(false)
+  const [nameErrorMessage, setNameErrorMessage] = useState('')
+
+  // callback: handleCloseNotistack
+  const handleCloseNotistack = useCallback(() => {
+    setNotistack((prev) => ({ ...prev, open: false }))
+  }, [])
+  // state: notistack
+  const [notistack, setNotistack] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error',
+  })
+
+  // trpc: user create
+  const { mutateAsync: createUser } = api.user.create.useMutation({
+    onSuccess: (data) => {
+      console.log('User created successfully:', data)
+      setNotistack({
+        open: true,
+        message:
+          'สร้างบัญชีผู้ใช้สำเร็จ, กำลังเปลี่ยนไปยังหน้าเข้าสู่ระบบ...',
+        severity: 'success',
+      })
+
+      setTimeout(() => {
+        // Send the user to the login page
+        void router.push('/signin')
+      }, 3000) // 2 seconds delay
+    },
+    onError: (error) => {
+      console.error('Error creating user:', error)
+      setNotistack({
+        open: true,
+        message: 'Error creating user',
+        severity: 'error',
+      })
+    },
+  })
 
   const validateInputs = () => {
     const email = document.getElementById(
@@ -109,19 +151,32 @@ export default function SignUp(props: {
     return isValid
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (nameError || emailError || passwordError) {
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      // Prevent default form submission
       event.preventDefault()
-      return
-    }
-    const data = new FormData(event.currentTarget)
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    })
-  }
+
+      if (nameError || emailError || passwordError) {
+        event.preventDefault()
+        return
+      }
+
+      const data = new FormData(event.currentTarget)
+      console.log({
+        name: data.get('name'),
+        lastName: data.get('lastName'),
+        email: data.get('email'),
+        password: data.get('password'),
+      })
+
+      await createUser({
+        name: data.get('name') as string,
+        email: data.get('email') as string,
+        password: data.get('password') as string,
+      })
+    },
+    [nameError, emailError, passwordError, createUser],
+  )
 
   return (
     <AppTheme {...props}>
@@ -129,6 +184,13 @@ export default function SignUp(props: {
       {/* <ColorModeSelect
         sx={{ position: 'fixed', top: '1rem', right: '1rem' }}
       /> */}
+      <NotiAlert
+        open={notistack.open}
+        message={notistack.message}
+        serverity={notistack.severity}
+        handleClose={handleCloseNotistack}
+      />
+
       <SignUpContainer
         direction="column"
         justifyContent="space-between">
