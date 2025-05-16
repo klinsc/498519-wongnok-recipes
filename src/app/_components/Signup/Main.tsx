@@ -134,7 +134,7 @@ export default function SignUp(props: {
 
   return (
     <AppTheme {...props}>
-      {/* <CssBaseline enableColorScheme={false} /> */}
+      <CssBaseline />
       {/* <ColorModeSelect
         sx={{ position: 'fixed', top: '1rem', right: '1rem' }}
       /> */}
@@ -205,12 +205,12 @@ export default function SignUp(props: {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
                 <Checkbox value="allowExtraEmails" color="primary" />
               }
               label="I want to receive updates via email."
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth
@@ -219,12 +219,12 @@ export default function SignUp(props: {
               Sign up
             </Button>
           </Box>
-          <Divider>
+          {/* <Divider>
             <Typography sx={{ color: 'text.secondary' }}>
               or
             </Typography>
-          </Divider>
-          <Box
+          </Divider> */}
+          {/* <Box
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -253,7 +253,7 @@ export default function SignUp(props: {
                 Sign in
               </Link>
             </Typography>
-          </Box>
+          </Box> */}
         </Card>
       </SignUpContainer>
     </AppTheme>
