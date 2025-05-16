@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import * as React from 'react'
+
+import { Menu, MenuItem } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
-import { useSession } from 'next-auth/react'
-import { Menu, MenuItem } from '@mui/material'
+import { signOut, useSession } from 'next-auth/react'
+import { useCallback, useState, type MouseEvent } from 'react'
 
 function stringToColor(string: string) {
   let hash = 0
@@ -36,10 +37,8 @@ function stringAvatar(name: string) {
 export default function AppAvatar() {
   const { data: session } = useSession()
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(
-    null,
-  )
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const handleMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
 
@@ -47,8 +46,33 @@ export default function AppAvatar() {
     setAnchorEl(null)
   }
 
+  //   // callback: handleCloseNotistack
+  //   const handleCloseNotistack = useCallback(() => {
+  //     setNotistack((prev) => ({ ...prev, open: false }))
+  //   }, [])
+  //   // state: notistack
+  //   const [notistack, setNotistack] = useState({
+  //     open: false,
+  //     message: '',
+  //     severity: 'success' as 'success' | 'error',
+  //   })
+
+  // callback: onClick sign out
+  const handleSignOut = useCallback(async () => {
+    await signOut({
+      callbackUrl: '/',
+    })
+  }, [])
+
   return (
     <Stack direction="row" spacing={2}>
+      {/* <NotiAlert
+        open={notistack.open}
+        message={notistack.message}
+        serverity={notistack.severity}
+        handleClose={handleCloseNotistack}
+      /> */}
+
       <Menu
         id="menu-appbar"
         anchorEl={anchorEl}
@@ -65,6 +89,7 @@ export default function AppAvatar() {
         onClose={handleClose}>
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleSignOut}>ลงชื่อออก</MenuItem>
       </Menu>
       <Avatar
         onClick={handleMenu}
