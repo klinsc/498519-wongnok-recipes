@@ -87,7 +87,7 @@ export default function AppAvatar() {
         }}
         open={Boolean(anchorEl)}
         onClose={handleClose}>
-        <MenuItem onClick={handleClose}>บัญชีของฉัน</MenuItem>
+        <MenuItem onClick={handleClose}>สูตรของฉัน</MenuItem>
         <MenuItem onClick={handleSignOut}>ลงชื่อออก</MenuItem>
       </Menu>
       <Avatar
