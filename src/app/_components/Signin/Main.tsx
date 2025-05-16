@@ -16,7 +16,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import AppTheme from '~/app/_components/shared-theme/AppTheme'
-import ColorModeSelect from '~/app/_components/shared-theme/ColorModeSelect'
+// import ColorModeSelect from '~/app/_components/shared-theme/ColorModeSelect'
 import {
   FacebookIcon,
   GoogleIcon,
@@ -136,9 +136,9 @@ export default function Main(props: {
       <SignInContainer
         direction="column"
         justifyContent="space-between">
-        <ColorModeSelect
+        {/* <ColorModeSelect
           sx={{ position: 'fixed', top: '1rem', right: '1rem' }}
-        />
+        /> */}
         <Card variant="outlined">
           <SitemarkIcon />
           <Typography
