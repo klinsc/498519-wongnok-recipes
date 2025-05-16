@@ -15,6 +15,7 @@ import { alpha, styled } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
 import * as React from 'react'
 import Sitemark from './SitemarkIcon'
+import { useRouter } from 'next/navigation'
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -33,6 +34,19 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }))
 
 export default function AppAppBar() {
+  // router
+  const router = useRouter()
+
+  // callback: onClick sign in
+  const handleSignIn = () => {
+    router.push('/signin')
+  }
+
+  // callback: onClick sign up
+  const handleSignUp = () => {
+    router.push('/signup')
+  }
+
   const [open, setOpen] = React.useState(false)
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -94,11 +108,19 @@ export default function AppAppBar() {
               gap: 1,
               alignItems: 'center',
             }}>
-            <Button color="primary" variant="text" size="small">
-              Sign in
+            <Button
+              onClick={handleSignIn}
+              color="primary"
+              variant="text"
+              size="small">
+              ลงชื่อเข้าใช้
             </Button>
-            <Button color="primary" variant="contained" size="small">
-              Sign up
+            <Button
+              onClick={handleSignUp}
+              color="primary"
+              variant="contained"
+              size="small">
+              สมัครสมาชิก
             </Button>
             {/* <ColorModeIconDropdown /> */}
           </Box>

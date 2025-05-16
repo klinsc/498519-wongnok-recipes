@@ -134,7 +134,7 @@ export default function SignUp(props: {
 
   return (
     <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
+      {/* <CssBaseline enableColorScheme={false} /> */}
       {/* <ColorModeSelect
         sx={{ position: 'fixed', top: '1rem', right: '1rem' }}
       /> */}

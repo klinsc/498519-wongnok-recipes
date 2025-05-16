@@ -132,7 +132,7 @@ export default function Main(props: {
 
   return (
     <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
+      {/* <CssBaseline enableColorScheme={false} /> */}
       <SignInContainer
         direction="column"
         justifyContent="space-between">

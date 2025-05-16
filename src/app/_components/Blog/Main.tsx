@@ -15,7 +15,7 @@ export default function Blog(props: {
   return (
     <AppTheme {...props}>
       <>
-        <CssBaseline enableColorScheme />
+        <CssBaseline />
 
         <AppAppBar />
         <Container
