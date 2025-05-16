@@ -7,5 +7,5 @@ const BlogMain = dynamic(() => import('./Main'), {
 })
 
 export default function SignIn() {
-  return <BlogMain disableCustomTheme />
+  return <BlogMain />
 }
