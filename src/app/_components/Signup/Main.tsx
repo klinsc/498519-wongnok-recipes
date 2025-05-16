@@ -1,25 +1,16 @@
-import * as React from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox'
+import MuiCard from '@mui/material/Card'
 import CssBaseline from '@mui/material/CssBaseline'
-import Divider from '@mui/material/Divider'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormLabel from '@mui/material/FormLabel'
 import FormControl from '@mui/material/FormControl'
-import Link from '@mui/material/Link'
+import FormLabel from '@mui/material/FormLabel'
+import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import Stack from '@mui/material/Stack'
-import MuiCard from '@mui/material/Card'
-import { styled } from '@mui/material/styles'
+import * as React from 'react'
 import AppTheme from '../shared-theme/AppTheme'
-// import ColorModeSelect from '../shared-theme/ColorModeSelect'
-import {
-  GoogleIcon,
-  FacebookIcon,
-  SitemarkIcon,
-} from './CustomIcons'
+import { SitemarkIcon } from './CustomIcons'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -150,7 +141,7 @@ export default function SignUp(props: {
               width: '100%',
               fontSize: 'clamp(2rem, 10vw, 2.15rem)',
             }}>
-            Sign up
+            สมัครสมาชิก
           </Typography>
           <Box
             component="form"
@@ -161,7 +152,7 @@ export default function SignUp(props: {
               gap: 2,
             }}>
             <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
+              <FormLabel htmlFor="name">ชื่อ</FormLabel>
               <TextField
                 autoComplete="name"
                 name="name"
@@ -175,7 +166,7 @@ export default function SignUp(props: {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email">อีเมล์</FormLabel>
               <TextField
                 required
                 fullWidth
@@ -190,7 +181,7 @@ export default function SignUp(props: {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password">รหัสผ่าน</FormLabel>
               <TextField
                 required
                 fullWidth
