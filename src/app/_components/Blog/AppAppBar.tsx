@@ -61,13 +61,6 @@ export default function AppAppBar() {
     setOpen(newOpen)
   }
 
-  // callback: onClick sign out
-  const handleSignOut = useCallback(async () => {
-    await signOut({
-      callbackUrl: '/',
-    })
-  }, [])
-
   return (
     <AppBar
       position="fixed"
