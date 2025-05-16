@@ -16,6 +16,8 @@ import Toolbar from '@mui/material/Toolbar'
 import * as React from 'react'
 import Sitemark from './SitemarkIcon'
 import { useRouter } from 'next/navigation'
+import AppAvatar from '../AppAvatar'
+import { useSession } from 'next-auth/react'
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -36,6 +38,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export default function AppAppBar() {
   // router
   const router = useRouter()
+
+  // session
+  const { data: session } = useSession()
 
   // callback: onClick sign in
   const handleSignIn = () => {
@@ -108,24 +113,31 @@ export default function AppAppBar() {
               gap: 1,
               alignItems: 'center',
             }}>
-            <Button
-              onClick={handleSignIn}
-              color="primary"
-              variant="text"
-              size="small">
-              ลงชื่อเข้าใช้
-            </Button>
-            <Button
-              onClick={handleSignUp}
-              color="primary"
-              variant="contained"
-              size="small">
-              สมัครสมาชิก
-            </Button>
+            {session?.user?.name ? (
+              <AppAvatar />
+            ) : (
+              <>
+                <Button
+                  onClick={handleSignIn}
+                  color="primary"
+                  variant="text"
+                  size="small">
+                  ลงชื่อเข้าใช้
+                </Button>
+                <Button
+                  onClick={handleSignUp}
+                  color="primary"
+                  variant="contained"
+                  size="small">
+                  สมัครสมาชิก
+                </Button>
+              </>
+            )}
             {/* <ColorModeIconDropdown /> */}
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             {/* <ColorModeIconDropdown size="medium" /> */}
+            <AppAvatar />
             <IconButton
               aria-label="Menu button"
               onClick={toggleDrawer(true)}>
@@ -158,22 +170,26 @@ export default function AppAppBar() {
                 <MenuItem>FAQ</MenuItem>
                 <MenuItem>Blog</MenuItem>
                 <Divider sx={{ my: 3 }} />
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    fullWidth>
-                    Sign up
-                  </Button>
-                </MenuItem>
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    fullWidth>
-                    Sign in
-                  </Button>
-                </MenuItem>
+                {!session?.user?.name && (
+                  <>
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        fullWidth>
+                        Sign up
+                      </Button>
+                    </MenuItem>
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        fullWidth>
+                        Sign in
+                      </Button>
+                    </MenuItem>
+                  </>
+                )}
               </Box>
             </Drawer>
           </Box>
