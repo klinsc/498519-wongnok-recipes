@@ -13,12 +13,14 @@ import IconButton from '@mui/material/IconButton'
 import MenuItem from '@mui/material/MenuItem'
 import { alpha, styled } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import AppAvatar from '../AppAvatar'
 import SiteIcon from '../SiteIcon'
 import SearchBar from '../SearchBar'
+import AppMenu, { MENU_ITEMS } from '../AppMenu'
+import { useCallback } from 'react'
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -58,6 +60,13 @@ export default function AppAppBar() {
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen)
   }
+
+  // callback: onClick sign out
+  const handleSignOut = useCallback(async () => {
+    await signOut({
+      callbackUrl: '/',
+    })
+  }, [])
 
   return (
     <AppBar
@@ -115,6 +124,7 @@ export default function AppAppBar() {
               </>
             )}
             {/* <ColorModeIconDropdown /> */}
+            <AppMenu />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             {/* <ColorModeIconDropdown size="medium" /> */}
@@ -144,12 +154,19 @@ export default function AppAppBar() {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <MenuItem>หน้าหลัก</MenuItem>
-                <MenuItem>เมนูโปรด</MenuItem>
-                <MenuItem>รายการของฉัน</MenuItem>
-                <Divider sx={{ my: 3 }} />
+                {MENU_ITEMS.map((item) => (
+                  <MenuItem
+                    key={item.label}
+                    onClick={toggleDrawer(false)}
+                    component="a"
+                    href={item.path}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+
                 {!session?.user?.name && (
                   <>
+                    <Divider sx={{ my: 3 }} />
                     <MenuItem>
                       <Button
                         color="primary"
