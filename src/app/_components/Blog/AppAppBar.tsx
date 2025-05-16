@@ -13,14 +13,13 @@ import IconButton from '@mui/material/IconButton'
 import MenuItem from '@mui/material/MenuItem'
 import { alpha, styled } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
-import { signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import AppAvatar from '../AppAvatar'
-import SiteIcon from '../SiteIcon'
-import SearchBar from '../SearchBar'
 import AppMenu, { MENU_ITEMS } from '../AppMenu'
-import { useCallback } from 'react'
+import SearchBar from '../SearchBar'
+import SiteIcon from '../SiteIcon'
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
