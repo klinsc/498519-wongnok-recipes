@@ -12,13 +12,13 @@ import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useCallback, useState, type FormEvent } from 'react'
 import AppTheme from '~/app/_components/shared-theme/AppTheme'
-import { SitemarkIcon } from '~/app/_components/Signin/CustomIcons'
 import ForgotPassword from '~/app/_components/Signin/ForgotPassword'
-import { signIn } from 'next-auth/react'
 import NotiAlert from '../NotiAlert'
-import { useRouter } from 'next/navigation'
+import SiteIcon from '../SiteIcon'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -186,7 +186,7 @@ export default function Main(props: {
           sx={{ position: 'fixed', top: '1rem', right: '1rem' }}
         /> */}
         <Card variant="outlined">
-          <SitemarkIcon />
+          <SiteIcon />
           <Typography
             component="h1"
             variant="h4"

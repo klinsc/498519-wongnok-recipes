@@ -17,7 +17,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import AppAvatar from '../AppAvatar'
-import SitemarkIcon from '../SitemarkIcon'
+import SiteIcon from '../SiteIcon'
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -77,7 +77,7 @@ export default function AppAppBar() {
               alignItems: 'center',
               px: 0,
             }}>
-            <SitemarkIcon />
+            <SiteIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button variant="text" color="info" size="small">
                 Features

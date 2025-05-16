@@ -2,7 +2,7 @@
 
 import { Box, Stack, Typography } from '@mui/material'
 
-export default function SitemarkIcon() {
+export default function SiteIcon() {
   return (
     <Stack
       direction="row"
@@ -37,7 +37,7 @@ export default function SitemarkIcon() {
         <Typography
           variant="h5"
           sx={{
-            color: (theme) => theme.palette.text.secondary,
+            color: (theme) => theme.palette.text.primary,
           }}>
           วงนอก
         </Typography>
@@ -46,7 +46,7 @@ export default function SitemarkIcon() {
           sx={{
             fontSize: '0.75rem',
             fontWeight: 500,
-            color: (theme) => theme.palette.text.secondary,
+            color: (theme) => theme.palette.text.primary,
           }}>
           เมนูโปรดใกล้ฉัน
         </Typography>
