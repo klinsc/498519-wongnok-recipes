@@ -64,6 +64,7 @@ model User {
     sessions      Session[]
     posts         Post[]
 
+    // Only for testing
     password String
 }
 
