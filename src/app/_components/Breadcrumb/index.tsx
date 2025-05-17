@@ -7,7 +7,7 @@ export default function Breadcrumb() {
   const pathname = usePathname()
 
   return (
-    <div role="presentation">
+    <div>
       <Breadcrumbs aria-label="breadcrumb">
         <Link
           sx={{
