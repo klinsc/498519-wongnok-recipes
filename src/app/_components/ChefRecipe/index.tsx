@@ -9,7 +9,7 @@ import Breadcrumb from '../Breadcrumb'
 import AppTheme from '../shared-theme/AppTheme'
 import Chef from './Chef'
 import RecipeList from './RecipeList'
-import RecipeMain from './RecipeMain'
+import RecipeMain from '../Recipe/RecipeMain'
 
 interface ChefRecipeProps {
   userID: string

@@ -70,6 +70,9 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   const [currentRecipe, setCurrentRecipe] =
     useState<RecipeNameWithCreatedByAndDetail | null>(null)
 
+  // State: file
+  const [file, setFile] = useState<File | null>(null)
+
   // trpc: get recipe by id
   const { data: recipeName } = api.recipe.getById.useQuery({
     recipeId: props.recipeID,
@@ -138,6 +141,16 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     }
   }, [deleteRecipeDraft, props.recipeID])
 
+  const handleUpload = useCallback(async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    await fetch('/api/v1/upload', {
+      method: 'POST',
+      body: formData,
+    })
+  }, [])
+
   // Callback: handleSave
   const handleSave = useCallback(() => {
     if (currentRecipe) {
@@ -145,8 +158,19 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
         recipeId: currentRecipe.id,
         name: currentRecipe.name,
       })
+
+      // Handle file upload if a file is selected
+      if (file) {
+        handleUpload(file)
+          .then(() => {
+            console.log('File uploaded successfully')
+          })
+          .catch((error) => {
+            console.error('Error uploading file:', error)
+          })
+      }
     }
-  }, [currentRecipe, updateRecipeName])
+  }, [currentRecipe, file, handleUpload, updateRecipeName])
 
   // Callback: handleCancel
   const handleCancel = useCallback(() => {
@@ -233,7 +257,7 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
               alignItems: 'center',
             }}
             height="194">
-            <ImageUploader />
+            <ImageUploader file={file} setFile={setFile} />
           </Box>
         )}
         <CardContent>

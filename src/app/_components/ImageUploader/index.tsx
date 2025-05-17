@@ -1,7 +1,8 @@
-import { styled } from '@mui/material/styles'
-import Button from '@mui/material/Button'
+/* eslint-disable @next/next/no-img-element */
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { useState } from 'react'
+import { Box, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import { styled } from '@mui/material/styles'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -15,10 +16,13 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 })
 
-export default function ImageUploader() {
-  // State: file
-  const [file, setFile] = useState<File | null>(null)
-
+export default function ImageUploader({
+  setFile,
+  file,
+}: {
+  setFile: (file: File | null) => void
+  file: File | null
+}) {
   // Callback: handleChange
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -55,19 +59,62 @@ export default function ImageUploader() {
     }
   }
 
+  // Display the selected image in image preview
   return (
-    <Button
-      component="label"
-      role={undefined}
-      variant="contained"
-      tabIndex={-1}
-      startIcon={<CloudUploadIcon />}>
-      Upload files
-      <VisuallyHiddenInput
-        type="file"
-        onChange={handleChange}
-        accept="image/*"
-      />
-    </Button>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '1px dashed #ccc',
+        borderRadius: 2,
+        backgroundColor: '#f9f9f9',
+      }}>
+      {file ? (
+        <Box
+          sx={{
+            maxHeight: '194px',
+          }}>
+          <img
+            src={URL.createObjectURL(file)}
+            alt="Selected"
+            style={{
+              // position: 'absolute',
+              width: 'auto',
+              height: 'auto',
+              maxWidth: '300px',
+              maxHeight: '194px',
+            }}
+          />
+        </Box>
+      ) : (
+        <Typography
+          component="div"
+          variant="body1"
+          sx={{
+            color: 'text.secondary',
+            textAlign: 'center',
+          }}>
+          No image selected
+        </Typography>
+      )}
+      <Button
+        sx={{
+          position: 'absolute',
+        }}
+        component="label"
+        role={undefined}
+        variant="contained"
+        tabIndex={-1}
+        startIcon={<CloudUploadIcon />}>
+        อัพโหลดรูปภาพใหม่
+        <VisuallyHiddenInput
+          type="file"
+          onChange={handleChange}
+          accept="image/*"
+        />
+      </Button>
+    </Box>
   )
 }
