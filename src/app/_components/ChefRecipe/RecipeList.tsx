@@ -110,7 +110,7 @@ export default function RecipeList({
             <Typography variant="h6" gutterBottom>
               รอเผยแพร่
             </Typography>
-            <Grid container>
+            <Grid container spacing={1}>
               {drafts?.map((recipe) => (
                 <Grid key={recipe.id}>
                   <MyDraftRecipe
