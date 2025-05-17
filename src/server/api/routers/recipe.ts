@@ -1,3 +1,4 @@
+import { RecipeStatus } from '@prisma/client'
 import { z } from 'zod'
 
 import {
@@ -71,18 +72,32 @@ export const recipeRouter = createTRPCRouter({
       return
     }),
 
-  getRecipeByUserId: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const recipe = await ctx.db.recipeName.findMany({
-        where: {
-          createdById: input.id,
-        },
-        include: {
-          createdBy: true,
-        },
-      })
+  getMyDraft: protectedProcedure.query(async ({ ctx }) => {
+    const recipe = await ctx.db.recipeName.findMany({
+      where: {
+        createdById: ctx.session.user.id,
+        status: RecipeStatus.DRAFT,
+      },
+      include: {
+        createdBy: true,
+      },
+    })
 
-      return recipe
-    }),
+    return recipe
+  }),
+
+  getMyPublished: protectedProcedure.query(async ({ ctx }) => {
+    const recipe = await ctx.db.recipeName.findMany({
+      where: {
+        createdById: ctx.session.user.id,
+        status: RecipeStatus.PUBLISHED,
+      },
+      include: {
+        createdBy: true,
+        RecipeDetail: true,
+      },
+    })
+
+    return recipe
+  }),
 })
