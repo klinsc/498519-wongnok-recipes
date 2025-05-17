@@ -5,7 +5,7 @@ import AppAppBar from '../Blog/AppAppBar'
 import Footer from '../Blog/Footer'
 import Breadcrumb from '../Breadcrumb'
 import Chef from './Chef'
-import Menus from './Menus'
+import RecipeList from './RecipeList'
 import AppTheme from '../shared-theme/AppTheme'
 
 interface ChefRecipeProps {
@@ -43,7 +43,7 @@ export default function ChefRecipe(props: ChefRecipeProps) {
               size={{
                 xs: 12,
               }}>
-              <Menus />
+              <RecipeList />
             </Grid>
           </Grid>
         </Container>

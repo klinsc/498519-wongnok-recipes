@@ -15,6 +15,7 @@ import * as React from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
+import RecipeCard from './RecipeCard'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -44,7 +45,7 @@ function a11yProps(index: number) {
   }
 }
 
-export default function Menus() {
+export default function RecipeList() {
   const [value, setValue] = React.useState(0)
 
   const handleChange = (
@@ -69,7 +70,7 @@ export default function Menus() {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        Item One
+        <RecipeCard />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         Item Two
