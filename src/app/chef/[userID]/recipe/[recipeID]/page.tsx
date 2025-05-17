@@ -1,11 +1,12 @@
 type Props = {
-  params: {
+  params: Promise<{
     userID: string
     recipeID: string
-  }
+  }>
 }
 
-export default async function RecipePage({ params }: Props) {
+export default async function RecipePage(props: Props) {
+  const params = await props.params;
   const { userID, recipeID } = params
 
   return (
