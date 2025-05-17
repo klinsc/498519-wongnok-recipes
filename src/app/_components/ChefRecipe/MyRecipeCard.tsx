@@ -12,7 +12,7 @@ import IconButton, {
 } from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean
@@ -64,9 +64,9 @@ export interface RecipeCardProps {
 export default function MyRecipeCard(props: RecipeCardProps) {
   const [expanded, setExpanded] = useState(false)
 
-  const handleExpandClick = () => {
+  const handleExpandClick = useCallback(() => {
     setExpanded(!expanded)
-  }
+  }, [expanded])
 
   return (
     <>
