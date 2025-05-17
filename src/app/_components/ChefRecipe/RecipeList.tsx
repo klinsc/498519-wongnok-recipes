@@ -145,7 +145,6 @@ export default function RecipeList({
       </CustomTabPanel>
 
       <NewRecipe
-        open={recipeID === 'new'}
         userID={userID}
         recipeID={recipeID}
         refetchDrafts={refetchDrafts}

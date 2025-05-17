@@ -12,12 +12,10 @@ import { useCallback } from 'react'
 import { api } from '~/trpc/react'
 
 export default function NewRecipe({
-  open,
   userID,
   recipeID,
   refetchDrafts,
 }: {
-  open: boolean
   userID: string
   recipeID: string
   refetchDrafts: () => void
@@ -65,7 +63,7 @@ export default function NewRecipe({
 
   return (
     <Dialog
-      open={open}
+      open={recipeID === 'new'}
       onClose={handleClose}
       slotProps={{
         paper: {

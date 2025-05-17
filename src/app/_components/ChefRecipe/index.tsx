@@ -1,15 +1,14 @@
 'use client'
 
-import { CssBaseline, Container, Grid, Fab } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import { Container, CssBaseline, Fab, Grid } from '@mui/material'
+import { useRouter } from 'next/navigation'
 import AppAppBar from '../Blog/AppAppBar'
 import Footer from '../Blog/Footer'
 import Breadcrumb from '../Breadcrumb'
+import AppTheme from '../shared-theme/AppTheme'
 import Chef from './Chef'
 import RecipeList from './RecipeList'
-import AppTheme from '../shared-theme/AppTheme'
-import NewRecipe from './NewRecipe'
-import AddIcon from '@mui/icons-material/Add'
-import { useRouter } from 'next/navigation'
 
 interface ChefRecipeProps {
   userID: string
