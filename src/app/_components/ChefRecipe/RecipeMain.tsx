@@ -4,7 +4,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import SaveIcon from '@mui/icons-material/Save'
 import ShareIcon from '@mui/icons-material/Share'
-import { Menu, MenuItem, Stack, TextField } from '@mui/material'
+import { Box, Menu, MenuItem, Stack, TextField } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -31,6 +31,9 @@ import {
 } from 'react'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import ImageUploader from '../ImageUploader'
+
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -326,20 +329,36 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
               : 'อัพเดทล่าสุด: '
           }
         />
-        <CardMedia
-          sx={{
-            paddingTop: 2,
-            paddingBottom: 2,
-            objectFit: 'cover',
-            objectPosition: 'center',
-            width: '100%',
-            height: 'auto',
-          }}
-          component="img"
-          height="194"
-          image="https://mui.com/static/images/cards/paella.jpg"
-          alt="Paella dish"
-        />
+        {recipeDetail?.image ? (
+          <CardMedia
+            sx={{
+              paddingTop: 2,
+              paddingBottom: 2,
+              objectFit: 'cover',
+              objectPosition: 'center',
+              width: '100%',
+              height: 'auto',
+            }}
+            component="img"
+            height="194"
+            image={recipeDetail.image}
+            alt="Paella dish"
+          />
+        ) : (
+          <Box
+            sx={{
+              paddingTop: 2,
+              paddingBottom: 2,
+              width: '100%',
+              height: '194px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            height="194">
+            <ImageUploader />
+          </Box>
+        )}
         <CardContent>
           <Typography
             variant="body2"
