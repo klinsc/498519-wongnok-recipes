@@ -86,6 +86,18 @@ export const recipeRouter = createTRPCRouter({
     return recipe
   }),
 
+  deleteDraft: protectedProcedure
+    .input(z.object({ recipeNameId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.recipeName.delete({
+        where: {
+          id: input.recipeNameId,
+        },
+      })
+
+      return
+    }),
+
   getMyPublisheds: protectedProcedure.query(async ({ ctx }) => {
     const recipe = await ctx.db.recipeName.findMany({
       where: {

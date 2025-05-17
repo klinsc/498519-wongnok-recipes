@@ -6,6 +6,7 @@ import MyRecipeCard from './MyRecipeCard'
 import { api } from '~/trpc/react'
 import MyDraftRecipe from './MyDraftRecipe'
 import { Grid, Typography } from '@mui/material'
+import NewRecipe from './NewRecipe'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -69,11 +70,18 @@ const RECIPE_SAMPLES = [
   },
 ]
 
-export default function RecipeList() {
+export default function RecipeList({
+  userID,
+  recipeID,
+}: {
+  userID: string
+  recipeID: string
+}) {
   const [value, setValue] = useState(0)
 
   // trpc: recipe get all
-  const { data: drafts } = api.recipe.getMyDrafts.useQuery()
+  const { data: drafts, refetch: refetchDrafts } =
+    api.recipe.getMyDrafts.useQuery()
 
   const handleChange = (
     event: React.SyntheticEvent,
@@ -105,7 +113,11 @@ export default function RecipeList() {
             <Grid container>
               {drafts?.map((recipe) => (
                 <Grid key={recipe.id}>
-                  <MyDraftRecipe key={recipe.id} recipe={recipe} />
+                  <MyDraftRecipe
+                    key={recipe.id}
+                    recipe={recipe}
+                    refetchDrafts={refetchDrafts}
+                  />
                 </Grid>
               ))}
             </Grid>
@@ -131,6 +143,13 @@ export default function RecipeList() {
       <CustomTabPanel value={value} index={2}>
         Item Three
       </CustomTabPanel>
+
+      <NewRecipe
+        open={recipeID === 'new'}
+        userID={userID}
+        recipeID={recipeID}
+        refetchDrafts={refetchDrafts}
+      />
     </Box>
   )
 }

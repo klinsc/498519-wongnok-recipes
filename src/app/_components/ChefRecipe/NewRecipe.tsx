@@ -11,7 +11,17 @@ import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 import { api } from '~/trpc/react'
 
-export default function NewRecipe({ open }: { open: boolean }) {
+export default function NewRecipe({
+  open,
+  userID,
+  recipeID,
+  refetchDrafts,
+}: {
+  open: boolean
+  userID: string
+  recipeID: string
+  refetchDrafts: () => void
+}) {
   // router
   const router = useRouter()
 
@@ -20,6 +30,8 @@ export default function NewRecipe({ open }: { open: boolean }) {
     onSuccess: () => {
       // Handle success
       console.log('Recipe name created successfully')
+      refetchDrafts()
+      router.push(`/chef/${userID}/recipe/all`)
     },
     onError: (error) => {
       // Handle error

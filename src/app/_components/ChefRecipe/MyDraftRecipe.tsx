@@ -5,21 +5,58 @@ import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
 import type { RecipeName } from '@prisma/client'
 import dayjs from 'dayjs'
-import { useState, type MouseEvent } from 'react'
+import { useCallback, useState, type MouseEvent } from 'react'
+import { api } from '~/trpc/react'
 
 export interface MyDraftRecipeProps {
   recipe: RecipeName
+  refetchDrafts: () => void
 }
 
 export default function MyDraftRecipe(props: MyDraftRecipeProps) {
+  // State: Menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget)
+    },
+    [],
+  )
+  const handleClose = useCallback(() => {
     setAnchorEl(null)
-  }
+  }, [])
+
+  // TRPC: delete recipe name
+  const {
+    mutateAsync: deleteRecipeDraft,
+    isPending: isDeleteRecipeDraftPending,
+  } = api.recipe.deleteDraft.useMutation({
+    onSuccess: () => {
+      console.log('Delete recipe draft success')
+      props.refetchDrafts()
+    },
+    onError: (error) => {
+      console.error('Delete recipe draft error', error)
+    },
+  })
+
+  // Callback: delete recipe name
+  const handleDeleteRecipeDraft = useCallback(async () => {
+    try {
+      const windowConfirm = window.confirm(
+        'คุณต้องการลบสูตรอาหารนี้หรือไม่?',
+      )
+      if (!windowConfirm) {
+        return
+      }
+
+      await deleteRecipeDraft({ recipeNameId: props.recipe.id })
+      console.log('Recipe draft deleted successfully')
+    } catch (error) {
+      console.error('Error deleting recipe draft:', error)
+    }
+  }, [deleteRecipeDraft, props.recipe.id])
 
   return (
     <>
@@ -48,9 +85,14 @@ export default function MyDraftRecipe(props: MyDraftRecipeProps) {
                 MenuListProps={{
                   'aria-labelledby': 'draft-settings-button',
                 }}>
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem onClick={handleClose}>
+                  เพิ่มข้อมูล
+                </MenuItem>
+                <MenuItem
+                  disabled={isDeleteRecipeDraftPending}
+                  onClick={handleDeleteRecipeDraft}>
+                  ลบ
+                </MenuItem>
               </Menu>
             </>
           }

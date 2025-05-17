@@ -65,11 +65,10 @@ export default function ChefRecipe(props: ChefRecipeProps) {
                 size={{
                   xs: 12,
                 }}>
-                <RecipeList />
+                <RecipeList userID={userID} recipeID={recipeID} />
               </Grid>
             </Grid>
           }
-          <NewRecipe open={recipeID === 'new'} />
         </Container>
         <Footer />
       </>
