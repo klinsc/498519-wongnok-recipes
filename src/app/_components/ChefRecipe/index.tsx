@@ -9,6 +9,7 @@ import Breadcrumb from '../Breadcrumb'
 import AppTheme from '../shared-theme/AppTheme'
 import Chef from './Chef'
 import RecipeList from './RecipeList'
+import RecipeMain from './RecipeMain'
 
 interface ChefRecipeProps {
   userID: string
@@ -54,18 +55,29 @@ export default function ChefRecipe(props: ChefRecipeProps) {
           <Breadcrumb />
           {
             <Grid container spacing={2}>
-              <Grid
-                size={{
-                  xs: 12,
-                }}>
-                <Chef userID={userID} />
-              </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                }}>
-                <RecipeList userID={userID} recipeID={recipeID} />
-              </Grid>
+              {Boolean(recipeID === 'all' || recipeID === 'new') ? (
+                <>
+                  <Grid
+                    size={{
+                      xs: 12,
+                    }}>
+                    <Chef userID={userID} />
+                  </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                    }}>
+                    <RecipeList
+                      userID={userID}
+                      recipeID={recipeID}
+                    />
+                  </Grid>
+                </>
+              ) : (
+                <>
+                  <RecipeMain userID={userID} recipeID={recipeID} />
+                </>
+              )}
             </Grid>
           }
         </Container>

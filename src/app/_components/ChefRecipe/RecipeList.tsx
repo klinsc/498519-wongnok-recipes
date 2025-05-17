@@ -36,9 +36,13 @@ function a11yProps(index: number) {
   }
 }
 
-const RECIPE_SAMPLES = [
+export const RECIPE_SAMPLES = [
   {
     id: '1',
+    createdBy: {
+      id: '1',
+      name: 'Chef John',
+    },
     title: '(ตัวอย่าง) Shrimp and Chorizo Paella',
     date: 'September 14, 2016',
     image: 'https://mui.com/static/images/cards/paella.jpg',
