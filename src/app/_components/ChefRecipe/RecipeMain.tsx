@@ -7,7 +7,6 @@ import ShareIcon from '@mui/icons-material/Share'
 import { Menu, MenuItem, Stack, TextField } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
-import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import CardMedia from '@mui/material/CardMedia'
@@ -131,6 +130,31 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     },
   })
 
+  // trpc: update recipe name
+  const updateRecipeName = api.recipe.updateName.useMutation({
+    onSuccess: () => {
+      console.log('Recipe name updated successfully')
+
+      // Update updatedAt
+      setCurrentRecipeName((prev) => {
+        if (prev) {
+          return {
+            ...prev,
+            updatedAt: new Date(),
+          }
+        }
+        return null
+      })
+
+      void router.push(pathName, {
+        scroll: false,
+      })
+    },
+    onError: (error) => {
+      console.error('Error updating recipe name:', error)
+    },
+  })
+
   // Callback: delete recipe name
   const handleDeleteRecipeDraft = useCallback(async () => {
     try {
@@ -157,6 +181,34 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     handleClose()
   }, [handleClose, pathName, router])
 
+  // Callback: handleSave
+  const handleSave = useCallback(() => {
+    if (currentRecipeName) {
+      void updateRecipeName.mutateAsync({
+        recipeId: currentRecipeName.id,
+        name: currentRecipeName.name,
+      })
+    }
+  }, [currentRecipeName, updateRecipeName])
+
+  // Callback: handleCancel
+  const handleCancel = useCallback(() => {
+    // Reset the current recipe name to the original value
+    setCurrentRecipeName((prev) => {
+      if (prev) {
+        return {
+          ...prev,
+          name: recipeName?.name || '',
+        }
+      }
+      return null
+    })
+
+    void router.push(pathName, {
+      scroll: false,
+    })
+  }, [pathName, recipeName?.name, router])
+
   return (
     <>
       <Card>
@@ -175,20 +227,12 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
                 <>
                   <IconButton
                     aria-label="save recipe name"
-                    onClick={() => {
-                      void router.push(pathName, {
-                        scroll: false,
-                      })
-                    }}>
+                    onClick={handleSave}>
                     <SaveIcon />
                   </IconButton>
                   <IconButton
                     aria-label="close recipe name"
-                    onClick={() => {
-                      void router.push(pathName, {
-                        scroll: false,
-                      })
-                    }}>
+                    onClick={handleCancel}>
                     <CloseIcon />
                   </IconButton>
                 </>
@@ -249,6 +293,17 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
                 onChange={(event) => {
                   const newRecipeName = event.target.value
                   console.log('recipeName', newRecipeName)
+                  setCurrentRecipeName((prev) =>
+                    prev ? { ...prev, name: newRecipeName } : null,
+                  )
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    void handleSave()
+                  }
+                  if (event.key === 'Escape') {
+                    void handleCancel()
+                  }
                 }}
                 autoFocus
               />
@@ -257,8 +312,8 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
             )
           }
           subheader={
-            currentRecipeName?.createdAt
-              ? dayjs(currentRecipeName.createdAt)
+            currentRecipeName?.updatedAt
+              ? dayjs(currentRecipeName.updatedAt)
                   .tz('Asia/Bangkok')
                   .format('DD/MM/YYYY HH:mm:ss')
               : 'Date created'
@@ -281,20 +336,12 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
         <CardContent>
           <Typography
             variant="body2"
-            sx={{ color: 'text.secondary' }}>
+            sx={{ color: 'text.secondary', marginBottom: 2 }}>
             This impressive paella is a perfect party dish and a fun
             meal to cook together with your guests. Add 1 cup of
             frozen peas along with the mussels, if you like.
           </Typography>
         </CardContent>
-        <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-          <IconButton aria-label="share">
-            <ShareIcon />
-          </IconButton>
-        </CardActions>
 
         <CardContent>
           <Typography sx={{ marginBottom: 2 }}>Method:</Typography>
