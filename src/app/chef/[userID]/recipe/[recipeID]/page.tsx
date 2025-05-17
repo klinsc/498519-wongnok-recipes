@@ -1,5 +1,4 @@
-import Chef from '~/app/_components/Chef'
-import Recipe from '~/app/_components/Recipe'
+import ChefRecipe from '~/app/_components/ChefRecipe'
 import { HydrateClient } from '~/trpc/server'
 
 type Props = {
@@ -15,8 +14,7 @@ export default async function RecipePage(props: Props) {
 
   return (
     <HydrateClient>
-      <Chef userID={userID} />
-      <Recipe recipeID={recipeID} />
+      <ChefRecipe userID={userID} recipeID={recipeID} />
     </HydrateClient>
   )
 }

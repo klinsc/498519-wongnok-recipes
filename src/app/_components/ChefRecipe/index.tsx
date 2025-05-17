@@ -1,20 +1,42 @@
+'use client'
+
+import { CssBaseline, Container } from '@mui/material'
+import AppAppBar from '../Blog/AppAppBar'
+import Footer from '../Blog/Footer'
+import Breadcrumb from '../Breadcrumb'
+import Chef from '../Chef'
+import Recipe from '../Recipe'
+import AppTheme from '../shared-theme/AppTheme'
+
 interface ChefRecipeProps {
   userID: string
   recipeID: string
 }
 
-export default async function ChefRecipe(
-  props: Promise<ChefRecipeProps>,
-) {
-  const params = await props
-  const { userID, recipeID } = params
+export default function ChefRecipe(props: ChefRecipeProps) {
+  const { userID, recipeID } = props
 
   return (
-    <div>
-      <h1>
-        Chef {userID} Recipe {recipeID}
-      </h1>
-      <p>This is the chef recipe page.</p>
-    </div>
+    <AppTheme {...props}>
+      <>
+        <CssBaseline />
+
+        <AppAppBar />
+        <Container
+          maxWidth="lg"
+          component="main"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            my: 16,
+            gap: 4,
+          }}>
+          <Breadcrumb />
+          <Chef userID={userID} />
+          <Recipe recipeID={recipeID} />
+        </Container>
+        <Footer />
+      </>
+    </AppTheme>
   )
 }
