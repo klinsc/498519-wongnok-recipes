@@ -308,15 +308,22 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
                 autoFocus
               />
             ) : (
-              <>{`${currentRecipeName?.name || 'Recipe Name'}`}</>
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{
+                  fontSize: '2rem',
+                  fontWeight: 'bold',
+                  color: 'text.primary',
+                }}>{`${currentRecipeName?.name || 'Recipe Name'}`}</Typography>
             )
           }
           subheader={
             currentRecipeName?.updatedAt
-              ? dayjs(currentRecipeName.updatedAt)
+              ? `อัพเดทล่าสุด: ${dayjs(currentRecipeName.updatedAt)
                   .tz('Asia/Bangkok')
-                  .format('DD/MM/YYYY HH:mm:ss')
-              : 'Date created'
+                  .format('DD/MM/YYYY HH:mm:ss')}`
+              : 'อัพเดทล่าสุด: '
           }
         />
         <CardMedia
