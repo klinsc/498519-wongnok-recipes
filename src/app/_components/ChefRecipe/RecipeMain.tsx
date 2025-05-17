@@ -2,7 +2,7 @@
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ShareIcon from '@mui/icons-material/Share'
-import { Stack } from '@mui/material'
+import { Menu, MenuItem, Stack } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { memo } from 'react'
+import { memo, useCallback, useState, type MouseEvent } from 'react'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 dayjs.extend(utc)
@@ -32,10 +32,53 @@ interface RecipeMainProps {
 //
 
 export default memo(function RecipeMain(props: RecipeMainProps) {
+  // State: Menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget)
+    },
+    [],
+  )
+  const handleClose = useCallback(() => {
+    setAnchorEl(null)
+  }, [])
+
   // trpc: get recipe by id
   const { data: recipe } = api.recipe.getById.useQuery({
     recipeId: props.recipeID,
   })
+
+  // TRPC: delete recipe name
+  const {
+    mutateAsync: deleteRecipeDraft,
+    isPending: isDeleteRecipeDraftPending,
+  } = api.recipe.deleteDraft.useMutation({
+    onSuccess: () => {
+      console.log('Delete recipe draft success')
+    },
+    onError: (error) => {
+      console.error('Delete recipe draft error', error)
+    },
+  })
+
+  // Callback: delete recipe name
+  const handleDeleteRecipeDraft = useCallback(async () => {
+    try {
+      const windowConfirm = window.confirm(
+        'คุณต้องการลบสูตรอาหารนี้หรือไม่?',
+      )
+      if (!windowConfirm) {
+        return
+      }
+
+      await deleteRecipeDraft({ recipeNameId: props.recipeID })
+      console.log('Recipe draft deleted successfully')
+    } catch (error) {
+      console.error('Error deleting recipe draft:', error)
+    }
+  }, [deleteRecipeDraft, props.recipeID])
 
   return (
     <>
@@ -48,15 +91,48 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
           }
           action={
             <Stack direction="row" spacing={1}>
-              <IconButton aria-label="add to favorites">
-                <FavoriteIcon />
-              </IconButton>
-              <IconButton aria-label="share">
-                <ShareIcon />
-              </IconButton>
-              <IconButton aria-label="settings">
-                <MoreVertIcon />
-              </IconButton>
+              <>
+                <IconButton aria-label="add to favorites">
+                  <FavoriteIcon />
+                </IconButton>
+                <IconButton aria-label="share">
+                  <ShareIcon />
+                </IconButton>
+
+                <IconButton
+                  disabled={
+                    recipe?.createdById !== props.userID ||
+                    isDeleteRecipeDraftPending
+                  }
+                  id="draft-settings-button"
+                  aria-controls={
+                    open ? 'draft-settings-menu' : undefined
+                  }
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                  sx={{ color: '#000' }}>
+                  <MoreVertIcon />
+                </IconButton>
+
+                <Menu
+                  id="draft-settings-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'draft-settings-button',
+                  }}>
+                  <MenuItem onClick={handleClose}>
+                    แก้ไขสูตร
+                  </MenuItem>
+                  <MenuItem
+                    disabled={isDeleteRecipeDraftPending}
+                    onClick={handleDeleteRecipeDraft}>
+                    ลบ
+                  </MenuItem>
+                </Menu>
+              </>
             </Stack>
           }
           title={recipe?.name || 'Recipe Name'}
