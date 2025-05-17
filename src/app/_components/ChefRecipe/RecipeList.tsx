@@ -1,10 +1,8 @@
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
-import MyRecipeCard from './MyRecipeCard'
-import { Fab } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 import { useState } from 'react'
+import MyRecipeCard from './MyRecipeCard'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -103,18 +101,6 @@ export default function RecipeList() {
       <CustomTabPanel value={value} index={2}>
         Item Three
       </CustomTabPanel>
-      <Fab
-        variant="extended"
-        sx={{
-          backgroundColor: '#FFFFFF',
-          position: 'fixed',
-          bottom: 16,
-          right: 16,
-          zIndex: 1000, // Ensure it's above other elements
-        }}>
-        <AddIcon sx={{ mr: 1 }} />
-        เพิ่มสูตรใหม่
-      </Fab>
     </Box>
   )
 }
