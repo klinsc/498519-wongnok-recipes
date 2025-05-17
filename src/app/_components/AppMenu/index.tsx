@@ -7,7 +7,7 @@ import { useState, type MouseEvent } from 'react'
 export const MENU_ITEMS = [
   { label: 'หน้าหลัก', path: '/' },
   { label: 'เมนูโปรด', path: '/favorite' },
-  { label: 'สูตรของฉัน', path: '/profile' },
+  { label: 'สูตรของฉัน', path: '/chef' },
 ]
 
 export default function AppMenu() {
