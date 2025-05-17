@@ -65,8 +65,9 @@ model User {
     posts         Post[]
 
     // Only for testing
-    password String
-    Recipe   Recipe[]
+    password     String
+    RecipeName   RecipeName[]
+    RecipeDetail RecipeDetail[]
 }
 
 model VerificationToken {
@@ -111,9 +112,22 @@ model VerificationToken {
 //   },
 // ]
 
-model Recipe {
+// Divide the recipe into two models, RecipeName and RecipeDetail
+model RecipeName {
+    id   String @id @default(cuid())
+    name String
+
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    createdBy    User           @relation(fields: [createdById], references: [id])
+    createdById  String
+    RecipeDetail RecipeDetail[]
+
+    @@index([name])
+}
+
+model RecipeDetail {
     id          String   @id @default(cuid())
-    title       String
     date        DateTime
     image       String
     description String
@@ -123,10 +137,11 @@ model Recipe {
     servings    String
     method      String
 
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    createdBy   User     @relation(fields: [createdById], references: [id])
-    createdById String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-    @@index([title])
+    recipeName   RecipeName @relation(fields: [recipeNameId], references: [id])
+    recipeNameId String
+    User         User       @relation(fields: [userId], references: [id])
+    userId       String
 }
