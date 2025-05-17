@@ -65,9 +65,8 @@ model User {
     posts         Post[]
 
     // Only for testing
-    password     String
-    RecipeName   RecipeName[]
-    RecipeDetail RecipeDetail[]
+    password   String
+    RecipeName RecipeName[]
 }
 
 model VerificationToken {
@@ -143,8 +142,6 @@ model RecipeDetail {
 
     recipeName   RecipeName @relation(fields: [recipeNameId], references: [id])
     recipeNameId String
-    User         User       @relation(fields: [userId], references: [id])
-    userId       String
 }
 
 enum RecipeStatus {
