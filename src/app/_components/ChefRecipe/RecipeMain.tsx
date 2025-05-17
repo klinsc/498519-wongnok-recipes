@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
-import { Box, TextField } from '@mui/material'
+import { Box } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -27,6 +27,7 @@ import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 import ImageUploader from '../ImageUploader'
 import RecipeMainActions from './RecipeMainActions'
+import RecipeMainTitle from './RecipeMainTitle'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -189,42 +190,13 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
             />
           }
           title={
-            isEditting.name ? (
-              <TextField
-                id="recipe-name"
-                name="recipe-name"
-                label="ชื่อสูตรอาหาร"
-                type="text"
-                fullWidth
-                variant="standard"
-                defaultValue={currentRecipe?.name}
-                onChange={(event) => {
-                  const newRecipeName = event.target.value
-                  console.log('recipeName', newRecipeName)
-                  setCurrentRecipe((prev) =>
-                    prev ? { ...prev, name: newRecipeName } : null,
-                  )
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    void handleSave()
-                  }
-                  if (event.key === 'Escape') {
-                    void handleCancel()
-                  }
-                }}
-                autoFocus
-              />
-            ) : (
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  fontSize: '2rem',
-                  fontWeight: 'bold',
-                  color: 'text.primary',
-                }}>{`${currentRecipe?.name || 'Recipe Name'}`}</Typography>
-            )
+            <RecipeMainTitle
+              currentRecipe={currentRecipe}
+              setCurrentRecipe={setCurrentRecipe}
+              isEditting={isEditting}
+              handleSave={handleSave}
+              handleCancel={handleCancel}
+            />
           }
           subheader={
             currentRecipe?.updatedAt
