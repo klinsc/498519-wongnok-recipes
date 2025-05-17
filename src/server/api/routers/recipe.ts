@@ -113,19 +113,99 @@ export const recipeRouter = createTRPCRouter({
     return recipe
   }),
 
-  getById: protectedProcedure
+  getNameById: protectedProcedure
     .input(z.object({ recipeId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const recipe = await ctx.db.recipeName.findUnique({
+      const recipeName = await ctx.db.recipeName.findUnique({
         where: {
           id: input.recipeId,
         },
         include: {
           createdBy: true,
-          RecipeDetail: true,
         },
       })
 
-      return recipe
+      return recipeName
+    }),
+
+  getDetailById: protectedProcedure
+    .input(z.object({ recipeId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const recipeDetail = await ctx.db.recipeDetail.findFirst({
+        where: {
+          recipeNameId: input.recipeId,
+        },
+      })
+
+      return recipeDetail
+    }),
+
+  updateName: protectedProcedure
+    .input(
+      z.object({
+        recipeId: z.string(),
+        name: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.recipeName.update({
+        where: {
+          id: input.recipeId,
+        },
+        data: {
+          name: input.name,
+          updatedAt: new Date(),
+        },
+      })
+
+      return
+    }),
+
+  updateDetail: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        recipeId: z.string(),
+        description: z.string().min(1),
+        method: z.string().min(1),
+        time: z.string().min(1),
+        difficulty: z.string().min(1),
+        servings: z.string().min(1),
+        ingredients: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string().min(1),
+            amount: z.string().min(1),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.recipeDetail.update({
+        where: {
+          id: input.id,
+          recipeNameId: input.recipeId,
+        },
+        data: {
+          description: input.description,
+          method: input.method,
+          time: input.time,
+          difficulty: input.difficulty,
+          servings: input.servings,
+          ingredients: {
+            updateMany: input.ingredients.map((ingredient) => ({
+              where: {
+                id: ingredient.id,
+              },
+              data: {
+                name: ingredient.name,
+                amount: ingredient.amount,
+              },
+            })),
+          },
+        },
+      })
+
+      return
     }),
 })
