@@ -32,7 +32,7 @@ export default function ChefRecipe(props: ChefRecipeProps) {
             gap: 4,
           }}>
           <Breadcrumb />
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid
               size={{
                 xs: 12,
