@@ -17,16 +17,25 @@ export default function Breadcrumb() {
   return (
     <div role="presentation" onClick={handleClick}>
       <Breadcrumbs aria-label="breadcrumb">
-        <Link underline="hover" color="inherit" href="/">
+        <Link
+          sx={{
+            color:
+              pathname === '/' ? 'text.primary' : 'text.secondary',
+          }}
+          underline="hover"
+          href="/">
           หน้าหลัก
         </Link>
-        {MENU_ITEMS.filter((item) =>
-          pathname?.includes(item.path),
+        {MENU_ITEMS.filter(
+          (item) =>
+            item.path !== '/' && pathname?.includes(item.path),
         ).map((item) => (
           <Link
+            sx={{
+              color: 'text.primary',
+            }}
             key={item.label}
             underline="hover"
-            color="inherit"
             href={item.path}>
             {item.label}
           </Link>
