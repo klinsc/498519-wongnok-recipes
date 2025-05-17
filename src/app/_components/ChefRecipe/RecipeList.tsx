@@ -1,21 +1,10 @@
-// import RecipeCard from './RecipeCard'
-
-// export default function Menus({ recipeID }: { recipeID: string }) {
-//   return (
-//     <div>
-//       <h1>Recipe of {recipeID}</h1>
-//       <p>This is the recipe page.</p>
-
-//       <RecipeCard />
-//     </div>
-//   )
-// }
-
-import * as React from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import RecipeCard from './RecipeCard'
+import { Fab } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import { useState } from 'react'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -46,7 +35,7 @@ function a11yProps(index: number) {
 }
 
 export default function RecipeList() {
-  const [value, setValue] = React.useState(0)
+  const [value, setValue] = useState(0)
 
   const handleChange = (
     event: React.SyntheticEvent,
@@ -78,6 +67,18 @@ export default function RecipeList() {
       <CustomTabPanel value={value} index={2}>
         Item Three
       </CustomTabPanel>
+      <Fab
+        variant="extended"
+        sx={{
+          backgroundColor: '#FFFFFF',
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          zIndex: 1000, // Ensure it's above other elements
+        }}>
+        <AddIcon sx={{ mr: 1 }} />
+        เพิ่มสูตรใหม่
+      </Fab>
     </Box>
   )
 }
