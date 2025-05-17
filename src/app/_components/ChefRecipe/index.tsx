@@ -14,7 +14,7 @@ interface ChefRecipeProps {
 }
 
 export default function ChefRecipe(props: ChefRecipeProps) {
-  const { userID, recipeID } = props
+  const { userID } = props
 
   return (
     <AppTheme>
