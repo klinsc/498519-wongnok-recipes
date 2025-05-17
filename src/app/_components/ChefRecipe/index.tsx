@@ -14,7 +14,7 @@ interface ChefRecipeProps {
 }
 
 export default function ChefRecipe(props: ChefRecipeProps) {
-  const { userID } = props
+  const { userID, recipeID } = props
 
   return (
     <AppTheme>
@@ -32,20 +32,22 @@ export default function ChefRecipe(props: ChefRecipeProps) {
             gap: 4,
           }}>
           <Breadcrumb />
-          <Grid container spacing={2}>
-            <Grid
-              size={{
-                xs: 12,
-              }}>
-              <Chef userID={userID} />
+          {recipeID === 'all' && (
+            <Grid container spacing={2}>
+              <Grid
+                size={{
+                  xs: 12,
+                }}>
+                <Chef userID={userID} />
+              </Grid>
+              <Grid
+                size={{
+                  xs: 12,
+                }}>
+                <RecipeList />
+              </Grid>
             </Grid>
-            <Grid
-              size={{
-                xs: 12,
-              }}>
-              <RecipeList />
-            </Grid>
-          </Grid>
+          )}
         </Container>
         <Footer />
       </>
