@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import CloseIcon from '@mui/icons-material/Close'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import SaveIcon from '@mui/icons-material/Save'
 import ShareIcon from '@mui/icons-material/Share'
-import { Menu, MenuItem, Stack } from '@mui/material'
+import { Menu, MenuItem, Stack, TextField } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
@@ -11,14 +13,31 @@ import CardHeader from '@mui/material/CardHeader'
 import CardMedia from '@mui/material/CardMedia'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import type { RecipeDetail, RecipeName, User } from '@prisma/client'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { memo, useCallback, useState, type MouseEvent } from 'react'
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type MouseEvent,
+} from 'react'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 dayjs.extend(utc)
 dayjs.extend(timezone)
+
+interface RecipeNameWithCreatedBy extends RecipeName {
+  createdBy: User
+}
 
 interface RecipeMainProps {
   userID: string
@@ -32,6 +51,31 @@ interface RecipeMainProps {
 //
 
 export default memo(function RecipeMain(props: RecipeMainProps) {
+  // navigation: Router
+  const router = useRouter()
+
+  // navigation: Searchparams
+  const searchParams = useSearchParams()
+  const QEditting = searchParams.get('editing')
+  const isEditting = useMemo(() => {
+    if (QEditting === 'true') {
+      return {
+        name: true,
+        detail: true,
+      }
+    }
+    return {
+      name: false,
+      detail: false,
+    }
+  }, [QEditting])
+
+  // navigation: Path name
+  const pathName = usePathname()
+  useEffect(() => {
+    console.log('pathName', pathName)
+  }, [pathName])
+
   // State: Menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -45,10 +89,34 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     setAnchorEl(null)
   }, [])
 
+  // State: Current Recipe Name
+  const [currentRecipeName, setCurrentRecipeName] =
+    useState<RecipeNameWithCreatedBy | null>(null)
+  // State: Current Recipe Details
+  const [currentRecipeDetail, setCurrentRecipeDetail] =
+    useState<RecipeDetail | null>()
+
   // trpc: get recipe by id
-  const { data: recipe } = api.recipe.getById.useQuery({
+  const { data: recipeName } = api.recipe.getNameById.useQuery({
     recipeId: props.recipeID,
   })
+  // effect: set current recipe name
+  useEffect(() => {
+    if (recipeName) {
+      setCurrentRecipeName(recipeName)
+    }
+  }, [recipeName])
+
+  // trpc: get recipe detail by id
+  const { data: recipeDetail } = api.recipe.getDetailById.useQuery({
+    recipeId: props.recipeID,
+  })
+  // effect: set current recipe detail
+  useEffect(() => {
+    if (recipeDetail) {
+      setCurrentRecipeDetail(recipeDetail)
+    }
+  }, [recipeDetail])
 
   // TRPC: delete recipe name
   const {
@@ -80,65 +148,117 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     }
   }, [deleteRecipeDraft, props.recipeID])
 
+  // Callback: handleEdit
+  const handleEdit = useCallback(() => {
+    void router.push(`${pathName}?editing=true`, {
+      scroll: false,
+    })
+
+    handleClose()
+  }, [handleClose, pathName, router])
+
   return (
     <>
       <Card>
         <CardHeader
           avatar={
             <Avatar
-              {...stringAvatar(recipe?.createdBy?.name || 'User')}
-              aria-label="recipe"></Avatar>
+              {...stringAvatar(
+                currentRecipeName?.createdBy?.name || 'User',
+              )}
+              aria-label="recipe"
+            />
           }
           action={
             <Stack direction="row" spacing={1}>
-              <>
-                <IconButton aria-label="add to favorites">
-                  <FavoriteIcon />
-                </IconButton>
-                <IconButton aria-label="share">
-                  <ShareIcon />
-                </IconButton>
-
-                <IconButton
-                  disabled={
-                    recipe?.createdById !== props.userID ||
-                    isDeleteRecipeDraftPending
-                  }
-                  id="draft-settings-button"
-                  aria-controls={
-                    open ? 'draft-settings-menu' : undefined
-                  }
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick}
-                  sx={{ color: '#000' }}>
-                  <MoreVertIcon />
-                </IconButton>
-
-                <Menu
-                  id="draft-settings-menu"
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    'aria-labelledby': 'draft-settings-button',
-                  }}>
-                  <MenuItem onClick={handleClose}>
-                    แก้ไขสูตร
-                  </MenuItem>
-                  <MenuItem
-                    disabled={isDeleteRecipeDraftPending}
-                    onClick={handleDeleteRecipeDraft}>
-                    ลบ
-                  </MenuItem>
-                </Menu>
-              </>
+              {isEditting.name ? (
+                <>
+                  <IconButton
+                    aria-label="save recipe name"
+                    onClick={() => {
+                      void router.push(pathName, {
+                        scroll: false,
+                      })
+                    }}>
+                    <SaveIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="close recipe name"
+                    onClick={() => {
+                      void router.push(pathName, {
+                        scroll: false,
+                      })
+                    }}>
+                    <CloseIcon />
+                  </IconButton>
+                </>
+              ) : (
+                <>
+                  <IconButton aria-label="add to favorites">
+                    <FavoriteIcon />
+                  </IconButton>
+                  <IconButton disabled aria-label="share">
+                    <ShareIcon />
+                  </IconButton>
+                  <IconButton
+                    disabled={
+                      currentRecipeName?.createdById !==
+                        props.userID || isDeleteRecipeDraftPending
+                    }
+                    id="draft-settings-button"
+                    aria-controls={
+                      open ? 'draft-settings-menu' : undefined
+                    }
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+                    sx={{ color: '#000' }}>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    id="draft-settings-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      'aria-labelledby': 'draft-settings-button',
+                    }}>
+                    <MenuItem onClick={handleEdit}>
+                      แก้ไขสูตร
+                    </MenuItem>
+                    <MenuItem
+                      disabled={isDeleteRecipeDraftPending}
+                      onClick={handleDeleteRecipeDraft}>
+                      ลบ
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
             </Stack>
           }
-          title={recipe?.name || 'Recipe Name'}
+          title={
+            isEditting.name ? (
+              <TextField
+                id="recipe-name"
+                name="recipe-name"
+                label="ชื่อสูตรอาหาร"
+                type="text"
+                fullWidth
+                variant="standard"
+                defaultValue={currentRecipeName?.name}
+                onChange={(event) => {
+                  const newRecipeName = event.target.value
+                  console.log('recipeName', newRecipeName)
+                }}
+                autoFocus
+              />
+            ) : (
+              <>{`${currentRecipeName?.name || 'Recipe Name'}`}</>
+            )
+          }
           subheader={
-            recipe?.createdAt
-              ? dayjs(recipe.createdAt)
+            currentRecipeName?.createdAt
+              ? dayjs(currentRecipeName.createdAt)
                   .tz('Asia/Bangkok')
                   .format('DD/MM/YYYY HH:mm:ss')
               : 'Date created'
