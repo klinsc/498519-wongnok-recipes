@@ -12,9 +12,26 @@ export default function NewRecipe({ open }: { open: boolean }) {
   // router
   const router = useRouter()
 
+  // callback: handleClose
   const handleClose = useCallback(() => {
     router.back()
   }, [router])
+
+  // callback: handleSubmit
+  const handleSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      // Prevent default form submission
+      event.preventDefault()
+
+      const formData = new FormData(event.currentTarget)
+      const formJson = Object.fromEntries(formData.entries())
+      const recipeName = formJson['recipe-name'] as string
+      console.log('recipeName', recipeName)
+
+      handleClose()
+    },
+    [handleClose],
+  )
 
   return (
     <Dialog
@@ -23,15 +40,7 @@ export default function NewRecipe({ open }: { open: boolean }) {
       slotProps={{
         paper: {
           component: 'form',
-          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault()
-            const formData = new FormData(event.currentTarget)
-            const formJson = Object.fromEntries(formData.entries())
-            const recipeName = formJson['recipe-name'] as string
-            console.log('recipeName', recipeName)
-
-            handleClose()
-          },
+          onSubmit: handleSubmit,
           sx: {
             width: '100%',
             maxWidth: '500px',
