@@ -17,10 +17,8 @@ export default function ChefRecipe(props: ChefRecipeProps) {
   const { userID, recipeID } = props
 
   return (
-    <AppTheme {...props}>
+    <AppTheme>
       <>
-        <CssBaseline />
-
         <AppAppBar />
         <Container
           maxWidth="lg"
