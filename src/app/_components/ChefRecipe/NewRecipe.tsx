@@ -6,14 +6,15 @@ import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import TextField from '@mui/material/TextField'
 import { useRouter } from 'next/navigation'
+import { useCallback } from 'react'
 
 export default function NewRecipe({ open }: { open: boolean }) {
   // router
   const router = useRouter()
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     router.back()
-  }
+  }, [router])
 
   return (
     <Dialog
@@ -26,8 +27,9 @@ export default function NewRecipe({ open }: { open: boolean }) {
             event.preventDefault()
             const formData = new FormData(event.currentTarget)
             const formJson = Object.fromEntries(formData.entries())
-            const email = formJson.email
-            console.log(email)
+            const recipeName = formJson['recipe-name'] as string
+            console.log('recipeName', recipeName)
+
             handleClose()
           },
           sx: {
