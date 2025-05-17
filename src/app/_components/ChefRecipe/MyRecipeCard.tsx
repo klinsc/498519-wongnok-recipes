@@ -114,6 +114,43 @@ export default function MyRecipeCard(props: RecipeCardProps) {
                 marginTop: 2,
                 fontWeight: 'bold',
               }}>
+              ส่วนผสม:
+            </Typography>
+            {props.recipe.ingredients.map((ingredient, index) => (
+              <Typography
+                key={index}
+                variant="body2"
+                sx={{ color: 'text.secondary' }}>
+                {ingredient.name}: {ingredient.amount}
+              </Typography>
+            ))}
+            <Typography
+              variant="body1"
+              sx={{
+                marginTop: 2,
+                fontWeight: 'bold',
+              }}>
+              ข้อมูลเพิ่มเติม:
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ color: 'text.secondary' }}>
+              เวลาทำอาหาร: {props.recipe.time}
+              <br />
+              ความยาก: {props.recipe.difficulty}
+              <br />
+              จำนวนที่เสิร์ฟ: {props.recipe.servings}
+              <br />
+            </Typography>
+          </CardContent>
+
+          <CardContent>
+            <Typography
+              variant="body1"
+              sx={{
+                marginTop: 2,
+                fontWeight: 'bold',
+              }}>
               วิธีทำ:
             </Typography>
             <Typography
