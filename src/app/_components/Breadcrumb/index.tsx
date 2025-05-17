@@ -1,21 +1,13 @@
-import * as React from 'react'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Link from '@mui/material/Link'
-import { MENU_ITEMS } from '../AppMenu'
 import { usePathname } from 'next/navigation'
-
-function handleClick(
-  event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-) {
-  event.preventDefault()
-  console.info('You clicked a breadcrumb.')
-}
+import { MENU_ITEMS } from '../AppMenu'
 
 export default function Breadcrumb() {
   const pathname = usePathname()
 
   return (
-    <div role="presentation" onClick={handleClick}>
+    <div role="presentation">
       <Breadcrumbs aria-label="breadcrumb">
         <Link
           sx={{
