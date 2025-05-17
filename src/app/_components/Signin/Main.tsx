@@ -175,7 +175,7 @@ export default function Main(props: {
       <NotiAlert
         open={notistack.open}
         message={notistack.message}
-        serverity={notistack.severity}
+        severity={notistack.severity}
         handleClose={handleCloseNotistack}
       />
 

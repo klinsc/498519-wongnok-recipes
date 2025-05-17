@@ -3,14 +3,14 @@ import { Snackbar, Alert, type AlertColor } from '@mui/material'
 interface NotiAlertProps {
   open: boolean
   message: string
-  serverity: AlertColor
+  severity: AlertColor
   handleClose: () => void
 }
 
 export default function NotiAlert({
   open,
   message,
-  serverity,
+  severity,
   handleClose,
 }: NotiAlertProps) {
   return (
@@ -24,7 +24,7 @@ export default function NotiAlert({
       }}>
       <Alert
         onClose={handleClose}
-        severity={serverity}
+        severity={severity}
         variant="filled"
         sx={{ width: '100%' }}>
         {message}

@@ -1,3 +1,5 @@
+'use client'
+
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -7,10 +9,23 @@ import DialogTitle from '@mui/material/DialogTitle'
 import TextField from '@mui/material/TextField'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
+import { api } from '~/trpc/react'
 
 export default function NewRecipe({ open }: { open: boolean }) {
   // router
   const router = useRouter()
+
+  // trpc: create recipe name
+  const createRecipeName = api.recipe.createName.useMutation({
+    onSuccess: () => {
+      // Handle success
+      console.log('Recipe name created successfully')
+    },
+    onError: (error) => {
+      // Handle error
+      console.error('Error creating recipe name:', error)
+    },
+  })
 
   // callback: handleClose
   const handleClose = useCallback(() => {
@@ -28,9 +43,12 @@ export default function NewRecipe({ open }: { open: boolean }) {
       const recipeName = formJson['recipe-name'] as string
       console.log('recipeName', recipeName)
 
-      handleClose()
+      // Call the createRecipeName mutation
+      createRecipeName.mutate({
+        name: recipeName,
+      })
     },
-    [handleClose],
+    [createRecipeName],
   )
 
   return (

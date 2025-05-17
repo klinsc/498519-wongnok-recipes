@@ -69,7 +69,7 @@ export default function AppAvatar() {
       {/* <NotiAlert
         open={notistack.open}
         message={notistack.message}
-        serverity={notistack.severity}
+        severity={notistack.severity}
         handleClose={handleCloseNotistack}
       /> */}
 
