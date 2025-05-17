@@ -3,7 +3,7 @@ import { Avatar, Box, Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import { stringAvatar } from '../AppAvatar'
 
-export default function Profile({ userID }: { userID: string }) {
+export default function Chef({ userID }: { userID: string }) {
   const { data: session } = useSession()
 
   return (

@@ -4,8 +4,8 @@ import { CssBaseline, Container, Grid } from '@mui/material'
 import AppAppBar from '../Blog/AppAppBar'
 import Footer from '../Blog/Footer'
 import Breadcrumb from '../Breadcrumb'
-import Chef from '../Chef'
-import Recipe from '../Recipe'
+import Chef from './Chef'
+import Recipe from './Recipe'
 import AppTheme from '../shared-theme/AppTheme'
 
 interface ChefRecipeProps {
@@ -19,6 +19,8 @@ export default function ChefRecipe(props: ChefRecipeProps) {
   return (
     <AppTheme>
       <>
+        <CssBaseline />
+
         <AppAppBar />
         <Container
           maxWidth="lg"
