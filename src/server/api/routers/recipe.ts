@@ -72,7 +72,7 @@ export const recipeRouter = createTRPCRouter({
       return
     }),
 
-  getMyDraft: protectedProcedure.query(async ({ ctx }) => {
+  getMyDrafts: protectedProcedure.query(async ({ ctx }) => {
     const recipe = await ctx.db.recipeName.findMany({
       where: {
         createdById: ctx.session.user.id,
@@ -86,7 +86,7 @@ export const recipeRouter = createTRPCRouter({
     return recipe
   }),
 
-  getMyPublished: protectedProcedure.query(async ({ ctx }) => {
+  getMyPublisheds: protectedProcedure.query(async ({ ctx }) => {
     const recipe = await ctx.db.recipeName.findMany({
       where: {
         createdById: ctx.session.user.id,

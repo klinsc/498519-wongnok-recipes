@@ -3,6 +3,9 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { useState } from 'react'
 import MyRecipeCard from './MyRecipeCard'
+import { api } from '~/trpc/react'
+import MyDraftRecipe from './MyDraftRecipe'
+import { Grid, Typography } from '@mui/material'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -69,6 +72,9 @@ const RECIPE_SAMPLES = [
 export default function RecipeList() {
   const [value, setValue] = useState(0)
 
+  // trpc: recipe get all
+  const { data: drafts } = api.recipe.getMyDrafts.useQuery()
+
   const handleChange = (
     event: React.SyntheticEvent,
     newValue: number,
@@ -91,9 +97,33 @@ export default function RecipeList() {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        {RECIPE_SAMPLES.map((recipe) => (
-          <MyRecipeCard key={recipe.id} recipe={recipe} />
-        ))}
+        {drafts && drafts?.length > 0 && (
+          <Box sx={{ marginBottom: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              รอเผยแพร่
+            </Typography>
+            <Grid container>
+              {drafts?.map((recipe) => (
+                <Grid key={recipe.id}>
+                  <MyDraftRecipe key={recipe.id} recipe={recipe} />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+
+        {drafts && drafts?.length > 0 && (
+          <Typography variant="h6" gutterBottom>
+            สูตรที่เผยแพร่แล้ว
+          </Typography>
+        )}
+        <Grid container>
+          {RECIPE_SAMPLES.map((recipe) => (
+            <Grid key={recipe.id}>
+              <MyRecipeCard key={recipe.id} recipe={recipe} />
+            </Grid>
+          ))}
+        </Grid>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         Item Two
