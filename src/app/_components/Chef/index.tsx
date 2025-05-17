@@ -1,7 +1,7 @@
-export default function Profile() {
+export default function Profile({ userID }: { userID: string }) {
   return (
     <div>
-      <h1>Profile</h1>
+      <h1>Profile of {userID}</h1>
       <p>This is the profile page.</p>
     </div>
   )
