@@ -1,6 +1,6 @@
 'use client'
 
-import { CssBaseline, Container } from '@mui/material'
+import { CssBaseline, Container, Grid } from '@mui/material'
 import AppAppBar from '../Blog/AppAppBar'
 import Footer from '../Blog/Footer'
 import Breadcrumb from '../Breadcrumb'
@@ -32,8 +32,20 @@ export default function ChefRecipe(props: ChefRecipeProps) {
             gap: 4,
           }}>
           <Breadcrumb />
-          <Chef userID={userID} />
-          <Recipe recipeID={recipeID} />
+          <Grid container>
+            <Grid
+              size={{
+                xs: 12,
+              }}>
+              <Chef userID={userID} />
+            </Grid>
+            <Grid
+              size={{
+                xs: 12,
+              }}>
+              <Recipe recipeID={recipeID} />
+            </Grid>
+          </Grid>
         </Container>
         <Footer />
       </>
