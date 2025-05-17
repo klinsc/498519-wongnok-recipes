@@ -1,3 +1,5 @@
+import { HydrateClient } from '~/trpc/server'
+
 type Props = {
   params: Promise<{
     userID: string
@@ -6,13 +8,13 @@ type Props = {
 }
 
 export default async function RecipePage(props: Props) {
-  const params = await props.params;
+  const params = await props.params
   const { userID, recipeID } = params
 
   return (
-    <div>
+    <HydrateClient>
       <h1>User: {userID}</h1>
       <h2>Recipe: {recipeID}</h2>
-    </div>
+    </HydrateClient>
   )
 }
