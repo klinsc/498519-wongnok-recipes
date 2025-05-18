@@ -1,14 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
-import {
-  Box,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-} from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -37,8 +29,8 @@ import ImageUploader from '../ImageUploader'
 import RecipeActions from './RecipeActions'
 import RecipeDescription from './RecipeDescription'
 import RecipeMethod from './RecipeMethod'
-import RecipeTitle from './RecipeTitle'
 import RecipeTime from './RecipeTime'
+import RecipeTitle from './RecipeTitle'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -219,6 +211,23 @@ export default memo(function Recipe(props: RecipeMainProps) {
       await fetch('/api/v1/upload', {
         method: 'POST',
         body: formData,
+      }).then((response) => {
+        if (response.ok) {
+          console.log('File uploaded successfully')
+          setPreparedFile(null)
+          // Update the current recipe with the new image
+          setCurrentRecipe((prev) => {
+            if (prev) {
+              return {
+                ...prev,
+                image: `${currentRecipe.id}.${fileObj.fileExtension}`,
+              }
+            }
+            return null
+          })
+        } else {
+          console.error('Error uploading file:', response.statusText)
+        }
       })
     },
     [currentRecipe],
