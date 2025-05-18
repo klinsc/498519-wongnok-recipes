@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
-import { Box } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -355,6 +355,44 @@ export default memo(function Recipe(props: RecipeMainProps) {
             handleCancel={handleCancel}
           />
         </CardContent>
+
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid size={6}>
+              <Typography
+                sx={{
+                  fontWeight: 'bold',
+                  marginBottom: 1,
+                }}>
+                ระยะเวลา:
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: 'bold',
+                  marginBottom: 1,
+                }}>
+                ความยาก:
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: 'bold',
+                  marginBottom: 1,
+                }}>
+                จำนวนที่เสิร์ฟ:
+              </Typography>
+            </Grid>
+            <Grid size={6}>
+              <Typography
+                sx={{
+                  fontWeight: 'bold',
+                  marginBottom: 1,
+                }}>
+                วัตถุดิบ:
+              </Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+
         <CardContent>
           <Typography
             sx={{
