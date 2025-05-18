@@ -6,7 +6,6 @@ import Container from '@mui/material/Container'
 import AppTheme from '../shared-theme/AppTheme'
 import AppAppBar from './AppAppBar'
 import MainContent from './MainContent'
-import Latest from './Lastest'
 import Footer from './Footer'
 import Breadcrumb from '../Breadcrumb'
 
@@ -30,7 +29,6 @@ export default function Blog(props: {
           }}>
           <Breadcrumb />
           <MainContent />
-          <Latest />
         </Container>
         <Footer />
       </>

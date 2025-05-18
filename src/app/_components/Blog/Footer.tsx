@@ -7,7 +7,6 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
-import InputLabel from '@mui/material/InputLabel'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -56,25 +55,8 @@ export default function Footer() {
               display: 'flex',
               flexDirection: 'column',
               gap: 4,
-              minWidth: { xs: '100%', sm: '60%' },
             }}>
-            <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
-              <SiteIcon />
-              <Typography
-                variant="body2"
-                gutterBottom
-                sx={{ fontWeight: 600, mt: 2 }}>
-                Join the newsletter
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{ color: 'text.secondary', mb: 2 }}>
-                Subscribe for weekly updates. No spams ever!
-              </Typography>
-              <InputLabel htmlFor="email-newsletter">
-                Email
-              </InputLabel>
-            </Box>
+            <SiteIcon />
           </Box>
           <Box
             sx={{
