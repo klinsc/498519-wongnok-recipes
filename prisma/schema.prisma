@@ -65,8 +65,9 @@ model User {
     posts         Post[]
 
     // Only for testing
-    password String
-    Recipe   Recipe[]
+    password         String
+    Recipe           Recipe[]
+    RecipeDifficulty RecipeDifficulty[]
 }
 
 model VerificationToken {
@@ -116,19 +117,34 @@ model Recipe {
     name   String
     status RecipeStatus @default(DRAFT)
 
-    image       String?
-    description String?
-    ingredients Json?
-    time        String?
-    difficulty  String?
-    servings    String?
-    method      String?
+    image        String?
+    description  String?
+    ingredients  Json?
+    time         String?
+    difficultyId String?
+    difficulty   RecipeDifficulty? @relation(fields: [difficultyId], references: [id])
+    servings     String?
+    method       String?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
+
+    @@index([name])
+    @@index([createdAt])
+    @@index([createdById])
+    @@index([status])
+    @@index([difficultyId])
+}
+
+model RecipeDifficulty {
+    id          String   @id @default(cuid())
+    name        String
+    createdBy   User?    @relation(fields: [createdById], references: [id])
+    createdById String?
+    Recipe      Recipe[]
 }
 
 enum RecipeStatus {
