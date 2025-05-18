@@ -83,7 +83,6 @@ export default function ImageUploader({
   useEffect(() => {
     if (preparedFile) {
       console.log('File changed:', preparedFile)
-      debugger
       handleUpload(preparedFile)
     }
   }, [preparedFile, handleUpload])
