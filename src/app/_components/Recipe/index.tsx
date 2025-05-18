@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
-import { Box, TextField } from '@mui/material'
+import { Box } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -28,11 +28,12 @@ import { stringAvatar } from '../AppAvatar'
 import ImageUploader from '../ImageUploader'
 import RecipeMainActions from './RecipeMainActions'
 import RecipeMainTitle from './RecipeMainTitle'
+import RecipeMainDescription from './RecipeMainDescription'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-const RECIPE_SAMPLES_TH = {
+export const RECIPE_SAMPLES_TH = {
   id: '1',
   createdBy: {
     id: '1',
@@ -335,44 +336,13 @@ export default memo(function Recipe(props: RecipeMainProps) {
           </Box>
         )}
         <CardContent>
-          {isEditting ? (
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              variant="outlined"
-              label="คำอธิบายคร่าวๆ"
-              value={currentRecipe?.description || ''}
-              slotProps={{
-                input: {
-                  sx: {
-                    height: '100%',
-                  },
-                },
-              }}
-              onChange={(e) => {
-                setCurrentRecipe((prev) => {
-                  if (prev) {
-                    return {
-                      ...prev,
-                      description: e.target.value,
-                    }
-                  }
-                  return null
-                })
-              }}
-              sx={{
-                marginBottom: 2,
-              }}
-            />
-          ) : (
-            <Typography
-              variant="body2"
-              sx={{ color: 'text.secondary', marginBottom: 2 }}>
-              {currentRecipe?.description ||
-                `กรอกคำอธิบายคร่าวๆ เช่น ${RECIPE_SAMPLES_TH.description}`}
-            </Typography>
-          )}
+          <RecipeMainDescription
+            currentRecipe={currentRecipe}
+            setCurrentRecipe={setCurrentRecipe}
+            isEditting={isEditting}
+            handleSave={handleSave}
+            handleCancel={handleCancel}
+          />
         </CardContent>
         <CardContent>
           <Typography sx={{ marginBottom: 2 }}>วิธีทำ:</Typography>
