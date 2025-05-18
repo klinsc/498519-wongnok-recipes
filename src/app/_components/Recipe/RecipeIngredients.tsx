@@ -29,6 +29,51 @@ const INGREDIENT_SAMPLES_TH = {
   '16': { name: 'หอยแมลงภู่', amount: '' },
 } as Ingrediants
 
+const IngredientRow = memo(function IngredientRow({
+  id,
+  value,
+  onChange,
+  onRemove,
+}: {
+  id: string
+  value: { name: string; amount: string }
+  onChange: (
+    id: string,
+    value: { name: string; amount: string },
+  ) => void
+  onRemove: (id: string) => void
+}) {
+  return (
+    <Stack direction="row">
+      <TextField
+        placeholder="ชื่อวัตถุดิบ"
+        value={value.name}
+        sx={{ mr: 1 }}
+        size="small"
+        onChange={(e) =>
+          onChange(id, { ...value, name: e.target.value })
+        }
+      />
+      <TextField
+        placeholder="ปริมาณ"
+        value={value.amount}
+        size="small"
+        onChange={(e) =>
+          onChange(id, { ...value, amount: e.target.value })
+        }
+      />
+      <Button
+        variant="outlined"
+        color="error"
+        size="small"
+        sx={{ ml: 1 }}
+        onClick={() => onRemove(id)}>
+        ลบ
+      </Button>
+    </Stack>
+  )
+})
+
 interface RecipeTitleProps {
   currentRecipe: RecipeWithCreatedBy | null
   setCurrentRecipe: (recipe: RecipeWithCreatedBy | null) => void
@@ -45,6 +90,26 @@ export default memo(function RecipeTime({
   const [ingredients, setIngredients] = useState<Ingrediants>(
     currentRecipe?.ingredients || INGREDIENT_SAMPLES_TH,
   )
+
+  // Handler functions are memoized to avoid unnecessary re-renders
+  const handleIngredientChange = (
+    id: string,
+    value: { name: string; amount: string },
+  ) => {
+    setIngredients((prev) => ({
+      ...prev,
+      [id]: value,
+    }))
+  }
+
+  const handleIngredientRemove = (id: string) => {
+    setIngredients((prev) => {
+      const newIngredients = { ...prev }
+      delete newIngredients[id]
+      return newIngredients
+    })
+  }
+
   return (
     <>
       {isEditting ? (
@@ -57,57 +122,14 @@ export default memo(function RecipeTime({
             }}>
             {ingredients &&
               Object.entries(ingredients).map(([key, value]) => {
-                const castedValue = value as {
-                  name: string
-                  amount: string
-                }
-
                 return (
-                  <Stack key={key} direction={'row'}>
-                    <TextField
-                      placeholder="ชื่อวัตถุดิบ"
-                      value={castedValue.name}
-                      sx={{ mr: 1 }}
-                      size="small"
-                      onChange={(e) => {
-                        const newIngredients = {
-                          ...ingredients,
-                          [key]: {
-                            ...castedValue,
-                            name: e.target.value,
-                          },
-                        }
-                        setIngredients(newIngredients)
-                      }}
-                    />
-                    <TextField
-                      placeholder="ปริมาณ"
-                      value={castedValue.amount}
-                      size="small"
-                      onChange={(e) => {
-                        const newIngredients = {
-                          ...ingredients,
-                          [key]: {
-                            ...castedValue,
-                            amount: e.target.value,
-                          },
-                        }
-                        setIngredients(newIngredients)
-                      }}
-                    />
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      size="small"
-                      sx={{ ml: 1 }}
-                      onClick={() => {
-                        const newIngredients = { ...ingredients }
-                        delete newIngredients[key]
-                        setIngredients(newIngredients)
-                      }}>
-                      ลบ
-                    </Button>
-                  </Stack>
+                  <IngredientRow
+                    key={key}
+                    id={key}
+                    value={value as { name: string; amount: string }}
+                    onChange={handleIngredientChange}
+                    onRemove={handleIngredientRemove}
+                  />
                 )
               })}
 
