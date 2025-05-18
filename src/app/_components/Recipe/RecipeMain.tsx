@@ -194,17 +194,6 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
         servings: currentRecipe.servings ?? '',
         method: currentRecipe.method ?? '',
       })
-
-      // // Handle file upload if a file is selected
-      // if (file) {
-      //   handleUpload(file)
-      //     .then(() => {
-      //       console.log('File uploaded successfully')
-      //     })
-      //     .catch((error) => {
-      //       console.error('Error uploading file:', error)
-      //     })
-      // }
     }
   }, [currentRecipe, updateRecipeName])
 
@@ -236,10 +225,6 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     }
     return null
   }, [props.recipeID])
-
-  useEffect(() => {
-    console.log('imageUrl', imageUrl)
-  }, [imageUrl])
 
   return (
     <>
