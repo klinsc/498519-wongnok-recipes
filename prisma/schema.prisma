@@ -124,7 +124,10 @@ model Recipe {
     difficultyId String?
     difficulty   RecipeDifficulty? @relation(fields: [difficultyId], references: [id])
     servings     String?
-    method       String?
+    // method       String?
+
+    // Use long text for method
+    method String? @db.Text
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
