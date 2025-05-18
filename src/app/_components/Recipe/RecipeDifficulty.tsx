@@ -47,7 +47,10 @@ export default memo(function RecipeDifficulty({
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            defaultValue={currentRecipe?.difficultyId || 0}
+            defaultValue={
+              currentRecipe?.difficultyId ||
+              'cmathzdqu00033fnwhhl8107r'
+            }
             label="ระดับ"
             onChange={(e: {
               target: {
@@ -69,10 +72,6 @@ export default memo(function RecipeDifficulty({
                   : null,
               )
             }}>
-            <MenuItem value={0}>
-              <em>ไม่ระบุ</em>
-            </MenuItem>
-
             {difficulties?.map((item) => (
               <MenuItem key={item.id} value={item.id}>
                 {item.name}

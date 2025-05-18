@@ -67,11 +67,6 @@ export default memo(function RecipeTime({
                   : null,
               )
             }}>
-            {
-              <MenuItem value={0}>
-                <em>ไม่ระบุ</em>
-              </MenuItem>
-            }
             {TIME_SAMPLES_TH.map((item) => (
               <MenuItem key={item.value} value={item.value}>
                 {item.label}
