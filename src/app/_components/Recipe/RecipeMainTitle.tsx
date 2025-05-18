@@ -25,33 +25,37 @@ export default memo(function RecipeMainTitle({
   return (
     <>
       {isEditting.name ? (
-        <TextField
-          id="recipe-name"
-          name="recipe-name"
-          label="ชื่อสูตรอาหาร"
-          type="text"
-          fullWidth
-          variant="standard"
-          defaultValue={currentRecipe?.name}
-          onChange={(event) => {
-            const newRecipeName = event.target.value
-            console.log('recipeName', newRecipeName)
-            setCurrentRecipe(
-              currentRecipe
-                ? { ...currentRecipe, name: newRecipeName }
-                : null,
-            )
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              void handleSave()
-            }
-            if (event.key === 'Escape') {
-              void handleCancel()
-            }
-          }}
-          autoFocus
-        />
+        <>
+          {currentRecipe?.name && (
+            <TextField
+              id="recipe-name"
+              name="recipe-name"
+              label="ชื่อสูตรอาหาร"
+              type="text"
+              fullWidth
+              variant="standard"
+              defaultValue={currentRecipe?.name}
+              onChange={(event) => {
+                const newRecipeName = event.target.value
+                console.log('recipeName', newRecipeName)
+                setCurrentRecipe(
+                  currentRecipe
+                    ? { ...currentRecipe, name: newRecipeName }
+                    : null,
+                )
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  void handleSave()
+                }
+                if (event.key === 'Escape') {
+                  void handleCancel()
+                }
+              }}
+              autoFocus
+            />
+          )}
+        </>
       ) : (
         <Typography
           variant="h6"
