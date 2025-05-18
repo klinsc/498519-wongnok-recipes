@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { Box, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
+import { useEffect } from 'react'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -19,9 +19,11 @@ const VisuallyHiddenInput = styled('input')({
 export default function ImageUploader({
   setFile,
   file,
+  handleUpload,
 }: {
   setFile: (file: File | null) => void
   file: File | null
+  handleUpload: (file: File) => void
 }) {
   // Callback: handleChange
   const handleChange = (
@@ -59,62 +61,31 @@ export default function ImageUploader({
     }
   }
 
+  // Effect: handleUpload on file change
+  useEffect(() => {
+    if (file) {
+      console.log('File changed:', file)
+      handleUpload(file)
+    }
+  }, [file, handleUpload])
+
   // Display the selected image in image preview
   return (
-    <Box
+    <Button
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: '1px dashed #ccc',
-        borderRadius: 2,
-        backgroundColor: '#f9f9f9',
-      }}>
-      {file ? (
-        <Box
-          sx={{
-            maxHeight: '194px',
-          }}>
-          <img
-            src={URL.createObjectURL(file)}
-            alt="Selected"
-            style={{
-              // position: 'absolute',
-              width: 'auto',
-              height: 'auto',
-              maxWidth: '300px',
-              maxHeight: '194px',
-            }}
-          />
-        </Box>
-      ) : (
-        <Typography
-          component="div"
-          variant="body1"
-          sx={{
-            color: 'text.secondary',
-            textAlign: 'center',
-          }}>
-          No image selected
-        </Typography>
-      )}
-      <Button
-        sx={{
-          position: 'absolute',
-        }}
-        component="label"
-        role={undefined}
-        variant="contained"
-        tabIndex={-1}
-        startIcon={<CloudUploadIcon />}>
-        อัพโหลดรูปภาพใหม่
-        <VisuallyHiddenInput
-          type="file"
-          onChange={handleChange}
-          accept="image/*"
-        />
-      </Button>
-    </Box>
+        position: 'absolute',
+      }}
+      component="label"
+      role={undefined}
+      variant="contained"
+      tabIndex={-1}
+      startIcon={<CloudUploadIcon />}>
+      อัพโหลดรูปภาพใหม่
+      <VisuallyHiddenInput
+        type="file"
+        onChange={handleChange}
+        accept="image/*"
+      />
+    </Button>
   )
 }
