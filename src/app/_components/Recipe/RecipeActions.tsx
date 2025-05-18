@@ -8,7 +8,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ShareIcon from '@mui/icons-material/Share'
 
-interface RecipeMainActionsProps {
+interface RecipeActionsProps {
   handleDeleteRecipeDraft: () => void
   handleSave: () => void
   handleCancel: () => void
@@ -18,7 +18,7 @@ interface RecipeMainActionsProps {
   userID: string
 }
 
-export default memo(function RecipeMainActions({
+export default memo(function RecipeActions({
   handleDeleteRecipeDraft,
   handleSave,
   handleCancel,
@@ -26,7 +26,7 @@ export default memo(function RecipeMainActions({
   isEditting,
   currentRecipe,
   userID,
-}: RecipeMainActionsProps) {
+}: RecipeActionsProps) {
   // navigation: Router
   const router = useRouter()
   // navigation: Path name

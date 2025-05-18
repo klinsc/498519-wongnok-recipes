@@ -4,7 +4,7 @@ import { memo } from 'react'
 
 import type { RecipeWithCreatedBy } from '.'
 
-interface RecipeMainTitleProps {
+interface RecipeTitleProps {
   currentRecipe: RecipeWithCreatedBy | null
   setCurrentRecipe: (recipe: RecipeWithCreatedBy | null) => void
   isEditting: boolean
@@ -12,13 +12,13 @@ interface RecipeMainTitleProps {
   handleCancel: () => void
 }
 
-export default memo(function RecipeMainTitle({
+export default memo(function RecipeTitle({
   currentRecipe,
   setCurrentRecipe,
   isEditting,
   handleSave,
   handleCancel,
-}: RecipeMainTitleProps) {
+}: RecipeTitleProps) {
   return (
     <>
       {isEditting ? (

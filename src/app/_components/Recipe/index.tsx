@@ -26,9 +26,9 @@ import {
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 import ImageUploader from '../ImageUploader'
-import RecipeMainActions from './RecipeMainActions'
-import RecipeMainTitle from './RecipeMainTitle'
-import RecipeMainDescription from './RecipeMainDescription'
+import RecipeActions from './RecipeActions'
+import RecipeTitle from './RecipeTitle'
+import RecipeDescription from './RecipeDescription'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -273,7 +273,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
           action={
             <>
               {currentRecipe && (
-                <RecipeMainActions
+                <RecipeActions
                   handleDeleteRecipeDraft={handleDeleteRecipeDraft}
                   handleSave={handleSave}
                   handleCancel={handleCancel}
@@ -286,7 +286,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
             </>
           }
           title={
-            <RecipeMainTitle
+            <RecipeTitle
               currentRecipe={currentRecipe}
               setCurrentRecipe={setCurrentRecipe}
               isEditting={isEditting}
@@ -336,7 +336,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
           </Box>
         )}
         <CardContent>
-          <RecipeMainDescription
+          <RecipeDescription
             currentRecipe={currentRecipe}
             setCurrentRecipe={setCurrentRecipe}
             isEditting={isEditting}
