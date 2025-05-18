@@ -5,6 +5,8 @@ import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
 import type { Recipe } from '@prisma/client'
 import dayjs from 'dayjs'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useCallback, useState, type MouseEvent } from 'react'
 import { api } from '~/trpc/react'
 
@@ -14,6 +16,12 @@ export interface MyDraftRecipeProps {
 }
 
 export default function MyDraftRecipe(props: MyDraftRecipeProps) {
+  // Router
+  const router = useRouter()
+
+  // Session
+  const { data: session } = useSession()
+
   // State: Menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -58,6 +66,13 @@ export default function MyDraftRecipe(props: MyDraftRecipeProps) {
     }
   }, [deleteRecipeDraft, props.recipe.id])
 
+  // Callback: edit recipe name
+  const handleEditRecipeDraft = useCallback(() => {
+    router.push(
+      `/chef/${session?.user?.id}/recipe/${props.recipe.id}?editing=true`,
+    )
+  }, [props.recipe.id, session?.user?.id, router])
+
   return (
     <>
       <Card sx={{ maxWidth: 345, backgroundColor: '#f5f5f5' }}>
@@ -85,7 +100,7 @@ export default function MyDraftRecipe(props: MyDraftRecipeProps) {
                 MenuListProps={{
                   'aria-labelledby': 'draft-settings-button',
                 }}>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={handleEditRecipeDraft}>
                   เพิ่มข้อมูล
                 </MenuItem>
                 <MenuItem
