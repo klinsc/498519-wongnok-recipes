@@ -141,15 +141,24 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     }
   }, [deleteRecipeDraft, props.recipeID])
 
-  const handleUpload = useCallback(async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
+  const handleUpload = useCallback(
+    async (file: File) => {
+      if (!currentRecipe) {
+        console.error('No current recipe to upload file to')
+        return
+      }
 
-    await fetch('/api/v1/upload', {
-      method: 'POST',
-      body: formData,
-    })
-  }, [])
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('recipeId', currentRecipe?.id)
+
+      await fetch('/api/v1/upload', {
+        method: 'POST',
+        body: formData,
+      })
+    },
+    [currentRecipe],
+  )
 
   // Callback: handleSave
   const handleSave = useCallback(() => {
