@@ -39,7 +39,7 @@ export default memo(function RecipeTime({
             marginTop: 1,
           }}>
           <InputLabel id="demo-simple-select-label" sx={{ top: -8 }}>
-            ระยะเวลา
+            ประมาณ
           </InputLabel>
           <Select
             labelId="demo-simple-select-label"
