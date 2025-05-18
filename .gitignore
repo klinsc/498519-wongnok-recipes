@@ -47,3 +47,4 @@ yarn-error.log*
 
 # uploads
 /src/assets/uploads/*
+serviceAccountKey.json
