@@ -28,7 +28,7 @@ export async function GET(
   const fileStream = createReadStream(filePath)
   const readable = fileStream as unknown as ReadableStream
 
-  // Get the file extension
+  // Get the file fileExtension
   const fileExtension = path.extname(filePath).toLowerCase()
   const mimeTypeMap: Record<string, string> = {
     '.jpg': 'jpeg',

@@ -111,7 +111,10 @@ export default memo(function Recipe(props: RecipeMainProps) {
     useState<RecipeWithCreatedBy | null>(null)
 
   // State: file
-  const [file, setFile] = useState<File | null>(null)
+  const [preparedFile, setPreparedFile] = useState<{
+    file: File
+    fileExtension: string
+  } | null>(null)
 
   // trpc: get recipe by id
   const { data: recipe } = api.recipe.getById.useQuery(
@@ -193,15 +196,16 @@ export default memo(function Recipe(props: RecipeMainProps) {
   }, [deleteRecipe, props.recipeID])
 
   const handleUpload = useCallback(
-    async (file: File) => {
+    async (fileObj: { file: File; fileExtension: string }) => {
       if (!currentRecipe) {
         console.error('No current recipe to upload file to')
         return
       }
 
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', fileObj.file)
       formData.append('recipeId', currentRecipe?.id)
+      formData.append('fileExtension', fileObj.fileExtension)
 
       await fetch('/api/v1/upload', {
         method: 'POST',
@@ -250,14 +254,14 @@ export default memo(function Recipe(props: RecipeMainProps) {
 
   // Memo: image URL
   const imageUrl = useMemo(() => {
-    if (props.recipeID) {
+    if (currentRecipe?.image) {
       // Get current domain
       const currentDomain = window.location.origin
 
-      return `${currentDomain}/api/v1/image/${props.recipeID}`
+      return `${currentDomain}/api/v1/image/${currentRecipe?.image}`
     }
     return null
-  }, [props.recipeID])
+  }, [currentRecipe?.image])
 
   return (
     <>
@@ -330,8 +334,8 @@ export default memo(function Recipe(props: RecipeMainProps) {
             }}
             height="194">
             <ImageUploader
-              file={file}
-              setFile={setFile}
+              preparedFile={preparedFile}
+              setPreparedFile={setPreparedFile}
               handleUpload={handleUpload}
             />
           </Box>

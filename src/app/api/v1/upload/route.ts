@@ -10,21 +10,29 @@ export const POST = async (req: Request) => {
     if (!file)
       return new Response('No file uploaded', { status: 400 })
 
-    const fileType = file.type
+    const fileExtension = formData.get('fileExtension') as string
+    if (!fileExtension)
+      return new Response('No file extension provided', {
+        status: 400,
+      })
 
     const recipeId = formData.get('recipeId') as string
     if (!recipeId)
       return new Response('No recipe ID provided', { status: 400 })
 
+    const newFileName = `${recipeId}.${fileExtension}`
+
     console.log('Received file:', file)
+    console.log('Received file name:', newFileName)
     console.log('Received recipe ID:', recipeId)
+    console.log('Received file extension:', fileExtension)
 
     const filePath = path.join(
       process.cwd(),
       'src',
       'assets',
       'uploads',
-      `${recipeId}${fileType === 'image/jpeg' ? '.jpg' : '.png'}`,
+      newFileName,
     )
 
     // Read file as buffer
@@ -35,7 +43,7 @@ export const POST = async (req: Request) => {
     await fs.writeFile(filePath, buffer)
 
     // Save file path to the database
-    await saveFilePathToDatabase(recipeId, filePath)
+    await saveFilePathToDatabase(recipeId, newFileName)
 
     return new Response('File uploaded and saved successfully', {
       status: 200,
@@ -49,7 +57,7 @@ export const POST = async (req: Request) => {
 // Save file path to the database
 async function saveFilePathToDatabase(
   recipeId: string,
-  filePath: string,
+  filename: string,
 ) {
   // Check if the recipe exists
   const recipe = await db.recipe.findUnique({
@@ -68,7 +76,7 @@ async function saveFilePathToDatabase(
       id: recipeId,
     },
     data: {
-      image: filePath,
+      image: filename,
     },
   })
 }

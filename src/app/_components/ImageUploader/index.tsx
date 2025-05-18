@@ -1,4 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
@@ -17,13 +18,21 @@ const VisuallyHiddenInput = styled('input')({
 })
 
 export default function ImageUploader({
-  setFile,
-  file,
+  setPreparedFile,
+  preparedFile,
   handleUpload,
 }: {
-  setFile: (file: File | null) => void
-  file: File | null
-  handleUpload: (file: File) => void
+  setPreparedFile: (
+    fileObj: { file: File; fileExtension: string } | null,
+  ) => void
+  preparedFile: {
+    file: File
+    fileExtension: string
+  } | null
+  handleUpload: (fileObj: {
+    file: File
+    fileExtension: string
+  }) => void
 }) {
   // Callback: handleChange
   const handleChange = (
@@ -53,8 +62,17 @@ export default function ImageUploader({
         return
       }
 
+      const fileExtension = selectedFile.name.split('.').pop() || ''
+      if (!['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+        console.error('Selected file is not a valid image format')
+        return
+      }
+
       // Set the file state
-      setFile(selectedFile)
+      setPreparedFile({
+        file: selectedFile,
+        fileExtension: fileExtension,
+      })
       console.log('File size:', selectedFile.size)
       console.log('File type:', selectedFile.type)
       console.log('File name:', selectedFile.name)
@@ -63,11 +81,12 @@ export default function ImageUploader({
 
   // Effect: handleUpload on file change
   useEffect(() => {
-    if (file) {
-      console.log('File changed:', file)
-      handleUpload(file)
+    if (preparedFile) {
+      console.log('File changed:', preparedFile)
+      debugger
+      handleUpload(preparedFile)
     }
-  }, [file, handleUpload])
+  }, [preparedFile, handleUpload])
 
   // Display the selected image in image preview
   return (
