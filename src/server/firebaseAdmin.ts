@@ -14,6 +14,4 @@ export const firebaseAdmin = () => {
 }
 
 export const firebaseAdminAuth = firebaseAdmin().auth()
-export const firebaseAdminDb = firebaseAdmin().database(
-  'https://ctk-t3-default-rtdb.asia-southeast1.firebasedatabase.app/',
-)
+export const firebaseAdminStorage = firebaseAdmin().storage()
