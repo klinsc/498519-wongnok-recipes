@@ -94,12 +94,15 @@ export const recipeRouter = createTRPCRouter({
         time: z.string().min(1),
         difficulty: z.string().min(1),
         servings: z.string().min(1),
-        ingredients: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string().min(1),
-            amount: z.string().min(1),
-          }),
+        ingredients: z.record(
+          z.string(),
+          z.array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              amount: z.string(),
+            }),
+          ),
         ),
       }),
     )
@@ -114,17 +117,7 @@ export const recipeRouter = createTRPCRouter({
           time: input.time,
           difficulty: input.difficulty,
           servings: input.servings,
-          ingredients: {
-            updateMany: input.ingredients.map((ingredient) => ({
-              where: {
-                id: ingredient.id,
-              },
-              data: {
-                name: ingredient.name,
-                amount: ingredient.amount,
-              },
-            })),
-          },
+          ingredients: input.ingredients,
         },
       })
 
