@@ -1,3 +1,12 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import CloseIcon from '@mui/icons-material/Close'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import SaveIcon from '@mui/icons-material/Save'
+import ShareIcon from '@mui/icons-material/Share'
+import { IconButton, Menu, MenuItem, Stack } from '@mui/material'
+import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   memo,
@@ -6,14 +15,8 @@ import {
   useState,
   type MouseEvent,
 } from 'react'
+import { api } from '~/trpc/react'
 import type { RecipeWithCreatedBy } from '.'
-import { IconButton, Menu, MenuItem, Stack } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
-import SaveIcon from '@mui/icons-material/Save'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import ShareIcon from '@mui/icons-material/Share'
-import { useSession } from 'next-auth/react'
 
 interface RecipeActionsProps {
   handleDeleteRecipeDraft: () => void
@@ -68,6 +71,24 @@ export default memo(function RecipeActions({
     [currentRecipe, session?.user.id],
   )
 
+  // Trpc: get like status
+  const { data: isLiked, refetch: refetchIsLiked } =
+    api.recipe.isLiked.useQuery(
+      {
+        recipeId: currentRecipe?.id || '',
+      },
+      {
+        enabled: !!session?.user.id,
+      },
+    )
+
+  // Trpc: like recipe
+  const { mutateAsync: likeRecipe } = api.recipe.like.useMutation({
+    onSuccess: () => {
+      void refetchIsLiked()
+    },
+  })
+
   return (
     <Stack direction="row" spacing={1}>
       {isEditting ? (
@@ -86,9 +107,15 @@ export default memo(function RecipeActions({
       ) : (
         <>
           <IconButton
+            onClick={() => {
+              if (!currentRecipe) return
+              void likeRecipe({
+                recipeId: currentRecipe.id,
+              })
+            }}
             disabled={isOwner || isDeleteRecipeDraftPending}
             aria-label="add to favorites">
-            <FavoriteIcon />
+            {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
           </IconButton>
           <IconButton
             disabled={isOwner || isDeleteRecipeDraftPending}
