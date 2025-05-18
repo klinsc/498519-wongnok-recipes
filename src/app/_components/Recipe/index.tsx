@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
-import { Box, TextField } from '@mui/material'
+import { Box } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -27,8 +27,9 @@ import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 import ImageUploader from '../ImageUploader'
 import RecipeActions from './RecipeActions'
-import RecipeTitle from './RecipeTitle'
 import RecipeDescription from './RecipeDescription'
+import RecipeMethod from './RecipeMethod'
+import RecipeTitle from './RecipeTitle'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -359,47 +360,13 @@ export default memo(function Recipe(props: RecipeMainProps) {
             }}>
             วิธีทำ:
           </Typography>
-
-          {isEditting ? (
-            <TextField
-              multiline
-              rows={4}
-              fullWidth
-              variant="outlined"
-              value={currentRecipe?.method || ''}
-              onChange={(e) => {
-                setCurrentRecipe((currentRecipe) => {
-                  if (currentRecipe) {
-                    return {
-                      ...currentRecipe,
-                      method: e.target.value,
-                    }
-                  }
-                  return null
-                })
-              }}
-              placeholder={`กรอกวิธีทำที่นี่`}
-              helperText={`เช่น ${RECIPE_SAMPLES_TH.method}`}
-              sx={{
-                marginBottom: 2,
-              }}
-              slotProps={{
-                input: {
-                  sx: {
-                    height: '100%',
-                  },
-                },
-              }}
-            />
-          ) : (
-            <Typography
-              sx={{
-                whiteSpace: 'pre-line',
-              }}>
-              {currentRecipe?.method ||
-                `กรอกวิธีทำที่นี่ เช่น ${RECIPE_SAMPLES_TH.method}`}
-            </Typography>
-          )}
+          <RecipeMethod
+            currentRecipe={currentRecipe}
+            setCurrentRecipe={setCurrentRecipe}
+            isEditting={isEditting}
+            handleSave={handleSave}
+            handleCancel={handleCancel}
+          />
         </CardContent>
       </Card>
     </>
