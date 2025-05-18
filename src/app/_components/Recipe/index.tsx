@@ -308,7 +308,6 @@ export default memo(function Recipe(props: RecipeMainProps) {
                   isDeleteRecipeDraftPending={isDeleteRecipePending}
                   isEditting={isEditting}
                   currentRecipe={currentRecipe}
-                  userID={props.userID}
                 />
               )}
             </>

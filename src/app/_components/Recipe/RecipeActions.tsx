@@ -1,5 +1,11 @@
 import { usePathname, useRouter } from 'next/navigation'
-import { memo, useCallback, useState, type MouseEvent } from 'react'
+import {
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+  type MouseEvent,
+} from 'react'
 import type { RecipeWithCreatedBy } from '.'
 import { IconButton, Menu, MenuItem, Stack } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
@@ -7,6 +13,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ShareIcon from '@mui/icons-material/Share'
+import { useSession } from 'next-auth/react'
 
 interface RecipeActionsProps {
   handleDeleteRecipeDraft: () => void
@@ -15,7 +22,6 @@ interface RecipeActionsProps {
   isDeleteRecipeDraftPending: boolean
   isEditting: boolean
   currentRecipe: RecipeWithCreatedBy | null
-  userID: string
 }
 
 export default memo(function RecipeActions({
@@ -25,12 +31,14 @@ export default memo(function RecipeActions({
   isDeleteRecipeDraftPending,
   isEditting,
   currentRecipe,
-  userID,
 }: RecipeActionsProps) {
   // navigation: Router
   const router = useRouter()
   // navigation: Path name
   const pathName = usePathname()
+
+  // Session
+  const { data: session } = useSession()
 
   // State: Menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -54,6 +62,12 @@ export default memo(function RecipeActions({
     handleClose()
   }, [handleClose, pathName, router])
 
+  // Memo: isOwner
+  const isOwner = useMemo(
+    () => currentRecipe?.createdById === session?.user.id,
+    [currentRecipe, session?.user.id],
+  )
+
   return (
     <Stack direction="row" spacing={1}>
       {isEditting ? (
@@ -71,17 +85,18 @@ export default memo(function RecipeActions({
         </>
       ) : (
         <>
-          <IconButton aria-label="add to favorites">
+          <IconButton
+            disabled={isOwner || isDeleteRecipeDraftPending}
+            aria-label="add to favorites">
             <FavoriteIcon />
           </IconButton>
-          <IconButton disabled aria-label="share">
+          <IconButton
+            disabled={isOwner || isDeleteRecipeDraftPending}
+            aria-label="share">
             <ShareIcon />
           </IconButton>
           <IconButton
-            disabled={
-              currentRecipe?.createdById !== userID ||
-              isDeleteRecipeDraftPending
-            }
+            disabled={!isOwner || isDeleteRecipeDraftPending}
             id="draft-settings-button"
             aria-controls={open ? 'draft-settings-menu' : undefined}
             aria-haspopup="true"
