@@ -32,7 +32,7 @@ export default memo(function RecipeMethod({
               currentRecipe
                 ? {
                     ...currentRecipe,
-                    description: newRecipeMethod,
+                    method: newRecipeMethod,
                   }
                 : null,
             )
