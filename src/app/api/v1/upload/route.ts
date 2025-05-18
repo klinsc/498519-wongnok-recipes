@@ -22,7 +22,7 @@ export const POST = async (req: Request) => {
       'src',
       'assets',
       'uploads',
-      file.name,
+      recipeId,
     )
 
     // Read file as buffer
