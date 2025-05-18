@@ -327,7 +327,6 @@ export default memo(function Recipe(props: RecipeMainProps) {
               paddingTop: 2,
               paddingBottom: 2,
               width: '100%',
-              height: '194px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
