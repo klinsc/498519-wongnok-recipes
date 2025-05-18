@@ -55,8 +55,7 @@ export default memo(function RecipeMethod({
           sx={{
             whiteSpace: 'pre-line',
           }}>
-          {currentRecipe?.method ||
-            `กรอกวิธีทำที่นี่ เช่น ${RECIPE_SAMPLES_TH.method}`}
+          {currentRecipe?.method || `กรอกวิธีทำที่นี่...`}
         </Typography>
       )}
     </>
