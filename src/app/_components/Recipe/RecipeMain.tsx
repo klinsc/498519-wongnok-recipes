@@ -195,18 +195,18 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
         method: currentRecipe.method ?? '',
       })
 
-      // Handle file upload if a file is selected
-      if (file) {
-        handleUpload(file)
-          .then(() => {
-            console.log('File uploaded successfully')
-          })
-          .catch((error) => {
-            console.error('Error uploading file:', error)
-          })
-      }
+      // // Handle file upload if a file is selected
+      // if (file) {
+      //   handleUpload(file)
+      //     .then(() => {
+      //       console.log('File uploaded successfully')
+      //     })
+      //     .catch((error) => {
+      //       console.error('Error uploading file:', error)
+      //     })
+      // }
     }
-  }, [currentRecipe, file, handleUpload, updateRecipeName])
+  }, [currentRecipe, updateRecipeName])
 
   // Callback: handleCancel
   const handleCancel = useCallback(() => {
@@ -228,14 +228,14 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
 
   // Memo: image URL
   const imageUrl = useMemo(() => {
-    if (currentRecipe?.image) {
+    if (props.recipeID) {
       // Get current domain
       const currentDomain = window.location.origin
 
-      return `${currentDomain}/api/v1/image/${currentRecipe.id}`
+      return `${currentDomain}/api/v1/image/${props.recipeID}`
     }
     return null
-  }, [currentRecipe?.id, currentRecipe?.image])
+  }, [props.recipeID])
 
   useEffect(() => {
     console.log('imageUrl', imageUrl)
@@ -285,22 +285,20 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
               : 'อัพเดทล่าสุด: '
           }
         />
-        {imageUrl ? (
+        {imageUrl && (
           <CardMedia
-            sx={{
-              paddingTop: 2,
-              paddingBottom: 2,
-              objectFit: 'cover',
-              objectPosition: 'center',
-              width: '100%',
-              height: 'auto',
-            }}
+            loading="lazy"
             component="img"
             height="194"
             image={imageUrl || ''}
-            alt="Paella dish"
+            alt="image of the recipe"
+            sx={{
+              objectFit: 'contain',
+            }}
           />
-        ) : (
+        )}
+
+        {isEditting.name && (
           <Box
             sx={{
               paddingTop: 2,
@@ -312,7 +310,11 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
               alignItems: 'center',
             }}
             height="194">
-            <ImageUploader file={file} setFile={setFile} />
+            <ImageUploader
+              file={file}
+              setFile={setFile}
+              handleUpload={handleUpload}
+            />
           </Box>
         )}
         <CardContent>
@@ -324,7 +326,6 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
             frozen peas along with the mussels, if you like.
           </Typography>
         </CardContent>
-
         <CardContent>
           <Typography sx={{ marginBottom: 2 }}>Method:</Typography>
           <Typography sx={{ marginBottom: 2 }}>
