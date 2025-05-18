@@ -93,7 +93,6 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   )
   // effect: set current recipe name
   useEffect(() => {
-    debugger
     if (recipe) {
       setCurrentRecipe(recipe)
     }
