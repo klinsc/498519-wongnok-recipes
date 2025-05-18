@@ -230,11 +230,9 @@ export default function MainContent() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
         <Typography variant="h1" gutterBottom>
-          Blog
+          เมนูอาหาร
         </Typography>
-        <Typography>
-          Stay in the loop with the latest about our products
-        </Typography>
+        <Typography>ค้นหาสูตรอาหารที่คุณชื่นชอบได้ที่นี่</Typography>
       </div>
       <Box
         sx={{
@@ -269,12 +267,12 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="All categories"
+            label="รวมทั้งหมด"
           />
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Company"
+            label="อาหารคาว"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -283,7 +281,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Product"
+            label="ของหวาน"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -292,7 +290,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Design"
+            label="เครื่องดื่ม"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
@@ -301,7 +299,7 @@ export default function MainContent() {
           <Chip
             onClick={handleClick}
             size="medium"
-            label="Engineering"
+            label="ของว่าง"
             sx={{
               backgroundColor: 'transparent',
               border: 'none',
