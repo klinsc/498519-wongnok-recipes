@@ -89,11 +89,11 @@ export const recipeRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string().min(1),
-        description: z.string().min(1),
-        method: z.string().min(1),
-        time: z.string().min(1),
-        difficulty: z.string().min(1),
-        servings: z.string().min(1),
+        description: z.string().optional(),
+        method: z.string().optional(),
+        time: z.string().optional(),
+        difficulty: z.string().optional(),
+        servings: z.string().optional(),
         ingredients: z.record(
           z.string(),
           z.array(
