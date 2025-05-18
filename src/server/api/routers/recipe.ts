@@ -184,4 +184,42 @@ export const recipeRouter = createTRPCRouter({
         },
       })
     }),
+
+  isLiked: protectedProcedure
+    .input(z.object({ recipeId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const isLiked = await ctx.db.like.findFirst({
+        where: {
+          recipeId: input.recipeId,
+          userId: ctx.session.user.id,
+        },
+      })
+      return !!isLiked
+    }),
+
+  like: protectedProcedure
+    .input(z.object({ recipeId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const isLiked = await ctx.db.like.findFirst({
+        where: {
+          recipeId: input.recipeId,
+          userId: ctx.session.user.id,
+        },
+      })
+
+      if (isLiked) {
+        await ctx.db.like.delete({
+          where: {
+            id: isLiked.id,
+          },
+        })
+      } else {
+        await ctx.db.like.create({
+          data: {
+            recipeId: input.recipeId,
+            userId: ctx.session.user.id,
+          },
+        })
+      }
+    }),
 })
