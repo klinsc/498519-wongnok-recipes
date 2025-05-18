@@ -57,11 +57,6 @@ export default memo(function RecipeDifficulty({
                 value: string | number
               }
             }) => {
-              if (isNaN(Number(e.target.value))) {
-                console.error('Invalid time value')
-                return
-              }
-
               const newRecipeDifficultyId = String(e.target.value)
               setCurrentRecipe(
                 currentRecipe
