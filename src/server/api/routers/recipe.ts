@@ -98,13 +98,10 @@ export const recipeRouter = createTRPCRouter({
         servings: z.string().optional(),
         ingredients: z.record(
           z.string(),
-          z.array(
-            z.object({
-              id: z.string(),
-              name: z.string(),
-              amount: z.string(),
-            }),
-          ),
+          z.object({
+            name: z.string(),
+            amount: z.string(),
+          }),
         ),
       }),
     )
