@@ -127,15 +127,14 @@ model RecipeName {
 }
 
 model RecipeDetail {
-    id          String   @id @default(cuid())
-    date        DateTime
-    image       String
-    description String
-    ingredients Json
-    time        String
-    difficulty  String
-    servings    String
-    method      String
+    id          String  @id @default(cuid())
+    image       String?
+    description String?
+    ingredients Json?
+    time        String?
+    difficulty  String?
+    servings    String?
+    method      String?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
