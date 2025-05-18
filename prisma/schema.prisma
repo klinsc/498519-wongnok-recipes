@@ -65,8 +65,8 @@ model User {
     posts         Post[]
 
     // Only for testing
-    password   String
-    RecipeName RecipeName[]
+    password String
+    Recipe   Recipe[]
 }
 
 model VerificationToken {
@@ -111,23 +111,11 @@ model VerificationToken {
 //   },
 // ]
 
-// Divide the recipe into two models, RecipeName and RecipeDetail
-model RecipeName {
+model Recipe {
     id     String       @id @default(cuid())
     name   String
     status RecipeStatus @default(DRAFT)
 
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    createdBy    User           @relation(fields: [createdById], references: [id])
-    createdById  String
-    RecipeDetail RecipeDetail[]
-
-    @@index([name])
-}
-
-model RecipeDetail {
-    id          String  @id @default(cuid())
     image       String?
     description String?
     ingredients Json?
@@ -139,8 +127,8 @@ model RecipeDetail {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    recipeName   RecipeName @relation(fields: [recipeNameId], references: [id])
-    recipeNameId String
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
 }
 
 enum RecipeStatus {
