@@ -78,6 +78,7 @@ export const recipeRouter = createTRPCRouter({
         },
         include: {
           createdBy: true,
+          difficulty: true,
         },
       })
 
@@ -92,7 +93,7 @@ export const recipeRouter = createTRPCRouter({
         description: z.string().optional(),
         method: z.string().optional(),
         time: z.string().optional(),
-        difficulty: z.string().optional(),
+        difficultyId: z.string().optional(),
         servings: z.string().optional(),
         ingredients: z.record(
           z.string(),

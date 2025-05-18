@@ -245,7 +245,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
           ingredient: [],
         },
         time: currentRecipe.time ?? '',
-        difficulty: currentRecipe.difficulty ?? '',
+        difficultyId: currentRecipe.difficultyId ?? '',
         servings: currentRecipe.servings ?? '',
         method: currentRecipe.method ?? '',
       })
