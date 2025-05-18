@@ -11,6 +11,7 @@ import RecipeList from './RecipeList'
 import Recipe from '../Recipe'
 import dynamic from 'next/dynamic'
 import { NotistackProvider } from '~/app/_context/NotistackContext'
+import { useSession } from 'next-auth/react'
 
 interface ChefRecipeProps {
   userID: string
@@ -22,8 +23,11 @@ const AppTheme = dynamic(() => import('../shared-theme/AppTheme'), {
 })
 
 export default function ChefRecipe(props: ChefRecipeProps) {
-  // router
+  // Router
   const router = useRouter()
+
+  // Session
+  const { data: session } = useSession()
 
   const { userID, recipeID } = props
 
@@ -46,6 +50,11 @@ export default function ChefRecipe(props: ChefRecipeProps) {
             <NotistackProvider>
               <Fab
                 onClick={() => {
+                  if (!session) {
+                    router.push('/signin')
+                    return
+                  }
+
                   router.push(`/chef/${userID}/recipe/new`)
                 }}
                 variant="extended"
@@ -57,7 +66,7 @@ export default function ChefRecipe(props: ChefRecipeProps) {
                   zIndex: 1000, // Ensure it's above other elements
                 }}>
                 <AddIcon sx={{ mr: 1 }} />
-                เพิ่มสูตรใหม่
+                เพิ่มสูตรของคุณ
               </Fab>
               <Breadcrumb />
               {
