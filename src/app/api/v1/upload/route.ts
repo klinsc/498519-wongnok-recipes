@@ -10,6 +10,8 @@ export const POST = async (req: Request) => {
     if (!file)
       return new Response('No file uploaded', { status: 400 })
 
+    const fileType = file.type
+
     const recipeId = formData.get('recipeId') as string
     if (!recipeId)
       return new Response('No recipe ID provided', { status: 400 })
@@ -22,7 +24,7 @@ export const POST = async (req: Request) => {
       'src',
       'assets',
       'uploads',
-      recipeId,
+      `${recipeId}${fileType === 'image/jpeg' ? '.jpg' : '.png'}`,
     )
 
     // Read file as buffer
