@@ -7,6 +7,7 @@ import { api } from '~/trpc/react'
 import MyDraftRecipe from './MyDraftRecipe'
 import { Grid, Typography } from '@mui/material'
 import NewRecipe from './NewRecipe'
+import { useSession } from 'next-auth/react'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -81,11 +82,16 @@ export default function RecipeList({
   userID: string
   recipeID: string
 }) {
+  // Session
+  const { data: session } = useSession()
+
   const [value, setValue] = useState(0)
 
   // trpc: recipe get all
   const { data: drafts, refetch: refetchDrafts } =
-    api.recipe.getMyDrafts.useQuery()
+    api.recipe.getMyDrafts.useQuery(undefined, {
+      enabled: userID === session?.user.id,
+    })
 
   const handleChange = (
     event: React.SyntheticEvent,
