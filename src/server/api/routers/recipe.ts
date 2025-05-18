@@ -5,6 +5,7 @@ import { z } from 'zod'
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from '~/server/api/trpc'
 
 export const recipeRouter = createTRPCRouter({
@@ -70,7 +71,7 @@ export const recipeRouter = createTRPCRouter({
     return recipes
   }),
 
-  getById: protectedProcedure
+  getById: publicProcedure
     .input(z.object({ recipeId: z.string() }))
     .query(async ({ ctx, input }) => {
       const recipeName = await ctx.db.recipe.findUnique({
