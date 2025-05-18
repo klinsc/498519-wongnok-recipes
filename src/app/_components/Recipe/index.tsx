@@ -32,6 +32,42 @@ import RecipeMainTitle from './RecipeMainTitle'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+const RECIPE_SAMPLES_TH = {
+  id: '1',
+  createdBy: {
+    id: '1',
+    name: 'เชฟจอห์น',
+  },
+  title: '(ตัวอย่าง) ปาเอยากุ้งและไส้กรอกโชริโซ',
+  date: '14 กันยายน 2016',
+  image: 'https://mui.com/static/images/cards/paella.jpg',
+  description:
+    'ปาเอยาที่ดูน่าประทับใจนี้เหมาะสำหรับงานปาร์ตี้ และยังเป็นอาหารสนุก ๆ ที่สามารถทำไปพร้อมกับแขกได้อีกด้วย คุณสามารถเติมถั่วลันเตาแช่แข็ง 1 ถ้วยลงไปพร้อมกับหอยแมลงภู่หากต้องการ',
+  ingredients: [
+    { name: 'น้ำมันมะกอก', amount: '2 ช้อนโต๊ะ' },
+    { name: 'สะโพกไก่', amount: '1 ปอนด์' },
+    { name: 'กุ้ง', amount: '1 ปอนด์' },
+    { name: 'ไส้กรอกโชริโซ', amount: '1/2 ปอนด์' },
+    { name: 'พริกปาปริก้ารมควัน (Pimentón)', amount: '1 ช้อนชา' },
+    { name: 'ใบกระวาน', amount: '2 ใบ' },
+    { name: 'กระเทียม', amount: '4 กลีบ' },
+    { name: 'มะเขือเทศกระป๋อง', amount: '1 กระป๋อง' },
+    { name: 'หัวหอม', amount: '1 หัว' },
+    { name: 'เกลือและพริกไทย', amount: '' },
+    { name: 'เกสรหญ้าฝรั่น (Saffron)', amount: '1 หยิบมือ' },
+    { name: 'น้ำซุปไก่', amount: '5 ถ้วย' },
+    { name: 'ข้าว', amount: '2 ถ้วย' },
+    { name: 'อาร์ติโช้ค', amount: '' },
+    { name: 'พริกหยวกแดง', amount: '' },
+    { name: 'หอยแมลงภู่', amount: '' },
+  ],
+  time: '30 นาที',
+  difficulty: 'ปานกลาง',
+  servings: '4 ที่',
+  method:
+    'อุ่นน้ำซุปไก่ 1/2 ถ้วยในหม้อจนร้อนแล้วเติมเกสรหญ้าฝรั่นลงไป จากนั้นพักไว้ 10 นาที\n\nตั้งน้ำมันในกระทะปาเอยาขนาด 14-16 นิ้ว หรือกระทะใบใหญ่ลึกบนไฟกลาง-แรง ใส่ไก่ กุ้ง และไส้กรอกลงไปผัดเป็นครั้งคราวจนสีเริ่มเหลืองทอง ใช้เวลาประมาณ 6-8 นาที นำกุ้งขึ้นพักไว้ โดยยังคงทิ้งไก่และไส้กรอกไว้ในกระทะ เติมพริกปาปริก้า ใบกระวาน กระเทียม มะเขือเทศ หัวหอม เกลือ และพริกไทย แล้วผัดจนข้นและหอม ใช้เวลาประมาณ 10 นาที เติมน้ำซุปหญ้าฝรั่นและน้ำซุปไก่ที่เหลือลงไป จากนั้นต้มจนเดือด\n\nใส่ข้าวลงไปและคนอย่างเบามือให้กระจายทั่วหน้า ใส่อาร์ติโช้คและพริกหยวกด้านบน และปรุงต่อโดยไม่ต้องคนจนของเหลวส่วนใหญ่ถูกดูดซึม ใช้เวลาประมาณ 15-18 นาที ลดไฟลงอ่อน-กลาง ใส่กุ้งและหอยแมลงภู่ที่พักไว้ โดยแทรกลงไปในข้าว แล้วปรุงต่อโดยไม่คนจนหอยแมลงภู่เปิดและข้าวสุกนุ่ม ใช้เวลาอีกประมาณ 5-7 นาที (ทิ้งหอยที่ไม่เปิด)\n\nนำลงจากเตาและพักไว้ 10 นาที แล้วจึงเสิร์ฟ',
+}
+
 type Ingrediants = Record<
   string,
   {
@@ -303,8 +339,15 @@ export default memo(function Recipe(props: RecipeMainProps) {
               multiline
               rows={4}
               variant="outlined"
-              label="Description"
+              label="คำอธิบายคร่าวๆ"
               value={currentRecipe?.description || ''}
+              slotProps={{
+                input: {
+                  sx: {
+                    height: '100%',
+                  },
+                },
+              }}
               onChange={(e) => {
                 setCurrentRecipe((prev) => {
                   if (prev) {
@@ -316,15 +359,16 @@ export default memo(function Recipe(props: RecipeMainProps) {
                   return null
                 })
               }}
-              sx={{ marginBottom: 2 }}
+              sx={{
+                marginBottom: 2,
+              }}
             />
           ) : (
             <Typography
               variant="body2"
               sx={{ color: 'text.secondary', marginBottom: 2 }}>
-              This impressive paella is a perfect party dish and a
-              fun meal to cook together with your guests. Add 1 cup
-              of frozen peas along with the mussels, if you like.
+              {currentRecipe?.description ||
+                `กรอกคำอธิบายคร่าวๆ เช่น ${RECIPE_SAMPLES_TH.description}`}
             </Typography>
           )}
         </CardContent>
