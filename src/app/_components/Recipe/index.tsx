@@ -149,15 +149,15 @@ export default memo(function Recipe(props: RecipeMainProps) {
   })
 
   // trpc: update recipe name
-  const updateRecipeName = api.recipe.update.useMutation({
+  const updateRecipe = api.recipe.update.useMutation({
     onSuccess: () => {
       console.log('Recipe name updated successfully')
 
       // Update updatedAt
-      setCurrentRecipe((prev) => {
-        if (prev) {
+      setCurrentRecipe(() => {
+        if (currentRecipe) {
           return {
-            ...prev,
+            ...currentRecipe,
             updatedAt: new Date(),
           }
         }
@@ -212,7 +212,8 @@ export default memo(function Recipe(props: RecipeMainProps) {
   // Callback: handleSave
   const handleSave = useCallback(() => {
     if (currentRecipe) {
-      void updateRecipeName.mutateAsync({
+      debugger
+      void updateRecipe.mutateAsync({
         id: currentRecipe.id,
         name: currentRecipe.name,
         description: currentRecipe.description ?? '',
@@ -225,7 +226,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
         method: currentRecipe.method ?? '',
       })
     }
-  }, [currentRecipe, updateRecipeName])
+  }, [currentRecipe, updateRecipe])
 
   // Callback: handleCancel
   const handleCancel = useCallback(() => {
@@ -309,6 +310,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
             alt="image of the recipe"
             sx={{
               objectFit: 'contain',
+              padding: 2,
             }}
           />
         )}

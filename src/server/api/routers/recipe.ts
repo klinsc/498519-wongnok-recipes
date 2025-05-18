@@ -112,12 +112,7 @@ export const recipeRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          description: input.description,
-          method: input.method,
-          time: input.time,
-          difficulty: input.difficulty,
-          servings: input.servings,
-          ingredients: input.ingredients,
+          ...input,
         },
       })
 

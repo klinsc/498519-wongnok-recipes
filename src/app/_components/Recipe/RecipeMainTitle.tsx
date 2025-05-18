@@ -23,7 +23,7 @@ export default memo(function RecipeMainTitle({
     <>
       {isEditting ? (
         <>
-          {currentRecipe?.name && (
+          {currentRecipe && (
             <TextField
               id="recipe-name"
               name="recipe-name"
