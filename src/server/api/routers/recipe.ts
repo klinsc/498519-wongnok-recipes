@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import { RecipeStatus } from '@prisma/client'
 import { z } from 'zod'
 
@@ -114,9 +115,20 @@ export const recipeRouter = createTRPCRouter({
         },
         data: {
           ...input,
+          difficultyId: input.difficultyId || undefined,
         },
       })
 
       return
     }),
+
+  getDifficulties: protectedProcedure.query(async ({ ctx }) => {
+    const difficulties = await ctx.db.recipeDifficulty.findMany({
+      orderBy: {
+        index: 'asc',
+      },
+    })
+
+    return difficulties
+  }),
 })

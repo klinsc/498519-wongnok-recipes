@@ -7,7 +7,11 @@ import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import type { Recipe, User } from '@prisma/client'
+import type {
+  Recipe,
+  RecipeDifficulty as IRecipeDifficulty,
+  User,
+} from '@prisma/client'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -31,6 +35,7 @@ import RecipeDescription from './RecipeDescription'
 import RecipeMethod from './RecipeMethod'
 import RecipeTime from './RecipeTime'
 import RecipeTitle from './RecipeTitle'
+import RecipeDifficulty from './RecipeDifficulty'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -83,6 +88,7 @@ type Ingrediants = Record<
 export interface RecipeWithCreatedBy extends Recipe {
   createdBy: User
   ingredients: Ingrediants
+  difficulty: IRecipeDifficulty
 }
 
 interface RecipeMainProps {
@@ -129,7 +135,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
   // effect: set current recipe name
   useEffect(() => {
     if (recipe) {
-      // Ensure ingredients is always of type Ingrediants
+      // Ensure ingredients is always of type Ingrediants and difficulty is not null
       setCurrentRecipe({
         ...recipe,
         ingredients:
@@ -137,6 +143,14 @@ export default memo(function Recipe(props: RecipeMainProps) {
           typeof recipe.ingredients === 'object'
             ? (recipe.ingredients as Ingrediants)
             : { ingredient: [] },
+        difficulty:
+          recipe.difficulty ?? // fallback to a default difficulty object if null
+          {
+            id: '',
+            name: '',
+            createdById: null,
+            index: 0,
+          },
       })
     }
   }, [recipe])
@@ -398,6 +412,13 @@ export default memo(function Recipe(props: RecipeMainProps) {
                 }}>
                 ความยาก:
               </Typography>
+              <RecipeDifficulty
+                currentRecipe={currentRecipe}
+                setCurrentRecipe={setCurrentRecipe}
+                isEditting={isEditting}
+                handleSave={handleSave}
+                handleCancel={handleCancel}
+              />
             </Grid>
             <Grid size={6}>
               <Typography
