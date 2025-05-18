@@ -15,6 +15,7 @@ import {
   useState,
   type MouseEvent,
 } from 'react'
+import { useNotistack } from '~/app/_context/NotistackContext'
 import { api } from '~/trpc/react'
 import type { RecipeWithCreatedBy } from '.'
 
@@ -55,6 +56,8 @@ export default memo(function RecipeActions({
   const handleClose = useCallback(() => {
     setAnchorEl(null)
   }, [])
+
+  const { showNotistack } = useNotistack()
 
   // Callback: handleEdit
   const handleEdit = useCallback(() => {
@@ -108,6 +111,13 @@ export default memo(function RecipeActions({
         <>
           <IconButton
             onClick={() => {
+              // Check if the user is logged in
+              if (!session?.user.id) {
+                showNotistack('กรุณาเข้าสู่ระบบ', 'error')
+
+                return
+              }
+
               if (!currentRecipe) return
               void likeRecipe({
                 recipeId: currentRecipe.id,
