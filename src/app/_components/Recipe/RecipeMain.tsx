@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
-import type { RecipeDetail, RecipeName, User } from '@prisma/client'
+import type { Recipe, User } from '@prisma/client'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -32,10 +32,18 @@ import RecipeMainTitle from './RecipeMainTitle'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export interface RecipeNameWithCreatedByAndDetail
-  extends RecipeName {
+type Ingrediants = Record<
+  string,
+  {
+    id: string
+    name: string
+    amount: string
+  }[]
+>
+
+export interface RecipeWithCreatedBy extends Recipe {
   createdBy: User
-  RecipeDetail: RecipeDetail
+  ingredients: Ingrediants
 }
 
 interface RecipeMainProps {
@@ -67,30 +75,35 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   const pathName = usePathname()
 
   // State: Current Recipe Name
-  const [currentRecipe, setCurrentRecipe] =
-    useState<RecipeNameWithCreatedByAndDetail | null>(null)
+  const [currentRecipe, setCurrentRecipe] = useState<
+    typeof recipe | null
+  >(null)
 
   // State: file
   const [file, setFile] = useState<File | null>(null)
 
   // trpc: get recipe by id
-  const { data: recipeName } = api.recipe.getById.useQuery({
-    recipeId: props.recipeID,
-  }) as {
-    data: RecipeNameWithCreatedByAndDetail
-  }
+  const { data: recipe } = api.recipe.getById.useQuery(
+    {
+      recipeId: props.recipeID,
+    },
+    {
+      enabled: Boolean(props.recipeID),
+    },
+  )
   // effect: set current recipe name
   useEffect(() => {
-    if (recipeName) {
-      setCurrentRecipe(recipeName)
+    debugger
+    if (recipe) {
+      setCurrentRecipe(recipe)
     }
-  }, [recipeName])
+  }, [recipe])
 
   // TRPC: delete recipe name
   const {
     mutateAsync: deleteRecipeDraft,
     isPending: isDeleteRecipeDraftPending,
-  } = api.recipe.deleteDraft.useMutation({
+  } = api.recipe.delete.useMutation({
     onSuccess: () => {
       console.log('Delete recipe draft success')
     },
@@ -100,7 +113,7 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   })
 
   // trpc: update recipe name
-  const updateRecipeName = api.recipe.updateName.useMutation({
+  const updateRecipeName = api.recipe.update.useMutation({
     onSuccess: () => {
       console.log('Recipe name updated successfully')
 
@@ -164,8 +177,16 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   const handleSave = useCallback(() => {
     if (currentRecipe) {
       void updateRecipeName.mutateAsync({
-        recipeId: currentRecipe.id,
+        id: currentRecipe.id,
         name: currentRecipe.name,
+        description: currentRecipe.description ?? '',
+        ingredients: (currentRecipe.ingredients as Ingrediants) ?? {
+          ingredient: [],
+        },
+        time: currentRecipe.time ?? '',
+        difficulty: currentRecipe.difficulty ?? '',
+        servings: currentRecipe.servings ?? '',
+        method: currentRecipe.method ?? '',
       })
 
       // Handle file upload if a file is selected
@@ -188,7 +209,7 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
       if (prev) {
         return {
           ...prev,
-          name: recipeName?.name || '',
+          name: recipe?.name || '',
         }
       }
       return null
@@ -197,7 +218,22 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
     void router.push(pathName, {
       scroll: false,
     })
-  }, [pathName, recipeName?.name, router])
+  }, [pathName, recipe?.name, router])
+
+  // Memo: image URL
+  const imageUrl = useMemo(() => {
+    if (currentRecipe?.image) {
+      // Get current domain
+      const currentDomain = window.location.origin
+
+      return `${currentDomain}/api/v1/image/${currentRecipe.id}`
+    }
+    return null
+  }, [currentRecipe?.id, currentRecipe?.image])
+
+  useEffect(() => {
+    console.log('imageUrl', imageUrl)
+  }, [imageUrl])
 
   return (
     <>
@@ -239,7 +275,7 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
               : 'อัพเดทล่าสุด: '
           }
         />
-        {currentRecipe?.RecipeDetail?.image ? (
+        {imageUrl ? (
           <CardMedia
             sx={{
               paddingTop: 2,
@@ -251,7 +287,7 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
             }}
             component="img"
             height="194"
-            image={currentRecipe?.RecipeDetail?.image}
+            image={imageUrl || ''}
             alt="Paella dish"
           />
         ) : (
