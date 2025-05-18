@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { memo, useCallback, useState, type MouseEvent } from 'react'
-import type { RecipeWithCreatedBy } from './RecipeMain'
+import type { RecipeWithCreatedBy } from '.'
 import { IconButton, Menu, MenuItem, Stack } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import SaveIcon from '@mui/icons-material/Save'

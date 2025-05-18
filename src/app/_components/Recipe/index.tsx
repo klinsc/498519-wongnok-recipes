@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
-import { Box } from '@mui/material'
+import { Box, TextField } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -51,7 +51,7 @@ interface RecipeMainProps {
   recipeID: string
 }
 
-export default memo(function RecipeMain(props: RecipeMainProps) {
+export default memo(function Recipe(props: RecipeMainProps) {
   // navigation: Router
   const router = useRouter()
 
@@ -297,13 +297,36 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
           </Box>
         )}
         <CardContent>
-          <Typography
-            variant="body2"
-            sx={{ color: 'text.secondary', marginBottom: 2 }}>
-            This impressive paella is a perfect party dish and a fun
-            meal to cook together with your guests. Add 1 cup of
-            frozen peas along with the mussels, if you like.
-          </Typography>
+          {isEditting ? (
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              variant="outlined"
+              label="Description"
+              value={currentRecipe?.description || ''}
+              onChange={(e) => {
+                setCurrentRecipe((prev) => {
+                  if (prev) {
+                    return {
+                      ...prev,
+                      description: e.target.value,
+                    }
+                  }
+                  return null
+                })
+              }}
+              sx={{ marginBottom: 2 }}
+            />
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{ color: 'text.secondary', marginBottom: 2 }}>
+              This impressive paella is a perfect party dish and a
+              fun meal to cook together with your guests. Add 1 cup
+              of frozen peas along with the mussels, if you like.
+            </Typography>
+          )}
         </CardContent>
         <CardContent>
           <Typography sx={{ marginBottom: 2 }}>Method:</Typography>

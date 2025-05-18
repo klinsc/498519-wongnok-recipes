@@ -2,7 +2,7 @@
 import { TextField, Typography } from '@mui/material'
 import { memo } from 'react'
 
-import type { RecipeWithCreatedBy } from './RecipeMain'
+import type { RecipeWithCreatedBy } from '.'
 
 interface RecipeMainTitleProps {
   currentRecipe: RecipeWithCreatedBy | null

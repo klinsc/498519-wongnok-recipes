@@ -8,7 +8,7 @@ import Footer from '../Blog/Footer'
 import Breadcrumb from '../Breadcrumb'
 import Chef from './Chef'
 import RecipeList from './RecipeList'
-import RecipeMain from '../Recipe/RecipeMain'
+import Recipe from '../Recipe'
 import dynamic from 'next/dynamic'
 
 interface ChefRecipeProps {
@@ -82,10 +82,7 @@ export default function ChefRecipe(props: ChefRecipeProps) {
                   </>
                 ) : (
                   <>
-                    <RecipeMain
-                      userID={userID}
-                      recipeID={recipeID}
-                    />
+                    <Recipe userID={userID} recipeID={recipeID} />
                   </>
                 )}
               </Grid>
