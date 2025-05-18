@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import {
   FormControl,
   InputLabel,
@@ -45,19 +44,16 @@ export default memo(function RecipeTime({
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            defaultValue={currentRecipe?.time || 0}
+            value={Number(currentRecipe?.time) || 0}
             label="ระยะเวลา"
-            onChange={(e: {
-              target: {
-                value: string | number
-              }
-            }) => {
-              if (isNaN(Number(e.target.value))) {
+            onChange={(e) => {
+              const value = Number(e.target.value)
+              if (isNaN(value)) {
                 console.error('Invalid time value')
                 return
               }
 
-              const newRecipeTime = String(e.target.value)
+              const newRecipeTime = String(value)
               setCurrentRecipe(
                 currentRecipe
                   ? {
