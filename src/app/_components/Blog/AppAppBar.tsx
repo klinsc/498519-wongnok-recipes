@@ -116,7 +116,7 @@ export default function AppAppBar() {
               </>
             )}
             {/* <ColorModeIconDropdown /> */}
-            <AppMenu />
+            <AppMenu session={session} />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             {/* <ColorModeIconDropdown size="medium" /> */}
