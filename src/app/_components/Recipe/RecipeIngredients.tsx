@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import {
   Box,
   Button,
@@ -6,27 +5,27 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { memo, useState } from 'react'
+import { memo } from 'react'
 
 import { type Ingrediants, type RecipeWithCreatedBy } from '.'
 
 const INGREDIENT_SAMPLES_TH = {
-  '1': { name: 'น้ำมันมะกอก', amount: '2 ช้อนโต๊ะ' },
-  '2': { name: 'สะโพกไก่', amount: '1 ปอนด์' },
-  '3': { name: 'กุ้ง', amount: '1 ปอนด์' },
-  '4': { name: 'ไส้กรอกโชริโซ', amount: '1/2 ปอนด์' },
-  '5': { name: 'พริกปาปริก้ารมควัน (Pimentón)', amount: '1 ช้อนชา' },
-  '6': { name: 'ใบกระวาน', amount: '2 ใบ' },
-  '7': { name: 'กระเทียม', amount: '4 กลีบ' },
-  '8': { name: 'มะเขือเทศกระป๋อง', amount: '1 กระป๋อง' },
-  '9': { name: 'หัวหอม', amount: '1 หัว' },
-  '104': { name: 'เกลือและพริกไทย', amount: '' },
-  '11': { name: 'เกสรหญ้าฝรั่น (Saffron)', amount: '1 หยิบมือ' },
-  '12': { name: 'น้ำซุปไก่', amount: '5 ถ้วย' },
-  '13': { name: 'ข้าว', amount: '2 ถ้วย' },
-  '14': { name: 'อาร์ติโช้ค', amount: '' },
-  '15': { name: 'พริกหยวกแดง', amount: '' },
-  '16': { name: 'หอยแมลงภู่', amount: '' },
+  '1': { name: '(ตัวอย่าง)น้ำมันมะกอก', amount: '2 ช้อนโต๊ะ' },
+  '2': { name: '(ตัวอย่าง)สะโพกไก่', amount: '1 ปอนด์' },
+  '3': { name: '(ตัวอย่าง)กุ้ง', amount: '1 ปอนด์' },
+  // '4': { name: 'ไส้กรอกโชริโซ', amount: '1/2 ปอนด์' },
+  // '5': { name: 'พริกปาปริก้ารมควัน (Pimentón)', amount: '1 ช้อนชา' },
+  // '6': { name: 'ใบกระวาน', amount: '2 ใบ' },
+  // '7': { name: 'กระเทียม', amount: '4 กลีบ' },
+  // '8': { name: 'มะเขือเทศกระป๋อง', amount: '1 กระป๋อง' },
+  // '9': { name: 'หัวหอม', amount: '1 หัว' },
+  // '104': { name: 'เกลือและพริกไทย', amount: '' },
+  // '11': { name: 'เกสรหญ้าฝรั่น (Saffron)', amount: '1 หยิบมือ' },
+  // '12': { name: 'น้ำซุปไก่', amount: '5 ถ้วย' },
+  // '13': { name: 'ข้าว', amount: '2 ถ้วย' },
+  // '14': { name: 'อาร์ติโช้ค', amount: '' },
+  // '15': { name: 'พริกหยวกแดง', amount: '' },
+  // '16': { name: 'หอยแมลงภู่', amount: '' },
 } as Ingrediants
 
 const IngredientRow = memo(function IngredientRow({
@@ -87,27 +86,46 @@ export default memo(function RecipeTime({
   setCurrentRecipe,
   isEditting,
 }: RecipeTitleProps) {
-  const [ingredients, setIngredients] = useState<Ingrediants>(
-    currentRecipe?.ingredients || INGREDIENT_SAMPLES_TH,
-  )
-
   // Handler functions are memoized to avoid unnecessary re-renders
   const handleIngredientChange = (
     id: string,
     value: { name: string; amount: string },
   ) => {
-    setIngredients((prev) => ({
-      ...prev,
-      [id]: value,
-    }))
+    // setIngredients((prev) => ({
+    //   ...prev,
+    //   [id]: value,
+    // }))
+
+    setCurrentRecipe(
+      currentRecipe
+        ? {
+            ...currentRecipe,
+            ingredients: {
+              ...currentRecipe.ingredients,
+              [id]: value,
+            },
+          }
+        : null,
+    )
   }
 
   const handleIngredientRemove = (id: string) => {
-    setIngredients((prev) => {
-      const newIngredients = { ...prev }
-      delete newIngredients[id]
-      return newIngredients
-    })
+    // setIngredients((prev) => {
+    //   const newIngredients = { ...prev }
+    //   delete newIngredients[id]
+    //   return newIngredients
+    // })
+
+    const newIngredients = { ...currentRecipe?.ingredients }
+    delete newIngredients[id]
+    setCurrentRecipe(
+      currentRecipe
+        ? {
+            ...currentRecipe,
+            ingredients: newIngredients,
+          }
+        : null,
+    )
   }
 
   return (
@@ -120,18 +138,22 @@ export default memo(function RecipeTime({
               maxHeight: 200,
               overflowY: 'auto',
             }}>
-            {ingredients &&
-              Object.entries(ingredients).map(([key, value]) => {
-                return (
-                  <IngredientRow
-                    key={key}
-                    id={key}
-                    value={value as { name: string; amount: string }}
-                    onChange={handleIngredientChange}
-                    onRemove={handleIngredientRemove}
-                  />
-                )
-              })}
+            {currentRecipe?.ingredients &&
+              Object.entries(currentRecipe?.ingredients).map(
+                ([key, value]) => {
+                  return (
+                    <IngredientRow
+                      key={key}
+                      id={key}
+                      value={
+                        value as { name: string; amount: string }
+                      }
+                      onChange={handleIngredientChange}
+                      onRemove={handleIngredientRemove}
+                    />
+                  )
+                },
+              )}
 
             <Stack direction={'row'} spacing={1} sx={{ mt: 1 }}>
               <Button
@@ -139,13 +161,20 @@ export default memo(function RecipeTime({
                 size="small"
                 onClick={() => {
                   const newIngredients = {
-                    ...ingredients,
+                    ...currentRecipe?.ingredients,
                     [`${Date.now()}`]: {
                       name: '',
                       amount: '',
                     },
                   }
-                  setIngredients(newIngredients)
+                  setCurrentRecipe(
+                    currentRecipe
+                      ? {
+                          ...currentRecipe,
+                          ingredients: newIngredients,
+                        }
+                      : null,
+                  )
                 }}>
                 เพิ่มวัตถุดิบ
               </Button>
@@ -159,20 +188,35 @@ export default memo(function RecipeTime({
             maxHeight: 200,
             overflowY: 'auto',
           }}>
-          {Object.entries(INGREDIENT_SAMPLES_TH).map(
-            ([key, value]) => (
-              <Typography
-                key={key}
-                variant="body2"
-                sx={{
-                  color: 'text.secondary',
-                  // marginTop: 1,
-                  // fontWeight: 'bold',
-                }}>
-                {value.name} : {value.amount}
-              </Typography>
-            ),
-          )}
+          {currentRecipe?.ingredients
+            ? Object.entries(currentRecipe?.ingredients).map(
+                ([key, value]) => (
+                  <Typography
+                    key={key}
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary',
+                      // marginTop: 1,
+                      // fontWeight: 'bold',
+                    }}>
+                    {value.name} : {value.amount}
+                  </Typography>
+                ),
+              )
+            : Object.entries(INGREDIENT_SAMPLES_TH).map(
+                ([key, value]) => (
+                  <Typography
+                    key={key}
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary',
+                      // marginTop: 1,
+                      // fontWeight: 'bold',
+                    }}>
+                    {value.name} : {value.amount}
+                  </Typography>
+                ),
+              )}
         </Stack>
       )}
     </>
