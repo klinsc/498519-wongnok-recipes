@@ -7,10 +7,7 @@ import type { RecipeWithCreatedBy } from './RecipeMain'
 interface RecipeMainTitleProps {
   currentRecipe: RecipeWithCreatedBy | null
   setCurrentRecipe: (recipe: RecipeWithCreatedBy | null) => void
-  isEditting: {
-    name: boolean
-    detail: boolean
-  }
+  isEditting: boolean
   handleSave: () => void
   handleCancel: () => void
 }
@@ -24,7 +21,7 @@ export default memo(function RecipeMainTitle({
 }: RecipeMainTitleProps) {
   return (
     <>
-      {isEditting.name ? (
+      {isEditting ? (
         <>
           {currentRecipe?.name && (
             <TextField

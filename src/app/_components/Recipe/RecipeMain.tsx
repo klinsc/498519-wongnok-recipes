@@ -60,15 +60,9 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   const QEditting = searchParams.get('editing')
   const isEditting = useMemo(() => {
     if (QEditting === 'true') {
-      return {
-        name: true,
-        detail: true,
-      }
+      return true
     }
-    return {
-      name: false,
-      detail: false,
-    }
+    return false
   }, [QEditting])
 
   // navigation: Path name
@@ -283,7 +277,7 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
           />
         )}
 
-        {isEditting.name && (
+        {isEditting && (
           <Box
             sx={{
               paddingTop: 2,

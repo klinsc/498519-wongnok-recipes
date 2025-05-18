@@ -13,10 +13,7 @@ interface RecipeMainActionsProps {
   handleSave: () => void
   handleCancel: () => void
   isDeleteRecipeDraftPending: boolean
-  isEditting: {
-    name: boolean
-    detail: boolean
-  }
+  isEditting: boolean
   currentRecipe: RecipeWithCreatedBy | null
   userID: string
 }
@@ -59,7 +56,7 @@ export default memo(function RecipeMainActions({
 
   return (
     <Stack direction="row" spacing={1}>
-      {isEditting.name ? (
+      {isEditting ? (
         <>
           <IconButton
             aria-label="save recipe name"
