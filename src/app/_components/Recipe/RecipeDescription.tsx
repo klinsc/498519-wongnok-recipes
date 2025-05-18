@@ -25,7 +25,8 @@ export default memo(function RecipeTitle({
           multiline
           rows={4}
           variant="outlined"
-          label="คำอธิบายคร่าวๆ"
+          placeholder="คำอธิบายคร่าวๆ"
+          helperText={RECIPE_SAMPLES_TH.description}
           value={currentRecipe?.description || ''}
           slotProps={{
             input: {
