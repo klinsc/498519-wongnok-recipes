@@ -52,7 +52,7 @@ async function saveFilePathToDatabase(
   filePath: string,
 ) {
   // Check if the recipe exists
-  const recipe = await db.recipeName.findUnique({
+  const recipe = await db.recipe.findUnique({
     where: {
       id: recipeId,
     },
@@ -62,27 +62,13 @@ async function saveFilePathToDatabase(
     throw new Error('Recipe not found')
   }
 
-  // Check if the recipe detail exists or create it
-  const recipeDetail = await db.recipeDetail.findFirst({
+  // Update the recipe with the file path
+  await db.recipe.update({
     where: {
-      recipeNameId: recipeId,
+      id: recipeId,
+    },
+    data: {
+      image: filePath,
     },
   })
-  if (!recipeDetail) {
-    await db.recipeDetail.create({
-      data: {
-        recipeNameId: recipeId,
-        image: filePath,
-      },
-    })
-  } else {
-    await db.recipeDetail.update({
-      where: {
-        id: recipeDetail.id,
-      },
-      data: {
-        image: filePath,
-      },
-    })
-  }
 }

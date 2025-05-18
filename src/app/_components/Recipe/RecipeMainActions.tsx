@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { memo, useCallback, useState, type MouseEvent } from 'react'
-import type { RecipeNameWithCreatedByAndDetail } from './RecipeMain'
+import type { RecipeWithCreatedBy } from './RecipeMain'
 import { IconButton, Menu, MenuItem, Stack } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import SaveIcon from '@mui/icons-material/Save'
@@ -17,7 +17,7 @@ interface RecipeMainActionsProps {
     name: boolean
     detail: boolean
   }
-  currentRecipe: RecipeNameWithCreatedByAndDetail | null
+  currentRecipe: RecipeWithCreatedBy | null
   userID: string
 }
 

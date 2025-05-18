@@ -1,7 +1,11 @@
-import { Theme, alpha, Components } from '@mui/material/styles';
-import { gray, orange } from '../themePrimitives';
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import {
+  type Theme,
+  alpha,
+  type Components,
+} from '@mui/material/styles'
+import { gray, orange } from '../themePrimitives'
 
-/* eslint-disable import/prefer-default-export */
 export const feedbackCustomizations: Components<Theme> = {
   MuiAlert: {
     styleOverrides: {
@@ -43,4 +47,4 @@ export const feedbackCustomizations: Components<Theme> = {
       }),
     },
   },
-};
+}

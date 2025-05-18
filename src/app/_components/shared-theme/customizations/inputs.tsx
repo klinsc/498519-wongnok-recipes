@@ -1,15 +1,18 @@
-import * as React from 'react';
-import { alpha, Theme, Components } from '@mui/material/styles';
-import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-import { svgIconClasses } from '@mui/material/SvgIcon';
-import { toggleButtonGroupClasses } from '@mui/material/ToggleButtonGroup';
-import { toggleButtonClasses } from '@mui/material/ToggleButton';
-import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
-import { gray, brand } from '../themePrimitives';
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded'
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded'
+import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded'
+import { outlinedInputClasses } from '@mui/material/OutlinedInput'
+import {
+  alpha,
+  type Components,
+  type Theme,
+} from '@mui/material/styles'
+import { svgIconClasses } from '@mui/material/SvgIcon'
+import { toggleButtonClasses } from '@mui/material/ToggleButton'
+import { toggleButtonGroupClasses } from '@mui/material/ToggleButtonGroup'
+import { brand, gray } from '../themePrimitives'
 
-/* eslint-disable import/prefer-default-export */
 export const inputsCustomizations: Components<Theme> = {
   MuiButtonBase: {
     defaultProps: {
@@ -314,10 +317,16 @@ export const inputsCustomizations: Components<Theme> = {
     defaultProps: {
       disableRipple: true,
       icon: (
-        <CheckBoxOutlineBlankRoundedIcon sx={{ color: 'hsla(210, 0%, 0%, 0.0)' }} />
+        <CheckBoxOutlineBlankRoundedIcon
+          sx={{ color: 'hsla(210, 0%, 0%, 0.0)' }}
+        />
       ),
-      checkedIcon: <CheckRoundedIcon sx={{ height: 14, width: 14 }} />,
-      indeterminateIcon: <RemoveRoundedIcon sx={{ height: 14, width: 14 }} />,
+      checkedIcon: (
+        <CheckRoundedIcon sx={{ height: 14, width: 14 }} />
+      ),
+      indeterminateIcon: (
+        <RemoveRoundedIcon sx={{ height: 14, width: 14 }} />
+      ),
     },
     styleOverrides: {
       root: ({ theme }) => ({
@@ -386,7 +395,8 @@ export const inputsCustomizations: Components<Theme> = {
         color: (theme.vars || theme).palette.text.primary,
         borderRadius: (theme.vars || theme).shape.borderRadius,
         border: `1px solid ${(theme.vars || theme).palette.divider}`,
-        backgroundColor: (theme.vars || theme).palette.background.default,
+        backgroundColor: (theme.vars || theme).palette.background
+          .default,
         transition: 'border 120ms ease-in',
         '&:hover': {
           borderColor: gray[400],
@@ -442,4 +452,4 @@ export const inputsCustomizations: Components<Theme> = {
       }),
     },
   },
-};
+}

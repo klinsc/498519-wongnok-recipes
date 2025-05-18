@@ -1,8 +1,8 @@
 import {
   createTheme,
   alpha,
-  PaletteMode,
-  Shadows,
+  type PaletteMode,
+  type Shadows,
 } from '@mui/material/styles'
 
 declare module '@mui/material/Paper' {
@@ -24,7 +24,7 @@ declare module '@mui/material/styles' {
     900: string
   }
 
-  interface PaletteColor extends ColorRange {}
+  // Removed custom PaletteColor type to avoid conflict with MUI's PaletteColor
 
   interface Palette {
     baseShadow: string
@@ -408,7 +408,8 @@ export const shape = {
   borderRadius: 8,
 }
 
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 const defaultShadows: Shadows = [
   'none',
   'var(--template-palette-baseShadow)',

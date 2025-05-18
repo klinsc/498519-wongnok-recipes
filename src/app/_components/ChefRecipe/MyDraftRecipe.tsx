@@ -3,13 +3,13 @@ import { Menu, MenuItem } from '@mui/material'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
-import type { RecipeName } from '@prisma/client'
+import type { Recipe } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useCallback, useState, type MouseEvent } from 'react'
 import { api } from '~/trpc/react'
 
 export interface MyDraftRecipeProps {
-  recipe: RecipeName
+  recipe: Recipe
   refetchDrafts: () => void
 }
 
@@ -31,7 +31,7 @@ export default function MyDraftRecipe(props: MyDraftRecipeProps) {
   const {
     mutateAsync: deleteRecipeDraft,
     isPending: isDeleteRecipeDraftPending,
-  } = api.recipe.deleteDraft.useMutation({
+  } = api.recipe.delete.useMutation({
     onSuccess: () => {
       console.log('Delete recipe draft success')
       props.refetchDrafts()
@@ -51,7 +51,7 @@ export default function MyDraftRecipe(props: MyDraftRecipeProps) {
         return
       }
 
-      await deleteRecipeDraft({ recipeNameId: props.recipe.id })
+      await deleteRecipeDraft({ recipeId: props.recipe.id })
       console.log('Recipe draft deleted successfully')
     } catch (error) {
       console.error('Error deleting recipe draft:', error)

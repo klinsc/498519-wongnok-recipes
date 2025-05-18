@@ -44,11 +44,11 @@ export const recipeRouter = createTRPCRouter({
   }),
 
   delete: protectedProcedure
-    .input(z.object({ recipeNameId: z.string() }))
+    .input(z.object({ recipeId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.recipe.delete({
         where: {
-          id: input.recipeNameId,
+          id: input.recipeId,
         },
       })
 

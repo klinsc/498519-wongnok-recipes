@@ -24,7 +24,7 @@ export default function NewRecipe({
   const router = useRouter()
 
   // trpc: create recipe name
-  const createRecipeName = api.recipe.createName.useMutation({
+  const createRecipeName = api.recipe.create.useMutation({
     onSuccess: () => {
       // Handle success
       console.log('Recipe name created successfully')

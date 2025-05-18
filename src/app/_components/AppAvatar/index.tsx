@@ -4,6 +4,7 @@ import { Menu, MenuItem } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
 import { signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useCallback, useState, type MouseEvent } from 'react'
 
 function stringToColor(string: string) {
@@ -35,6 +36,10 @@ export function stringAvatar(name: string) {
 }
 
 export default function AppAvatar() {
+  // Router
+  const router = useRouter()
+
+  // Session
   const { data: session } = useSession()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -46,16 +51,11 @@ export default function AppAvatar() {
     setAnchorEl(null)
   }
 
-  //   // callback: handleCloseNotistack
-  //   const handleCloseNotistack = useCallback(() => {
-  //     setNotistack((prev) => ({ ...prev, open: false }))
-  //   }, [])
-  //   // state: notistack
-  //   const [notistack, setNotistack] = useState({
-  //     open: false,
-  //     message: '',
-  //     severity: 'success' as 'success' | 'error',
-  //   })
+  // callback: my recipe
+  const handleMyRecipe = useCallback(() => {
+    void router.push(`/chef/${session?.user?.id}/recipe/all`)
+    handleClose()
+  }, [router, session?.user?.id])
 
   // callback: onClick sign out
   const handleSignOut = useCallback(async () => {
@@ -87,7 +87,7 @@ export default function AppAvatar() {
         }}
         open={Boolean(anchorEl)}
         onClose={handleClose}>
-        <MenuItem onClick={handleClose}>สูตรของฉัน</MenuItem>
+        <MenuItem onClick={handleMyRecipe}>สูตรของฉัน</MenuItem>
         <MenuItem onClick={handleSignOut}>ลงชื่อออก</MenuItem>
       </Menu>
       <Avatar

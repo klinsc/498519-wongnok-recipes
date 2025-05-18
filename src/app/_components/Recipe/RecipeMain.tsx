@@ -75,9 +75,8 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   const pathName = usePathname()
 
   // State: Current Recipe Name
-  const [currentRecipe, setCurrentRecipe] = useState<
-    typeof recipe | null
-  >(null)
+  const [currentRecipe, setCurrentRecipe] =
+    useState<RecipeWithCreatedBy | null>(null)
 
   // State: file
   const [file, setFile] = useState<File | null>(null)
@@ -94,14 +93,22 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
   // effect: set current recipe name
   useEffect(() => {
     if (recipe) {
-      setCurrentRecipe(recipe)
+      // Ensure ingredients is always of type Ingrediants
+      setCurrentRecipe({
+        ...recipe,
+        ingredients:
+          recipe.ingredients &&
+          typeof recipe.ingredients === 'object'
+            ? (recipe.ingredients as Ingrediants)
+            : { ingredient: [] },
+      })
     }
   }, [recipe])
 
   // TRPC: delete recipe name
   const {
-    mutateAsync: deleteRecipeDraft,
-    isPending: isDeleteRecipeDraftPending,
+    mutateAsync: deleteRecipe,
+    isPending: isDeleteRecipePending,
   } = api.recipe.delete.useMutation({
     onSuccess: () => {
       console.log('Delete recipe draft success')
@@ -146,12 +153,12 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
         return
       }
 
-      await deleteRecipeDraft({ recipeNameId: props.recipeID })
+      await deleteRecipe({ recipeId: props.recipeID })
       console.log('Recipe draft deleted successfully')
     } catch (error) {
       console.error('Error deleting recipe draft:', error)
     }
-  }, [deleteRecipeDraft, props.recipeID])
+  }, [deleteRecipe, props.recipeID])
 
   const handleUpload = useCallback(
     async (file: File) => {
@@ -179,7 +186,7 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
         id: currentRecipe.id,
         name: currentRecipe.name,
         description: currentRecipe.description ?? '',
-        ingredients: (currentRecipe.ingredients as Ingrediants) ?? {
+        ingredients: currentRecipe.ingredients ?? {
           ingredient: [],
         },
         time: currentRecipe.time ?? '',
@@ -247,15 +254,19 @@ export default memo(function RecipeMain(props: RecipeMainProps) {
             />
           }
           action={
-            <RecipeMainActions
-              handleDeleteRecipeDraft={handleDeleteRecipeDraft}
-              handleSave={handleSave}
-              handleCancel={handleCancel}
-              isDeleteRecipeDraftPending={isDeleteRecipeDraftPending}
-              isEditting={isEditting}
-              currentRecipe={currentRecipe}
-              userID={props.userID}
-            />
+            <>
+              {currentRecipe && (
+                <RecipeMainActions
+                  handleDeleteRecipeDraft={handleDeleteRecipeDraft}
+                  handleSave={handleSave}
+                  handleCancel={handleCancel}
+                  isDeleteRecipeDraftPending={isDeleteRecipePending}
+                  isEditting={isEditting}
+                  currentRecipe={currentRecipe}
+                  userID={props.userID}
+                />
+              )}
+            </>
           }
           title={
             <RecipeMainTitle

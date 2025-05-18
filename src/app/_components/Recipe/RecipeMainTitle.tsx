@@ -2,13 +2,11 @@
 import { TextField, Typography } from '@mui/material'
 import { memo } from 'react'
 
-import type { RecipeNameWithCreatedByAndDetail } from './RecipeMain'
+import type { RecipeWithCreatedBy } from './RecipeMain'
 
 interface RecipeMainTitleProps {
-  currentRecipe: RecipeNameWithCreatedByAndDetail | null
-  setCurrentRecipe: (
-    recipe: RecipeNameWithCreatedByAndDetail | null,
-  ) => void
+  currentRecipe: RecipeWithCreatedBy | null
+  setCurrentRecipe: (recipe: RecipeWithCreatedBy | null) => void
   isEditting: {
     name: boolean
     detail: boolean

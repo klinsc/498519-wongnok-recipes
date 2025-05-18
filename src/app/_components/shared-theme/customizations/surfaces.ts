@@ -1,7 +1,11 @@
-import { alpha, Theme, Components } from '@mui/material/styles';
-import { gray } from '../themePrimitives';
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import {
+  alpha,
+  type Theme,
+  type Components,
+} from '@mui/material/styles'
+import { gray } from '../themePrimitives'
 
-/* eslint-disable import/prefer-default-export */
 export const surfacesCustomizations: Components<Theme> = {
   MuiAccordion: {
     defaultProps: {
@@ -12,7 +16,8 @@ export const surfacesCustomizations: Components<Theme> = {
       root: ({ theme }) => ({
         padding: 4,
         overflow: 'clip',
-        backgroundColor: (theme.vars || theme).palette.background.default,
+        backgroundColor: (theme.vars || theme).palette.background
+          .default,
         border: '1px solid',
         borderColor: (theme.vars || theme).palette.divider,
         ':before': {
@@ -22,12 +27,16 @@ export const surfacesCustomizations: Components<Theme> = {
           borderBottom: 'none',
         },
         '&:first-of-type': {
-          borderTopLeftRadius: (theme.vars || theme).shape.borderRadius,
-          borderTopRightRadius: (theme.vars || theme).shape.borderRadius,
+          borderTopLeftRadius: (theme.vars || theme).shape
+            .borderRadius,
+          borderTopRightRadius: (theme.vars || theme).shape
+            .borderRadius,
         },
         '&:last-of-type': {
-          borderBottomLeftRadius: (theme.vars || theme).shape.borderRadius,
-          borderBottomRightRadius: (theme.vars || theme).shape.borderRadius,
+          borderBottomLeftRadius: (theme.vars || theme).shape
+            .borderRadius,
+          borderBottomRightRadius: (theme.vars || theme).shape
+            .borderRadius,
         },
       }),
     },
@@ -84,7 +93,7 @@ export const surfacesCustomizations: Components<Theme> = {
               },
             },
           ],
-        };
+        }
       },
     },
   },
@@ -110,4 +119,4 @@ export const surfacesCustomizations: Components<Theme> = {
       },
     },
   },
-};
+}
