@@ -124,6 +124,17 @@ export const recipeRouter = createTRPCRouter({
 
   getDifficulties: protectedProcedure.query(async ({ ctx }) => {
     const difficulties = await ctx.db.recipeDifficulty.findMany({
+      // Get difficulties those created by me or null
+      where: {
+        OR: [
+          {
+            createdById: ctx.session.user.id,
+          },
+          {
+            createdById: null,
+          },
+        ],
+      },
       orderBy: {
         index: 'asc',
       },

@@ -47,7 +47,7 @@ export default memo(function RecipeDifficulty({
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            defaultValue={
+            value={
               currentRecipe?.difficultyId ||
               'cmathzdqu00033fnwhhl8107r'
             }

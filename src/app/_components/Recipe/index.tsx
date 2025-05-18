@@ -124,14 +124,15 @@ export default memo(function Recipe(props: RecipeMainProps) {
   } | null>(null)
 
   // trpc: get recipe by id
-  const { data: recipe } = api.recipe.getById.useQuery(
-    {
-      recipeId: props.recipeID,
-    },
-    {
-      enabled: Boolean(props.recipeID),
-    },
-  )
+  const { data: recipe, refetch: refetchRecipe } =
+    api.recipe.getById.useQuery(
+      {
+        recipeId: props.recipeID,
+      },
+      {
+        enabled: Boolean(props.recipeID),
+      },
+    )
   // effect: set current recipe name
   useEffect(() => {
     if (recipe) {
@@ -143,14 +144,13 @@ export default memo(function Recipe(props: RecipeMainProps) {
           typeof recipe.ingredients === 'object'
             ? (recipe.ingredients as Ingrediants)
             : { ingredient: [] },
-        difficulty:
-          recipe.difficulty ?? // fallback to a default difficulty object if null
-          {
-            id: '',
-            name: '',
-            createdById: null,
-            index: 0,
-          },
+        difficulty: recipe.difficulty ?? {
+          // fallback to a default difficulty object if null
+          id: '',
+          name: '',
+          createdById: null,
+          index: 0,
+        },
       })
     }
   }, [recipe])
@@ -173,19 +173,10 @@ export default memo(function Recipe(props: RecipeMainProps) {
     onSuccess: () => {
       console.log('Recipe name updated successfully')
 
-      // Update updatedAt
-      setCurrentRecipe(() => {
-        if (currentRecipe) {
-          return {
-            ...currentRecipe,
-            updatedAt: new Date(),
-          }
-        }
-        return null
-      })
+      void refetchRecipe()
 
       void router.push(pathName, {
-        scroll: false,
+        scroll: true,
       })
     },
     onError: (error) => {
