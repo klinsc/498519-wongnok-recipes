@@ -142,4 +142,49 @@ export const recipeRouter = createTRPCRouter({
 
     return difficulties
   }),
+
+  createDifficulty: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existingDifficulty =
+        await ctx.db.recipeDifficulty.findFirst({
+          where: {
+            name: input.name,
+          },
+        })
+      if (existingDifficulty) {
+        throw new Error('Difficulty already exists')
+      }
+      const maxIndex = await ctx.db.recipeDifficulty.aggregate({
+        where: {
+          OR: [
+            {
+              createdById: ctx.session.user.id,
+            },
+            {
+              createdById: null,
+            },
+          ],
+        },
+        _max: {
+          index: true,
+        },
+      })
+
+      return await ctx.db.recipeDifficulty.create({
+        data: {
+          name: input.name,
+          index: (maxIndex._max.index || 0) + 1,
+          createdBy: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      })
+    }),
 })

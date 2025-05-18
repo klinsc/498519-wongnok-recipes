@@ -6,7 +6,7 @@ import {
   Select,
   Typography,
 } from '@mui/material'
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 
 import { type RecipeWithCreatedBy } from '.'
 import { api } from '~/trpc/react'
@@ -25,13 +25,40 @@ export default memo(function RecipeDifficulty({
   isEditting,
 }: RecipeTitleProps) {
   // TRPC: get recipe difficulties
-  const { data: difficulties } = api.recipe.getDifficulties.useQuery(
-    undefined,
-    {
+  const { data: difficulties, refetch: refetchDifficulties } =
+    api.recipe.getDifficulties.useQuery(undefined, {
       enabled: isEditting,
       refetchOnWindowFocus: false,
-    },
-  )
+    })
+
+  // TRPC: create new recipe difficulty
+  const { mutateAsync: createNewDifficulty } =
+    api.recipe.createDifficulty.useMutation({
+      onSuccess: (newDifficulty) => {
+        // Refetch the recipe difficulties
+        void refetchDifficulties().then(() => {
+          // Set the new difficulty as the current recipe difficulty
+          setCurrentRecipe(
+            currentRecipe
+              ? {
+                  ...currentRecipe,
+                  difficultyId: newDifficulty.id,
+                }
+              : null,
+          )
+        })
+      },
+    })
+
+  // Callback: create new recipe difficulty
+  const handleCreateNewDifficulty = useCallback(async () => {
+    const newDifficultyName = prompt('กรุณากรอกชื่อระดับความยากใหม่')
+    if (newDifficultyName) {
+      await createNewDifficulty({
+        name: newDifficultyName,
+      })
+    }
+  }, [createNewDifficulty])
 
   return (
     <>
@@ -57,6 +84,10 @@ export default memo(function RecipeDifficulty({
                 value: string | number
               }
             }) => {
+              if (e.target.value === 'add-new') {
+                return void handleCreateNewDifficulty()
+              }
+
               const newRecipeDifficultyId = String(e.target.value)
               setCurrentRecipe(
                 currentRecipe
@@ -72,6 +103,17 @@ export default memo(function RecipeDifficulty({
                 {item.name}
               </MenuItem>
             ))}
+
+            {/* Add new button */}
+            <MenuItem
+              key="add-new"
+              value="add-new"
+              sx={{
+                color: 'primary.main',
+                fontWeight: 'bold',
+              }}>
+              + เพิ่ม
+            </MenuItem>
           </Select>
         </FormControl>
       ) : (
