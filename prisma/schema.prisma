@@ -141,6 +141,7 @@ model Recipe {
 
 model RecipeDifficulty {
     id          String   @id @default(cuid())
+    index       Int
     name        String
     createdBy   User?    @relation(fields: [createdById], references: [id])
     createdById String?
