@@ -36,6 +36,7 @@ import RecipeMethod from './RecipeMethod'
 import RecipeTime from './RecipeTime'
 import RecipeTitle from './RecipeTitle'
 import RecipeDifficulty from './RecipeDifficulty'
+import RecipeIngredients from './RecipeIngredients'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -419,6 +420,13 @@ export default memo(function Recipe(props: RecipeMainProps) {
                 }}>
                 วัตถุดิบ:
               </Typography>
+              <RecipeIngredients
+                currentRecipe={currentRecipe}
+                setCurrentRecipe={setCurrentRecipe}
+                isEditting={isEditting}
+                handleSave={handleSave}
+                handleCancel={handleCancel}
+              />
             </Grid>
           </Grid>
         </CardContent>
