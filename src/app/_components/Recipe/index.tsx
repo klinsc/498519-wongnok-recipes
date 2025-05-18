@@ -342,7 +342,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
               fontWeight: 'bold',
               marginBottom: 1,
             }}>
-            คำอธิบายคร่าวๆ:
+            คำอธิบาย:
           </Typography>
           <RecipeDescription
             currentRecipe={currentRecipe}

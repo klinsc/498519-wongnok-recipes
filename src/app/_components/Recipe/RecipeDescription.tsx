@@ -56,7 +56,7 @@ export default memo(function RecipeTitle({
           variant="body2"
           sx={{ color: 'text.secondary', marginBottom: 2 }}>
           {currentRecipe?.description ||
-            `กรอกคำอธิบายคร่าวๆ เช่น ${RECIPE_SAMPLES_TH.description}`}
+            `กดปุ่มแก้ไขเพื่อ กรอกคำอธิบายคร่าวๆ ของสูตรอาหาร`}
         </Typography>
       )}
     </>
