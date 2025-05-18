@@ -375,7 +375,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
           )}
         </CardContent>
         <CardContent>
-          <Typography sx={{ marginBottom: 2 }}>Method:</Typography>
+          <Typography sx={{ marginBottom: 2 }}>วิธีทำ:</Typography>
           <Typography sx={{ marginBottom: 2 }}>
             Heat 1/2 cup of the broth in a pot until simmering, add
             saffron and set aside for 10 minutes.
