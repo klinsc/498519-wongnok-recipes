@@ -24,7 +24,7 @@ export async function GET(
   if (existsSync(`${filePath}.png`)) {
     filePath = `${filePath}.png`
   }
-
+  console.log('filePath', filePath)
   const fileStream = createReadStream(filePath)
   const readable = fileStream as unknown as ReadableStream
 
