@@ -1,5 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu'
-import { IconButton } from '@mui/material'
+import { Box, IconButton } from '@mui/material'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import type { Session } from 'next-auth'
@@ -27,7 +27,10 @@ export default function AppMenu({
   }
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: { xs: 'block', md: 'none' },
+      }}>
       <IconButton
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
@@ -60,6 +63,6 @@ export default function AppMenu({
           </MenuItem>
         ))}
       </Menu>
-    </div>
+    </Box>
   )
 }
