@@ -59,7 +59,7 @@ export default function Profile({ userID }: { userID: string }) {
           <Avatar
             alt={user?.name ?? ''}
             src={user?.image ?? ''}
-            style={{ width: 72, height: 72 }}
+            style={{ width: 72, height: 72, cursor: 'auto' }}
             {...stringAvatar(user?.name || 'User Name')}
           />
           <Typography
