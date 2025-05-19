@@ -84,8 +84,16 @@ export default function AppAppBar() {
               sx={{
                 display: { xs: 'flex', md: 'flex' },
                 flexGrow: 1,
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
               }}>
+              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <Button variant="text" color="info" size="small">
+                  หน้าหลัก
+                </Button>
+                <Button variant="text" color="info" size="small">
+                  สูตรของฉัน
+                </Button>
+              </Box>
               <SearchBar />
             </Box>
           </Box>
