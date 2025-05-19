@@ -8,7 +8,7 @@ import { api } from '~/trpc/react'
 import type { Ingrediants } from '../Recipe'
 import MyDraftRecipe from './MyDraftRecipe'
 import NewRecipe from './NewRecipe'
-import PublishedRecipe from './PublishedRecipe'
+import PublishedCard from './PublishedCard'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -97,8 +97,8 @@ export default function RecipeList({
 
   // trpc: recipe get all published
   const {
-    data: publishedRecipes,
-    // refetch: refetchPublishedRecipes,
+    data: PublishedCards,
+    // refetch: refetchPublishedCards,
   } = api.recipe.getPublisedByUserId.useQuery(
     {
       userID,
@@ -156,9 +156,9 @@ export default function RecipeList({
           </Typography>
         )}
         <Grid container spacing={1}>
-          {publishedRecipes &&
-            publishedRecipes?.length > 0 &&
-            publishedRecipes?.map((recipe) => {
+          {PublishedCards &&
+            PublishedCards?.length > 0 &&
+            PublishedCards?.map((recipe) => {
               // Ensure ingredients is not null and is of correct type
               // Ensure difficulty is not null (provide a fallback if needed)
               const safeRecipe = {
@@ -174,7 +174,7 @@ export default function RecipeList({
               }
               return (
                 <Grid key={recipe.id}>
-                  <PublishedRecipe
+                  <PublishedCard
                     key={recipe.id}
                     recipe={safeRecipe}
                   />

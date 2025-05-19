@@ -61,7 +61,7 @@ export interface RecipeCardProps {
   recipe: RecipeWithCreatedBy
 }
 
-export default function PublishedRecipe(props: RecipeCardProps) {
+export default function PublishedCard(props: RecipeCardProps) {
   // Router
   const router = useRouter()
 
