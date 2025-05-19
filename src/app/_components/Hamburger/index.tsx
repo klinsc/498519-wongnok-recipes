@@ -11,7 +11,7 @@ export const MENU_ITEMS = [
   { label: 'สูตรของฉัน', path: '/chef' },
 ]
 
-export default function AppMenu({
+export default function Hamburger({
   session,
 }: {
   session: Session | null

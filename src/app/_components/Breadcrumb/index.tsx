@@ -1,7 +1,7 @@
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Link from '@mui/material/Link'
 import { usePathname } from 'next/navigation'
-import { MENU_ITEMS } from '../AppMenu'
+import { MENU_ITEMS } from '../Hamburger'
 
 export default function Breadcrumb() {
   const pathname = usePathname()

@@ -17,7 +17,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import AppAvatar from '../AppAvatar'
-import AppMenu, { MENU_ITEMS } from '../AppMenu'
+import Hamburger, { MENU_ITEMS } from '../Hamburger'
 import SearchBar from '../SearchBar'
 import SiteIcon from '../SiteIcon'
 
@@ -124,7 +124,7 @@ export default function AppAppBar() {
               </>
             )}
             {/* <ColorModeIconDropdown /> */}
-            <AppMenu session={session} />
+            <Hamburger session={session} />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             {/* <ColorModeIconDropdown size="medium" /> */}
