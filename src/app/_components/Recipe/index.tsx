@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
-import { Box, Grid } from '@mui/material'
+import PublicIcon from '@mui/icons-material/Public'
+import PublicOffIcon from '@mui/icons-material/PublicOff'
+import { Box, Grid, Stack, Tooltip } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -8,10 +10,11 @@ import CardHeader from '@mui/material/CardHeader'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import type {
-  Recipe,
   RecipeDifficulty as IRecipeDifficulty,
+  Recipe,
   User,
 } from '@prisma/client'
+import { RecipeStatus } from '@prisma/client'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -32,11 +35,11 @@ import { stringAvatar } from '../AppAvatar'
 import ImageUploader from '../ImageUploader'
 import RecipeActions from './RecipeActions'
 import RecipeDescription from './RecipeDescription'
+import RecipeDifficulty from './RecipeDifficulty'
+import RecipeIngredients from './RecipeIngredients'
 import RecipeMethod from './RecipeMethod'
 import RecipeTime from './RecipeTime'
 import RecipeTitle from './RecipeTitle'
-import RecipeDifficulty from './RecipeDifficulty'
-import RecipeIngredients from './RecipeIngredients'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -286,6 +289,13 @@ export default memo(function Recipe(props: RecipeMainProps) {
     return null
   }, [currentRecipe?.image])
 
+  // Memo: isPublished
+  const isPublished = useMemo(() => {
+    if (!currentRecipe) return false
+
+    return currentRecipe.status === RecipeStatus.PUBLISHED
+  }, [currentRecipe])
+
   return (
     <>
       <Card>
@@ -308,6 +318,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
                   isDeleteRecipeDraftPending={isDeleteRecipePending}
                   isEditting={isEditting}
                   currentRecipe={currentRecipe}
+                  refetchRecipe={refetchRecipe}
                 />
               )}
             </>
@@ -322,11 +333,39 @@ export default memo(function Recipe(props: RecipeMainProps) {
             />
           }
           subheader={
-            currentRecipe?.updatedAt
-              ? `อัพเดทล่าสุด: ${dayjs(currentRecipe.updatedAt)
-                  .tz('Asia/Bangkok')
-                  .format('DD/MM/YYYY HH:mm:ss')}`
-              : 'อัพเดทล่าสุด: '
+            <Stack direction="row" spacing={1} alignItems={'center'}>
+              {isPublished ? (
+                <Tooltip title="เผยแพร่แล้ว">
+                  <PublicIcon
+                    sx={{
+                      color: 'text.secondary',
+                      fontSize: 'small',
+                    }}
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip title="ฉบับร่าง">
+                  <PublicOffIcon
+                    sx={{
+                      color: 'text.secondary',
+                      fontSize: 'small',
+                    }}
+                  />
+                </Tooltip>
+              )}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontSize="small">
+                {`${
+                  currentRecipe?.createdAt
+                    ? `สร้างเมื่อ: ${dayjs(currentRecipe.createdAt)
+                        .tz('Asia/Bangkok')
+                        .format('DD/MM/YYYY HH:mm:ss')}`
+                    : 'สร้างเมื่อ: '
+                }`}
+              </Typography>
+            </Stack>
           }
         />
         {imageUrl && (
