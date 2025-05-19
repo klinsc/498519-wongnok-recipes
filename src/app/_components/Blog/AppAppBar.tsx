@@ -84,7 +84,9 @@ export default function AppAppBar() {
               sx={{
                 display: { xs: 'flex', md: 'flex' },
                 flexGrow: 1,
-                justifyContent: 'flex-start',
+                justifyContent: 'space-between',
+                paddingLeft: 2,
+                paddingRight: 2,
               }}>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <Button
