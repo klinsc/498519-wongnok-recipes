@@ -223,4 +223,65 @@ export const recipeRouter = createTRPCRouter({
         })
       }
     }),
+
+  publish: protectedProcedure
+    .input(z.object({ recipeId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const completedRecipe = await ctx.db.recipe.findUnique({
+        where: {
+          id: input.recipeId,
+          createdById: ctx.session.user.id,
+          // The former status is DRAFT, and all fields are not null
+          status: RecipeStatus.DRAFT,
+          NOT: [
+            {
+              description: null,
+            },
+            {
+              method: null,
+            },
+            {
+              time: null,
+            },
+            {
+              difficultyId: null,
+            },
+            {
+              servings: null,
+            },
+            {
+              ingredients: { equals: undefined },
+            },
+          ],
+        },
+      })
+
+      if (!completedRecipe) {
+        throw new Error('Recipe is not completed')
+      }
+
+      return await ctx.db.recipe.update({
+        where: {
+          id: completedRecipe.id,
+        },
+        data: {
+          status: RecipeStatus.PUBLISHED,
+        },
+      })
+    }),
+
+  unpublish: protectedProcedure
+    .input(z.object({ recipeId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.recipe.update({
+        where: {
+          id: input.recipeId,
+          createdById: ctx.session.user.id,
+          status: RecipeStatus.PUBLISHED,
+        },
+        data: {
+          status: RecipeStatus.DRAFT,
+        },
+      })
+    }),
 })
