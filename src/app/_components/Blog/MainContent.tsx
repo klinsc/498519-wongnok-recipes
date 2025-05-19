@@ -15,7 +15,16 @@ import InputAdornment from '@mui/material/InputAdornment'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import dayjs from 'dayjs'
 import * as React from 'react'
+import { useMemo } from 'react'
+import { api } from '~/trpc/react'
+import tz from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+import { Divider } from '@mui/material'
+
+dayjs.extend(utc)
+dayjs.extend(tz)
 
 const defaultAuthos = [
   {
@@ -144,7 +153,7 @@ const StyledTypography = styled(Typography)({
 function Author({
   authors,
 }: {
-  authors: { name: string; avatar: string }[]
+  authors: { name: string; avatar: string; updatedAt: Date }[]
 }) {
   return (
     <Box
@@ -177,7 +186,12 @@ function Author({
           {authors.map((author) => author.name).join(', ')}
         </Typography>
       </Box>
-      <Typography variant="caption">July 14, 2021</Typography>
+      <Typography variant="caption">
+        {/* July 14, 2021 */}
+        {dayjs(authors[0]?.updatedAt || new Date())
+          .tz('Asia/Bangkok')
+          .format('MMMM D, YYYY')}
+      </Typography>
     </Box>
   )
 }
@@ -274,6 +288,26 @@ export default function MainContent() {
     setFocusedCardIndex(null)
   }
 
+  // State: pagination
+  const [pagination, setPagination] = React.useState({
+    page: 1,
+    limit: 6,
+  })
+
+  // Trpc: getAllPublisheds
+  const { data: publishedRecipes } =
+    api.recipe.getAllPublisheds.useQuery(pagination, {
+      refetchOnWindowFocus: false,
+    })
+
+  // Memo: Get current domain
+  const currentDomain = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.origin
+    }
+    return ''
+  }, [])
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
@@ -294,7 +328,123 @@ export default function MainContent() {
         }}>
         <FilterChips />
       </Box>
+
+      {/* One page take max 6 recipes */}
       <Grid container spacing={2} columns={12}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          {publishedRecipes && publishedRecipes[0] && (
+            <SyledCard
+              variant="outlined"
+              onFocus={() => handleFocus(0)}
+              onBlur={handleBlur}
+              tabIndex={0}
+              className={
+                focusedCardIndex === 0 ? 'Mui-focused' : ''
+              }>
+              <CardMedia
+                component="img"
+                alt="recipe image"
+                image={`${currentDomain}/api/v1/image/${publishedRecipes[0]?.image}`}
+                sx={{
+                  aspectRatio: '16 / 9',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                }}
+              />
+              <SyledCardContent>
+                <Typography
+                  gutterBottom
+                  variant="caption"
+                  component="div">
+                  {publishedRecipes[0]?.name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div">
+                  {publishedRecipes[0]?.description}
+                </Typography>
+                <StyledTypography
+                  variant="body2"
+                  color="text.secondary"
+                  gutterBottom>
+                  {publishedRecipes[0]?.method}
+                </StyledTypography>
+              </SyledCardContent>
+              <Author
+                authors={[
+                  {
+                    name:
+                      publishedRecipes[0]?.createdBy.name ||
+                      'default author',
+                    avatar:
+                      publishedRecipes[0]?.createdBy.name ||
+                      '/static/images/avatar/default.jpg',
+                    updatedAt: publishedRecipes[0]?.updatedAt,
+                  },
+                ]}
+              />
+            </SyledCard>
+          )}
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          {publishedRecipes && publishedRecipes[1] && (
+            <SyledCard
+              variant="outlined"
+              onFocus={() => handleFocus(1)}
+              onBlur={handleBlur}
+              tabIndex={1}
+              className={
+                focusedCardIndex === 1 ? 'Mui-focused' : ''
+              }>
+              <CardMedia
+                component="img"
+                alt="recipe image"
+                image={`${currentDomain}/api/v1/image/${publishedRecipes[1]?.image}`}
+                sx={{
+                  aspectRatio: '16 / 9',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                }}
+              />
+              <SyledCardContent>
+                <Typography
+                  gutterBottom
+                  variant="caption"
+                  component="div">
+                  {publishedRecipes[1]?.name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div">
+                  {publishedRecipes[1]?.description}
+                </Typography>
+                <StyledTypography
+                  variant="body2"
+                  color="text.secondary"
+                  gutterBottom>
+                  {publishedRecipes[1]?.method}
+                </StyledTypography>
+              </SyledCardContent>
+              <Author
+                authors={[
+                  {
+                    name:
+                      publishedRecipes[1]?.createdBy.name ||
+                      'default author',
+                    avatar:
+                      publishedRecipes[1]?.createdBy.name ||
+                      '/static/images/avatar/default.jpg',
+                    updatedAt: publishedRecipes[1]?.updatedAt,
+                  },
+                ]}
+              />
+            </SyledCard>
+          )}
+        </Grid>
+
+        <Divider />
         <Grid size={{ xs: 12, md: 6 }}>
           <SyledCard
             variant="outlined"

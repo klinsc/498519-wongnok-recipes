@@ -87,21 +87,25 @@ export const recipeRouter = createTRPCRouter({
     return recipes
   }),
 
-  getAllPublisheds: publicProcedure.query(async ({ ctx }) => {
-    const recipes = await ctx.db.recipe.findMany({
-      where: {
-        status: RecipeStatus.PUBLISHED,
-      },
-      include: {
-        createdBy: true,
-        difficulty: true,
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    })
-    return recipes
-  }),
+  getAllPublisheds: publicProcedure
+    .input(z.object({ page: z.number(), limit: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const recipes = await ctx.db.recipe.findMany({
+        where: {
+          status: RecipeStatus.PUBLISHED,
+        },
+        include: {
+          createdBy: true,
+          difficulty: true,
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        skip: (input.page - 1) * input.limit,
+        take: input.limit,
+      })
+      return recipes
+    }),
 
   getById: publicProcedure
     .input(z.object({ recipeId: z.string() }))
