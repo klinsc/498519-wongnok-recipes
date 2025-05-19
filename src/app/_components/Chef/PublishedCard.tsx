@@ -184,14 +184,21 @@ export default function PublishedCard(props: RecipeCardProps) {
             marginBottom: 2,
           }}
         />
-        <CardContent>
+        <CardContent
+          sx={{
+            marginBottom: 2,
+          }}>
           <Typography
             variant="body2"
             sx={{ color: 'text.secondary' }}>
             {props.recipe.description}
           </Typography>
         </CardContent>
-        <CardActions disableSpacing>
+        <CardActions
+          disableSpacing
+          sx={{
+            marginBottom: 2,
+          }}>
           <IconButton aria-label="share">
             <ShareIcon />
           </IconButton>
