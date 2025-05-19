@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew'
 import PublicIcon from '@mui/icons-material/Public'
@@ -77,26 +76,6 @@ export default memo(function RecipeActions({
     [currentRecipe, session?.user.id],
   )
 
-  // Trpc: get like status
-  const { data: isLiked, refetch: refetchIsLiked } =
-    api.recipe.isLiked.useQuery(
-      {
-        recipeId: currentRecipe?.id || '',
-      },
-      {
-        enabled: !!session?.user.id,
-        refetchOnWindowFocus: false,
-      },
-    )
-
-  // Trpc: like recipe
-  const { mutateAsync: likeRecipe, isPending: isLikePending } =
-    api.recipe.like.useMutation({
-      onSuccess: () => {
-        void refetchIsLiked()
-      },
-    })
-
   // Trpc: publish recipe
   const { mutateAsync: publishRecipe } =
     api.recipe.publish.useMutation({
@@ -157,30 +136,9 @@ export default memo(function RecipeActions({
         </>
       ) : (
         <>
-          {/* <IconButton
-            onClick={() => {
-              // Check if the user is logged in
-              if (!session?.user.id) {
-                showNotistack('กรุณาเข้าสู่ระบบ', 'error')
-
-                return
-              }
-
-              if (!currentRecipe) return
-              void likeRecipe({
-                recipeId: currentRecipe.id,
-              })
-            }}
-            disabled={isOwner || isDeleteRecipeDraftPending}
-            aria-label="add to favorites">
-            {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-          </IconButton> */}
           <LikeButton
-            isLiked={isLiked || false}
             isOwner={isOwner}
-            isPending={isLikePending}
             currentRecipe={currentRecipe}
-            likeRecipe={likeRecipe}
           />
           <IconButton
             disabled={isOwner || isDeleteRecipeDraftPending}
