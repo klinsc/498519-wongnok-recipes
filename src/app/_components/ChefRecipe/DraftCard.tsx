@@ -15,12 +15,12 @@ import {
 } from 'react'
 import { api } from '~/trpc/react'
 
-export interface MyDraftRecipeProps {
+export interface DraftCardProps {
   recipe: Recipe
   refetchDrafts: () => void
 }
 
-export default function MyDraftRecipe(props: MyDraftRecipeProps) {
+export default function DraftCard(props: DraftCardProps) {
   // Router
   const router = useRouter()
 

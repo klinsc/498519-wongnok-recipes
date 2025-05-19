@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { api } from '~/trpc/react'
 import type { Ingrediants } from '../Recipe'
-import MyDraftRecipe from './MyDraftRecipe'
+import DraftCard from './DraftCard'
 import NewRecipe from './NewRecipe'
 import PublishedCard from './PublishedCard'
 
@@ -139,7 +139,7 @@ export default function RecipeList({
             <Grid container spacing={1}>
               {drafts?.map((recipe) => (
                 <Grid key={recipe.id}>
-                  <MyDraftRecipe
+                  <DraftCard
                     key={recipe.id}
                     recipe={recipe}
                     refetchDrafts={refetchDrafts}
