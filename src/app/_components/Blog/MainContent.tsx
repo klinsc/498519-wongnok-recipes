@@ -187,7 +187,6 @@ function Author({
         </Typography>
       </Box>
       <Typography variant="caption">
-        {/* July 14, 2021 */}
         {dayjs(authors[0]?.updatedAt || new Date())
           .tz('Asia/Bangkok')
           .format('MMMM D, YYYY')}
