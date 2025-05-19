@@ -17,8 +17,8 @@ export default memo(function LikeButton(props: LikeButtonProps) {
   const { showNotistack } = useNotistack()
 
   // Trpc: get like status
-  const { data: isLiked, refetch: refetchIsLiked } =
-    api.recipe.isLiked.useQuery(
+  const { data: likedStatus, refetch: refetchLikedStatus } =
+    api.recipe.likeStatus.useQuery(
       {
         recipeId: props.currentRecipe?.id || '',
       },
@@ -32,7 +32,7 @@ export default memo(function LikeButton(props: LikeButtonProps) {
   const { mutateAsync: likeRecipe, isPending: isLikePending } =
     api.recipe.like.useMutation({
       onSuccess: () => {
-        void refetchIsLiked()
+        void refetchLikedStatus()
       },
     })
 
@@ -56,7 +56,16 @@ export default memo(function LikeButton(props: LikeButtonProps) {
       }}
       disabled={props.isOwner || isLikePending}
       aria-label="add to favorites">
-      {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+      {likedStatus?.isLiked ? (
+        <FavoriteIcon />
+      ) : (
+        <FavoriteBorderIcon />
+      )}
+      {likedStatus?.likeCount && likedStatus?.likeCount > 0 ? (
+        <span>{likedStatus.likeCount}</span>
+      ) : (
+        <span>0</span>
+      )}
     </IconButton>
   )
 })

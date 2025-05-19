@@ -226,6 +226,29 @@ export const recipeRouter = createTRPCRouter({
       return !!isLiked
     }),
 
+  likeStatus: protectedProcedure
+    .input(z.object({ recipeId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // Check if the user liked the recipe
+      const isLiked = await ctx.db.like.findFirst({
+        where: {
+          recipeId: input.recipeId,
+          userId: ctx.session.user.id,
+        },
+      })
+
+      // Check how many likes the recipe has by counting the likes
+      const likeCount = await ctx.db.like.count({
+        where: {
+          recipeId: input.recipeId,
+        },
+      })
+      return {
+        isLiked: !!isLiked,
+        likeCount,
+      }
+    }),
+
   like: protectedProcedure
     .input(z.object({ recipeId: z.string() }))
     .mutation(async ({ ctx, input }) => {
