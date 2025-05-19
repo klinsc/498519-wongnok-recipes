@@ -40,6 +40,7 @@ import RecipeIngredients from './RecipeIngredients'
 import RecipeMethod from './RecipeMethod'
 import RecipeTime from './RecipeTime'
 import RecipeTitle from './RecipeTitle'
+import { useNotistack } from '~/app/_context/NotistackContext'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -176,6 +177,8 @@ export default memo(function Recipe(props: RecipeMainProps) {
   // navigation: Path name
   const pathName = usePathname()
 
+  const { showNotistack } = useNotistack()
+
   // State: Current Recipe Name
   const [currentRecipe, setCurrentRecipe] =
     useState<RecipeWithCreatedBy | null>(null)
@@ -250,10 +253,13 @@ export default memo(function Recipe(props: RecipeMainProps) {
     onSuccess: () => {
       console.log('Recipe name updated successfully')
 
+      // void refetchRecipe().then(() => {
+      //   void router.push(pathName, {
+      //     scroll: true,
+      //   })
+      // })
       void refetchRecipe().then(() => {
-        void router.push(pathName, {
-          scroll: true,
-        })
+        void showNotistack('บันทึกฉบับร่างแล้ว', 'success')
       })
     },
     onError: (error) => {
@@ -411,6 +417,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
                     isEditting={isEditting}
                     currentRecipe={currentRecipe}
                     refetchRecipe={refetchRecipe}
+                    isSaving={updateRecipe?.isPending}
                   />
                 )}
               </>

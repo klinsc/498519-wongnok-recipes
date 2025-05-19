@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import CloseIcon from '@mui/icons-material/Close'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew'
+import PublicIcon from '@mui/icons-material/Public'
+import PublicOffIcon from '@mui/icons-material/PublicOff'
 import SaveIcon from '@mui/icons-material/Save'
 import ShareIcon from '@mui/icons-material/Share'
 import { IconButton, Menu, MenuItem, Stack } from '@mui/material'
+import { RecipeStatus } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -18,9 +21,6 @@ import {
 import { useNotistack } from '~/app/_context/NotistackContext'
 import { api } from '~/trpc/react'
 import type { RecipeWithCreatedBy } from '.'
-import PublicIcon from '@mui/icons-material/Public'
-import PublicOffIcon from '@mui/icons-material/PublicOff'
-import { RecipeStatus } from '@prisma/client'
 
 interface RecipeActionsProps {
   handleDeleteRecipeDraft: () => void
@@ -30,6 +30,7 @@ interface RecipeActionsProps {
   isEditting: boolean
   currentRecipe: RecipeWithCreatedBy | null
   refetchRecipe: () => void
+  isSaving: boolean
 }
 
 export default memo(function RecipeActions({
@@ -40,6 +41,7 @@ export default memo(function RecipeActions({
   isEditting,
   currentRecipe,
   refetchRecipe,
+  isSaving,
 }: RecipeActionsProps) {
   // navigation: Router
   const router = useRouter()
@@ -125,9 +127,10 @@ export default memo(function RecipeActions({
           <IconButton
             aria-label="close recipe name"
             onClick={handleCancel}>
-            <CloseIcon />
+            <PowerSettingsNewIcon />
           </IconButton>
           <IconButton
+            disabled={isSaving}
             aria-label="save recipe name"
             onClick={handleSave}>
             <SaveIcon />
