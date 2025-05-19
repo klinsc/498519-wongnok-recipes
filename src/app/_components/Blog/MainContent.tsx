@@ -314,7 +314,6 @@ export default function MainContent() {
             width: { xs: '100%', md: 'fit-content' },
             overflow: 'auto',
           }}>
-          <Search />
           <IconButton size="small" aria-label="RSS feed">
             <RssFeedRoundedIcon />
           </IconButton>
