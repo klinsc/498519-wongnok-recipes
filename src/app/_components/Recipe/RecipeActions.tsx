@@ -5,7 +5,13 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import SaveIcon from '@mui/icons-material/Save'
 import ShareIcon from '@mui/icons-material/Share'
-import { IconButton, Menu, MenuItem, Stack } from '@mui/material'
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  SpeedDial,
+  Stack,
+} from '@mui/material'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -18,6 +24,8 @@ import {
 import { useNotistack } from '~/app/_context/NotistackContext'
 import { api } from '~/trpc/react'
 import type { RecipeWithCreatedBy } from '.'
+import SpeedDialIcon from '@mui/material/SpeedDialIcon'
+import SpeedDialAction from '@mui/material/SpeedDialAction'
 
 interface RecipeActionsProps {
   handleDeleteRecipeDraft: () => void
@@ -93,72 +101,95 @@ export default memo(function RecipeActions({
   })
 
   return (
-    <Stack direction="row" spacing={1}>
-      {isEditting ? (
-        <>
-          <IconButton
-            aria-label="save recipe name"
-            onClick={handleSave}>
-            <SaveIcon />
-          </IconButton>
-          <IconButton
-            aria-label="close recipe name"
-            onClick={handleCancel}>
-            <CloseIcon />
-          </IconButton>
-        </>
-      ) : (
-        <>
-          <IconButton
-            onClick={() => {
-              // Check if the user is logged in
-              if (!session?.user.id) {
-                showNotistack('กรุณาเข้าสู่ระบบ', 'error')
+    <>
+      <Stack direction="row" spacing={1}>
+        {isEditting ? (
+          <>
+            <SpeedDial
+              sx={{
+                position: 'fixed',
+                bottom: 16,
+                right: 16,
+              }}
+              ariaLabel="SpeedDial basic example"
+              icon={<SpeedDialIcon />}>
+              <SpeedDialAction
+                icon={<SaveIcon />}
+                slotProps={{
+                  tooltip: {
+                    title: 'บันทึก',
+                    placement: 'left',
+                  },
+                }}
+                onClick={handleSave}
+              />
+              <SpeedDialAction
+                icon={<CloseIcon />}
+                slotProps={{
+                  tooltip: {
+                    title: 'ยกเลิก',
+                    placement: 'left',
+                  },
+                }}
+                onClick={handleCancel}
+              />
+            </SpeedDial>
+          </>
+        ) : (
+          <>
+            <IconButton
+              onClick={() => {
+                // Check if the user is logged in
+                if (!session?.user.id) {
+                  showNotistack('กรุณาเข้าสู่ระบบ', 'error')
 
-                return
+                  return
+                }
+
+                if (!currentRecipe) return
+                void likeRecipe({
+                  recipeId: currentRecipe.id,
+                })
+              }}
+              disabled={isOwner || isDeleteRecipeDraftPending}
+              aria-label="add to favorites">
+              {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </IconButton>
+            <IconButton
+              disabled={isOwner || isDeleteRecipeDraftPending}
+              aria-label="share">
+              <ShareIcon />
+            </IconButton>
+            <IconButton
+              disabled={!isOwner || isDeleteRecipeDraftPending}
+              id="draft-settings-button"
+              aria-controls={
+                open ? 'draft-settings-menu' : undefined
               }
-
-              if (!currentRecipe) return
-              void likeRecipe({
-                recipeId: currentRecipe.id,
-              })
-            }}
-            disabled={isOwner || isDeleteRecipeDraftPending}
-            aria-label="add to favorites">
-            {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-          </IconButton>
-          <IconButton
-            disabled={isOwner || isDeleteRecipeDraftPending}
-            aria-label="share">
-            <ShareIcon />
-          </IconButton>
-          <IconButton
-            disabled={!isOwner || isDeleteRecipeDraftPending}
-            id="draft-settings-button"
-            aria-controls={open ? 'draft-settings-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}
-            sx={{ color: '#000' }}>
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            id="draft-settings-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              'aria-labelledby': 'draft-settings-button',
-            }}>
-            <MenuItem onClick={handleEdit}>แก้ไขสูตร</MenuItem>
-            <MenuItem
-              disabled={isDeleteRecipeDraftPending}
-              onClick={handleDeleteRecipeDraft}>
-              ลบ
-            </MenuItem>
-          </Menu>
-        </>
-      )}
-    </Stack>
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+              sx={{ color: '#000' }}>
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              id="draft-settings-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'draft-settings-button',
+              }}>
+              <MenuItem onClick={handleEdit}>แก้ไขสูตร</MenuItem>
+              <MenuItem
+                disabled={isDeleteRecipeDraftPending}
+                onClick={handleDeleteRecipeDraft}>
+                ลบ
+              </MenuItem>
+            </Menu>
+          </>
+        )}
+      </Stack>
+    </>
   )
 })
