@@ -12,9 +12,14 @@ import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useCallback, useState, type FormEvent } from 'react'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FormEvent,
+} from 'react'
 import AppTheme from '~/app/_components/shared-theme/AppTheme'
 import ForgotPassword from '~/app/_components/Signin/ForgotPassword'
 import NotiAlert from '../NotiAlert'
@@ -65,8 +70,16 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function Main(props: {
   disableCustomTheme?: boolean
 }) {
+  // Session
+  const { data: session } = useSession()
+
   // router
   const router = useRouter()
+
+  // Searchparams
+  const searchParams = useSearchParams()
+  const QError = searchParams.get('error')
+  const QCode = searchParams.get('code')
 
   const [emailError, setEmailError] = useState(false)
   const [emailErrorMessage, setEmailErrorMessage] = useState('')
@@ -78,6 +91,34 @@ export default function Main(props: {
   const handleClose = () => {
     setOpen(false)
   }
+
+  // Effect: if session, go to home
+  useEffect(() => {
+    if (session) {
+      // Show a success message
+      setNotistack({
+        open: true,
+        message: 'Signing in...',
+        severity: 'success',
+      })
+
+      // Redirect to the home page after successful sign-in
+      setTimeout(() => {
+        // Send the user to the login page
+        void router.push('/')
+      }, 3000) // 3 seconds delay
+    }
+  }, [router, session])
+
+  // Effect: if error, show error message
+  useEffect(() => {
+    if (QError && QCode) {
+      setPasswordError(true)
+      setPasswordErrorMessage(
+        'Invalid email or password. Please try again.',
+      )
+    }
+  }, [QCode, QError])
 
   // callback: handleCloseNotistack
   const handleCloseNotistack = useCallback(() => {
@@ -107,22 +148,10 @@ export default function Main(props: {
       // Add nextauth credential login here
       try {
         await signIn('credentials', {
-          redirect: false,
+          // redirect: false,
           email: data.get('email'),
           password: data.get('password'),
         })
-
-        setNotistack({
-          open: true,
-          message: 'Signing in...',
-          severity: 'success',
-        })
-
-        // Redirect to the home page after successful sign-in
-        setTimeout(() => {
-          // Send the user to the login page
-          void router.push('/')
-        }, 3000) // 3 seconds delay
       } catch (error) {
         console.error('Error signing in:', error)
 
@@ -133,7 +162,7 @@ export default function Main(props: {
         })
       }
     },
-    [emailError, passwordError, router],
+    [emailError, passwordError],
   )
 
   const validateInputs = () => {
@@ -233,7 +262,6 @@ export default function Main(props: {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
