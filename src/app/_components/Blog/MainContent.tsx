@@ -277,7 +277,7 @@ export default function MainContent() {
   // State: pagination
   const [pagination, setPagination] = React.useState({
     page: 0,
-    limit: 2,
+    limit: 6,
     total: -1,
   })
 
@@ -330,6 +330,19 @@ export default function MainContent() {
           overflow: 'auto',
         }}>
         <FilterChips />
+        <TablePagination
+          component="div"
+          count={pagination.total}
+          page={pagination.page}
+          onPageChange={(_event, newPage: number) => {
+            setPagination((prev) => ({
+              ...prev,
+              page: newPage,
+            }))
+          }}
+          rowsPerPage={pagination.limit}
+          rowsPerPageOptions={[]}
+        />
       </Box>
 
       {/* One page take max 6 recipes */}
@@ -430,7 +443,7 @@ export default function MainContent() {
             page: newPage,
           }))
         }}
-        rowsPerPage={2}
+        rowsPerPage={pagination.limit}
         rowsPerPageOptions={[]}
       />
     </Box>
