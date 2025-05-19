@@ -103,9 +103,12 @@ export default function ChefRecipe(props: ChefRecipeProps) {
                       </Grid>
                     </>
                   ) : (
-                    <>
+                    <Grid
+                      size={{
+                        xs: 12,
+                      }}>
                       <Recipe userID={userID} recipeID={recipeID} />
-                    </>
+                    </Grid>
                   )}
                 </Grid>
               }
