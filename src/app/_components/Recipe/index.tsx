@@ -127,16 +127,27 @@ export default memo(function Recipe(props: RecipeMainProps) {
   } | null>(null)
 
   // trpc: get recipe by id
-  const { data: recipe, refetch: refetchRecipe } =
-    api.recipe.getById.useQuery(
-      {
-        recipeId: props.recipeID,
-      },
-      {
-        enabled: Boolean(props.recipeID),
-        refetchOnWindowFocus: false,
-      },
-    )
+  const {
+    data: recipe,
+    refetch: refetchRecipe,
+    error: recipeError,
+  } = api.recipe.getById.useQuery(
+    {
+      recipeId: props.recipeID,
+    },
+    {
+      enabled: Boolean(props.recipeID),
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  )
+  // Effect: handle recipe error
+  useEffect(() => {
+    if (recipeError?.message === 'Unauthorized') {
+      void router.push('/not-found')
+    }
+  }, [recipeError, router])
+
   // effect: set current recipe name
   useEffect(() => {
     if (recipe) {

@@ -90,7 +90,8 @@ export const recipeRouter = createTRPCRouter({
   getById: publicProcedure
     .input(z.object({ recipeId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const recipeName = await ctx.db.recipe.findUnique({
+      // If this recipe is owned by the user, return all data, if not, return only status of PUBLISHED
+      const recipe = await ctx.db.recipe.findUnique({
         where: {
           id: input.recipeId,
         },
@@ -99,8 +100,19 @@ export const recipeRouter = createTRPCRouter({
           difficulty: true,
         },
       })
+      if (!recipe) {
+        throw new Error('Recipe not found')
+      }
 
-      return recipeName
+      if (recipe.createdById === ctx.session?.user.id) {
+        return recipe
+      }
+
+      if (recipe.status === RecipeStatus.PUBLISHED) {
+        return recipe
+      }
+
+      throw new Error('Unauthorized')
     }),
 
   update: protectedProcedure
