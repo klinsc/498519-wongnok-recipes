@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import { useSession } from 'next-auth/react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { api } from '~/trpc/react'
 import type { Ingrediants } from '../Recipe'
 import DraftCard from './DraftCard'
@@ -116,6 +116,12 @@ export default function RecipeList({
     setValue(newValue)
   }
 
+  // Memo: isOwner
+  const isOwner = useMemo(
+    () => session?.user?.id === userID,
+    [session?.user?.id, userID],
+  )
+
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -125,7 +131,10 @@ export default function RecipeList({
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example">
-          <Tab label="สูตรของฉัน" {...a11yProps(0)} />
+          <Tab
+            label={`สูตรของ${isOwner ? 'ฉัน' : 'เชฟ'}`}
+            {...a11yProps(0)}
+          />
           <Tab label="ที่บันทึกไว้" {...a11yProps(1)} />
           <Tab label="อื่นๆ" {...a11yProps(2)} />
         </Tabs>
