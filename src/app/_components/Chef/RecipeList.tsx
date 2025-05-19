@@ -138,7 +138,14 @@ export default function RecipeList({
             </Typography>
             <Grid container spacing={1}>
               {drafts?.map((recipe) => (
-                <Grid key={recipe.id}>
+                <Grid
+                  key={recipe.id}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4,
+                    lg: 3,
+                  }}>
                   <DraftCard
                     key={recipe.id}
                     recipe={recipe}
@@ -173,7 +180,14 @@ export default function RecipeList({
                 },
               }
               return (
-                <Grid key={recipe.id}>
+                <Grid
+                  key={recipe.id}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4,
+                    lg: 3,
+                  }}>
                   <PublishedCard
                     key={recipe.id}
                     recipe={safeRecipe}
