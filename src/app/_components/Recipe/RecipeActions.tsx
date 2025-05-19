@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew'
 import PublicIcon from '@mui/icons-material/Public'
@@ -18,7 +16,7 @@ import {
   useState,
   type MouseEvent,
 } from 'react'
-import { useNotistack } from '~/app/_context/NotistackContext'
+import LikeButton from '~/app/_components/LikeButton'
 import { api } from '~/trpc/react'
 import type { RecipeWithCreatedBy } from '.'
 
@@ -64,8 +62,6 @@ export default memo(function RecipeActions({
     setAnchorEl(null)
   }, [])
 
-  const { showNotistack } = useNotistack()
-
   // Callback: handleEdit
   const handleEdit = useCallback(() => {
     void router.push(`${pathName}?editing=true`, {
@@ -94,11 +90,12 @@ export default memo(function RecipeActions({
     )
 
   // Trpc: like recipe
-  const { mutateAsync: likeRecipe } = api.recipe.like.useMutation({
-    onSuccess: () => {
-      void refetchIsLiked()
-    },
-  })
+  const { mutateAsync: likeRecipe, isPending: isLikePending } =
+    api.recipe.like.useMutation({
+      onSuccess: () => {
+        void refetchIsLiked()
+      },
+    })
 
   // Trpc: publish recipe
   const { mutateAsync: publishRecipe } =
@@ -160,7 +157,7 @@ export default memo(function RecipeActions({
         </>
       ) : (
         <>
-          <IconButton
+          {/* <IconButton
             onClick={() => {
               // Check if the user is logged in
               if (!session?.user.id) {
@@ -177,7 +174,14 @@ export default memo(function RecipeActions({
             disabled={isOwner || isDeleteRecipeDraftPending}
             aria-label="add to favorites">
             {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-          </IconButton>
+          </IconButton> */}
+          <LikeButton
+            isLiked={isLiked || false}
+            isOwner={isOwner}
+            isPending={isLikePending}
+            currentRecipe={currentRecipe}
+            likeRecipe={likeRecipe}
+          />
           <IconButton
             disabled={isOwner || isDeleteRecipeDraftPending}
             aria-label="share">

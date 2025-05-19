@@ -1,7 +1,7 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ShareIcon from '@mui/icons-material/Share'
-import { Menu, MenuItem } from '@mui/material'
+import { Box, Menu, MenuItem } from '@mui/material'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
@@ -199,9 +199,14 @@ export default function PublishedCard(props: RecipeCardProps) {
           sx={{
             marginBottom: 2,
           }}>
-          <IconButton aria-label="share">
-            <ShareIcon />
-          </IconButton>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <IconButton aria-label="share">
+              <ShareIcon />
+            </IconButton>
+            <IconButton aria-label="share">
+              <ShareIcon />
+            </IconButton>
+          </Box>
           <ExpandMore
             expand={expanded}
             onClick={handleExpandClick}
