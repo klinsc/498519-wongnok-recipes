@@ -3,7 +3,7 @@ import { Avatar, Box, Skeleton, Typography } from '@mui/material'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 
-export default function Chef({ userID }: { userID: string }) {
+export default function Profile({ userID }: { userID: string }) {
   const {
     data: user,
     isLoading: isUserLoading,

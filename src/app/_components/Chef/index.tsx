@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import AppAppBar from '../Blog/AppAppBar'
 import Footer from '../Blog/Footer'
 import Breadcrumb from '../Breadcrumb'
-import Chef from './Chef'
+import Profile from './Profile'
 import RecipeList from './RecipeList'
 import Recipe from '../Recipe'
 import dynamic from 'next/dynamic'
@@ -14,7 +14,7 @@ import { NotistackProvider } from '~/app/_context/NotistackContext'
 import { useSession } from 'next-auth/react'
 import { useMemo } from 'react'
 
-interface ChefRecipeProps {
+interface ChefProps {
   userID: string
   recipeID: string
 }
@@ -23,7 +23,7 @@ const AppTheme = dynamic(() => import('../shared-theme/AppTheme'), {
   ssr: false,
 })
 
-export default function ChefRecipe(props: ChefRecipeProps) {
+export default function Chef(props: ChefProps) {
   // Router
   const router = useRouter()
 
@@ -90,7 +90,7 @@ export default function ChefRecipe(props: ChefRecipeProps) {
                         size={{
                           xs: 12,
                         }}>
-                        <Chef userID={userID} />
+                        <Profile userID={userID} />
                       </Grid>
                       <Grid
                         size={{
