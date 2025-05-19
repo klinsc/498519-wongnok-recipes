@@ -2,8 +2,12 @@
 import { Avatar, Box, Skeleton, Typography } from '@mui/material'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
+import { useSession } from 'next-auth/react'
+import { useMemo } from 'react'
 
 export default function Profile({ userID }: { userID: string }) {
+  const { data: session } = useSession()
+
   const {
     data: user,
     isLoading: isUserLoading,
@@ -16,6 +20,12 @@ export default function Profile({ userID }: { userID: string }) {
       enabled: !!userID,
       refetchOnWindowFocus: false,
     },
+  )
+
+  // Memo: isOwner
+  const isOwner = useMemo(
+    () => session?.user?.id === userID,
+    [session?.user?.id, userID],
   )
 
   return (
@@ -80,7 +90,9 @@ export default function Profile({ userID }: { userID: string }) {
               fontSize: '1rem',
               color: '#666',
             }}>
-            เรามาอวดสูตรอาหารของคุณดีกว่า
+            {isOwner
+              ? 'เรามาอวดสูตรอาหารของคุณดีกว่า'
+              : 'มาดูสูตรอาหารของเชฟกันเถอะ'}
           </Typography>
         </>
       )}
