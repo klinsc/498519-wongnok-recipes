@@ -87,10 +87,32 @@ export default function AppAppBar() {
                 justifyContent: 'flex-start',
               }}>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <Button variant="text" color="info" size="small">
+                <Button
+                  variant="text"
+                  color="info"
+                  size="small"
+                  onClick={() => router.push('/')}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                    },
+                  }}>
                   หน้าหลัก
                 </Button>
-                <Button variant="text" color="info" size="small">
+                <Button
+                  variant="text"
+                  color="info"
+                  size="small"
+                  onClick={() =>
+                    router.push(
+                      `/chef/${session?.user?.id}/recipe/all`,
+                    )
+                  }
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                    },
+                  }}>
                   สูตรของฉัน
                 </Button>
               </Box>
