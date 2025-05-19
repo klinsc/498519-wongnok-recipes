@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import { Box } from '@mui/material'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
-import { useEffect } from 'react'
+import Image from 'next/image'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -20,7 +21,7 @@ const VisuallyHiddenInput = styled('input')({
 export default function ImageUploader({
   setPreparedFile,
   preparedFile,
-  handleUpload,
+  // handleUpload,
 }: {
   setPreparedFile: (
     fileObj: { file: File; fileExtension: string } | null,
@@ -29,10 +30,10 @@ export default function ImageUploader({
     file: File
     fileExtension: string
   } | null
-  handleUpload: (fileObj: {
-    file: File
-    fileExtension: string
-  }) => void
+  // handleUpload: (fileObj: {
+  //   file: File
+  //   fileExtension: string
+  // }) => void
 }) {
   // Callback: handleChange
   const handleChange = (
@@ -79,31 +80,49 @@ export default function ImageUploader({
     }
   }
 
-  // Effect: handleUpload on file change
-  useEffect(() => {
-    if (preparedFile) {
-      console.log('File changed:', preparedFile)
-      handleUpload(preparedFile)
-    }
-  }, [preparedFile, handleUpload])
+  // // Effect: handleUpload on file change
+  // useEffect(() => {
+  //   if (preparedFile) {
+  //     console.log('File changed:', preparedFile)
+  //     handleUpload(preparedFile)
+  //   }
+  // }, [preparedFile, handleUpload])
 
   // Display the selected image in image preview
   return (
-    <Button
-      sx={{
-        position: 'absolute',
-      }}
-      component="label"
-      role={undefined}
-      variant="contained"
-      tabIndex={-1}
-      startIcon={<CloudUploadIcon />}>
-      อัพโหลดรูปภาพใหม่
-      <VisuallyHiddenInput
-        type="file"
-        onChange={handleChange}
-        accept="image/*"
+    <Box
+      display={'flex'}
+      flexDirection={'column'}
+      justifyItems={'center'}
+      alignItems={'center'}>
+      <Image
+        src={
+          preparedFile
+            ? URL.createObjectURL(preparedFile.file)
+            : '/images/placeholder.png'
+        }
+        alt="ตัวอย่างรูปภาพใหม่"
+        width={preparedFile ? 200 : 100}
+        height={preparedFile ? 200 : 50}
+        style={{
+          borderRadius: '8px',
+          marginBottom: '16px',
+          objectFit: 'cover',
+        }}
       />
-    </Button>
+      <Button
+        component="label"
+        role={undefined}
+        variant="contained"
+        tabIndex={-1}
+        startIcon={<CloudUploadIcon />}>
+        อัพโหลดรูปภาพใหม่
+        <VisuallyHiddenInput
+          type="file"
+          onChange={handleChange}
+          accept="image/*"
+        />
+      </Button>
+    </Box>
   )
 }

@@ -250,10 +250,10 @@ export default memo(function Recipe(props: RecipeMainProps) {
     onSuccess: () => {
       console.log('Recipe name updated successfully')
 
-      void refetchRecipe()
-
-      void router.push(pathName, {
-        scroll: true,
+      void refetchRecipe().then(() => {
+        void router.push(pathName, {
+          scroll: true,
+        })
       })
     },
     onError: (error) => {
@@ -316,10 +316,15 @@ export default memo(function Recipe(props: RecipeMainProps) {
   )
 
   // Callback: handleSave
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (currentRecipe) {
       debugger
-      void updateRecipe.mutateAsync({
+
+      if (preparedFile) {
+        await handleUpload(preparedFile)
+      }
+
+      await updateRecipe.mutateAsync({
         id: currentRecipe.id,
         name: currentRecipe.name,
         description: currentRecipe.description ?? '',
@@ -332,7 +337,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
         method: currentRecipe.method ?? '',
       })
     }
-  }, [currentRecipe, updateRecipe])
+  }, [currentRecipe, handleUpload, preparedFile, updateRecipe])
 
   // Callback: handleCancel
   const handleCancel = useCallback(() => {
@@ -352,6 +357,14 @@ export default memo(function Recipe(props: RecipeMainProps) {
     })
   }, [pathName, recipe?.name, router])
 
+  // Memo: isRecipeLoading
+  const isLoading = useMemo(() => {
+    if (isRecipeLoading || isRecipeFetching) {
+      return true
+    }
+    return false
+  }, [isRecipeLoading, isRecipeFetching])
+
   // Memo: image URL
   const imageURL = useMemo(() => {
     if (currentRecipe?.image) {
@@ -369,14 +382,6 @@ export default memo(function Recipe(props: RecipeMainProps) {
 
     return currentRecipe.status === RecipeStatus.PUBLISHED
   }, [currentRecipe])
-
-  // Memo: isRecipeLoading
-  const isLoading = useMemo(() => {
-    if (isRecipeLoading || isRecipeFetching) {
-      return true
-    }
-    return false
-  }, [isRecipeLoading, isRecipeFetching])
 
   return (
     <>
@@ -487,7 +492,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
               <ImageUploader
                 preparedFile={preparedFile}
                 setPreparedFile={setPreparedFile}
-                handleUpload={handleUpload}
+                // handleUpload={handleUpload}
               />
             </Box>
           )}

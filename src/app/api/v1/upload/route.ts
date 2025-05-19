@@ -20,7 +20,7 @@ export const POST = async (req: Request) => {
     if (!recipeId)
       return new Response('No recipe ID provided', { status: 400 })
 
-    const newFileName = `${recipeId}.${fileExtension}`
+    const newFileName = `${recipeId}-${Date.now()}.${fileExtension}`
 
     console.log('Received file:', file)
     console.log('Received file name:', newFileName)
