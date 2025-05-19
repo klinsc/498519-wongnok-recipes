@@ -460,15 +460,16 @@ export default memo(function Recipe(props: RecipeMainProps) {
           />
           {imageURL && (
             <CardMedia
+              id="recipe-image"
               loading="lazy"
               component="img"
-              height="194"
+              height="300"
               image={imageURL || ''}
               alt="image of the recipe"
-              sx={{
-                objectFit: 'contain',
-                padding: 2,
-              }}
+              // sx={{
+              //   objectFit: 'cover',
+              //   padding: 2,
+              // }}
             />
           )}
 
