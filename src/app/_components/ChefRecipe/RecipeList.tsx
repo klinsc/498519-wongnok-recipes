@@ -99,13 +99,13 @@ export default function RecipeList({
   // trpc: recipe get all published
   const {
     data: publishedRecipes,
-    refetch: refetchPublishedRecipes,
+    // refetch: refetchPublishedRecipes,
   } = api.recipe.getPublisedByUserId.useQuery(
     {
       userID,
     },
     {
-      enabled: userID === session?.user.id,
+      enabled: !!userID && !!recipeID,
       refetchOnWindowFocus: false,
     },
   )

@@ -1,5 +1,5 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { Menu, MenuItem } from '@mui/material'
+import { Menu, MenuItem, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import IconButton from '@mui/material/IconButton'
@@ -7,7 +7,12 @@ import type { Recipe } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useState, type MouseEvent } from 'react'
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type MouseEvent,
+} from 'react'
 import { api } from '~/trpc/react'
 
 export interface MyDraftRecipeProps {
@@ -73,6 +78,17 @@ export default function MyDraftRecipe(props: MyDraftRecipeProps) {
     )
   }, [props.recipe.id, session?.user?.id, router])
 
+  // Memo: recipe URL
+  const recipeURL = useMemo(() => {
+    if (!!props.recipe?.createdById && !!props.recipe.id) {
+      // Get current domain
+      const currentDomain = window.location.origin
+
+      return `${currentDomain}/chef/${props.recipe?.createdById}/recipe/${props.recipe.id}`
+    }
+    return null
+  }, [props.recipe?.createdById, props.recipe.id])
+
   return (
     <>
       <Card sx={{ maxWidth: 345, backgroundColor: '#f5f5f5' }}>
@@ -111,7 +127,26 @@ export default function MyDraftRecipe(props: MyDraftRecipeProps) {
               </Menu>
             </>
           }
-          title={props.recipe.name || 'ชื่อสูตรอาหาร'}
+          title={
+            <Typography
+              variant="h6"
+              component="div"
+              onClick={() => {
+                if (recipeURL) {
+                  router.push(recipeURL)
+                }
+              }}
+              sx={{
+                cursor: 'pointer',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}>
+              {props.recipe.name || 'ชื่อสูตรอาหาร'}
+            </Typography>
+          }
           subheader={
             dayjs(props.recipe.createdAt).format(
               'DD/MM/YYYY HH:mm:ss',

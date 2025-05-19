@@ -1,6 +1,7 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import ShareIcon from '@mui/icons-material/Share'
+import { Menu, MenuItem } from '@mui/material'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
@@ -12,11 +13,18 @@ import IconButton, {
 } from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
-import { useCallback, useMemo, useState } from 'react'
-import type { RecipeWithCreatedBy } from '../Recipe'
 import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import {
+  useCallback,
+  useMemo,
+  useState,
+  type MouseEvent,
+} from 'react'
+import type { RecipeWithCreatedBy } from '../Recipe'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -54,12 +62,33 @@ export interface RecipeCardProps {
 }
 
 export default function PublishedRecipe(props: RecipeCardProps) {
+  // Router
+  const router = useRouter()
+
+  // Session
+  const { data: session } = useSession()
+
+  // State: expand
   const [expanded, setExpanded] = useState(false)
+
+  // State: Menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget)
+    },
+    [],
+  )
+  const handleClose = useCallback(() => {
+    setAnchorEl(null)
+  }, [])
 
   const handleExpandClick = useCallback(() => {
     setExpanded(!expanded)
   }, [expanded])
 
+  // Memo: image URL
   const imageURL = useMemo(() => {
     if (props.recipe?.image) {
       // Get current domain
@@ -70,17 +99,77 @@ export default function PublishedRecipe(props: RecipeCardProps) {
     return 'no image'
   }, [props.recipe?.image])
 
+  // Callback: edit recipe name
+  const handleEditRecipeDraft = useCallback(() => {
+    router.push(
+      `/chef/${session?.user?.id}/recipe/${props.recipe.id}?editing=true`,
+    )
+  }, [props.recipe.id, session?.user?.id, router])
+
+  // Memo: recipe URL
+  const recipeURL = useMemo(() => {
+    if (!!props.recipe?.createdById && !!props.recipe.id) {
+      // Get current domain
+      const currentDomain = window.location.origin
+
+      return `${currentDomain}/chef/${props.recipe?.createdById}/recipe/${props.recipe.id}`
+    }
+    return null
+  }, [props.recipe?.createdById, props.recipe.id])
+
   return (
     <>
       <Card sx={{ maxWidth: 345, backgroundColor: '#f5f5f5' }}>
         <CardHeader
           avatar={false}
           action={
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
-            </IconButton>
+            <>
+              <IconButton
+                id="draft-settings-button"
+                aria-controls={
+                  open ? 'draft-settings-menu' : undefined
+                }
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+                sx={{ color: '#000' }}>
+                <MoreVertIcon />
+              </IconButton>
+
+              <Menu
+                id="draft-settings-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'draft-settings-button',
+                }}>
+                <MenuItem onClick={handleEditRecipeDraft}>
+                  แก้ไขสูตร
+                </MenuItem>
+              </Menu>
+            </>
           }
-          title={props.recipe.name || 'ชื่อสูตรอาหาร'}
+          title={
+            <Typography
+              variant="h6"
+              component="div"
+              onClick={() => {
+                if (recipeURL) {
+                  router.push(recipeURL)
+                }
+              }}
+              sx={{
+                cursor: 'pointer',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}>
+              {props.recipe.name || 'ชื่อสูตรอาหาร'}
+            </Typography>
+          }
           subheader={dayjs(props.recipe.updatedAt)
             .tz('Asia/Bangkok')
             .format('DD/MM/YYYY HH:mm:ss')}
