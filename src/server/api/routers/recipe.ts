@@ -101,10 +101,18 @@ export const recipeRouter = createTRPCRouter({
         orderBy: {
           updatedAt: 'desc',
         },
-        skip: (input.page - 1) * input.limit,
+        // page start from 0
+        skip: input.page * input.limit,
         take: input.limit,
       })
-      return recipes
+
+      const total = await ctx.db.recipe.count({
+        where: {
+          status: RecipeStatus.PUBLISHED,
+        },
+      })
+
+      return { recipes, total, page: input.page, limit: input.limit }
     }),
 
   getById: publicProcedure

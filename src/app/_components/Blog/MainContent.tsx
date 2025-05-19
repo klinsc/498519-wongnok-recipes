@@ -2,6 +2,7 @@
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
+import { TablePagination } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import Box from '@mui/material/Box'
@@ -19,7 +20,7 @@ import dayjs from 'dayjs'
 import tz from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import * as React from 'react'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { api } from '~/trpc/react'
 
 dayjs.extend(utc)
@@ -275,15 +276,32 @@ export default function MainContent() {
 
   // State: pagination
   const [pagination, setPagination] = React.useState({
-    page: 1,
-    limit: 6,
+    page: 0,
+    limit: 2,
+    total: -1,
   })
 
   // Trpc: getAllPublisheds
-  const { data: publishedRecipes } =
+  const { data: allPublisheds } =
     api.recipe.getAllPublisheds.useQuery(pagination, {
       refetchOnWindowFocus: false,
     })
+  // Effect: set pagination on data change
+  useEffect(() => {
+    if (allPublisheds) {
+      setPagination((prev) => ({
+        ...prev,
+        total: allPublisheds.total,
+      }))
+    }
+  }, [allPublisheds])
+  // Memo: publishedRecipes
+  const publishedRecipes = useMemo(() => {
+    if (allPublisheds) {
+      return allPublisheds.recipes
+    }
+    return []
+  }, [allPublisheds])
 
   // Memo: Get current domain
   const currentDomain = useMemo(() => {
@@ -401,6 +419,20 @@ export default function MainContent() {
           )}
         </Grid>
       </Grid>
+
+      <TablePagination
+        component="div"
+        count={pagination.total}
+        page={pagination.page}
+        onPageChange={(_event, newPage: number) => {
+          setPagination((prev) => ({
+            ...prev,
+            page: newPage,
+          }))
+        }}
+        rowsPerPage={2}
+        rowsPerPageOptions={[]}
+      />
     </Box>
   )
 }
