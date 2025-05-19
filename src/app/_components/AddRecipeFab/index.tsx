@@ -2,7 +2,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { Fab } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 
 export default memo(function AddRecipeFab() {
   // Router
@@ -11,16 +11,19 @@ export default memo(function AddRecipeFab() {
   // Session
   const { data: session } = useSession()
 
+  // Callback: handle click
+  const handleClick = useCallback(() => {
+    if (!session) {
+      router.push('/signin')
+      return
+    }
+
+    router.push(`/chef/${session?.user?.id}/recipe/new`)
+  }, [router, session])
+
   return (
     <Fab
-      onClick={() => {
-        if (!session) {
-          router.push('/signin')
-          return
-        }
-
-        router.push(`/chef/${session?.user?.id}/recipe/new`)
-      }}
+      onClick={() => handleClick()}
       variant="extended"
       sx={{
         backgroundColor: '#FFFFFF',
