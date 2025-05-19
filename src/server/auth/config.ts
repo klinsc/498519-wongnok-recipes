@@ -1,4 +1,8 @@
-import { type DefaultSession, type NextAuthConfig } from 'next-auth'
+import {
+  CredentialsSignin,
+  type DefaultSession,
+  type NextAuthConfig,
+} from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { env } from '~/env'
 import { db } from '../db'
@@ -22,6 +26,10 @@ declare module 'next-auth' {
   //   // ...other properties
   //   // role: UserRole;
   // }
+}
+
+class AuthorizationError extends CredentialsSignin {
+  code = 'AuthorizationError'
 }
 
 /**
@@ -53,7 +61,8 @@ export const authConfig = {
         if (!user) {
           // throw new Error('No user found with the email')
           console.error('No user found with the email')
-          return null
+          // throw new Error('InvalidCredentials')
+          throw new AuthorizationError()
         }
 
         return user
