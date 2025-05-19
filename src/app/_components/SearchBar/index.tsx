@@ -7,7 +7,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 export default function SearchBar() {
   return (
     <FormControl
-      sx={{ width: { xs: '80%', md: '80%' } }}
+      sx={{ width: { xs: '60%', md: '60%' } }}
       variant="outlined">
       <OutlinedInput
         size="small"
