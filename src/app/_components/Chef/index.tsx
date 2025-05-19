@@ -1,18 +1,17 @@
 'use client'
 
-import AddIcon from '@mui/icons-material/Add'
-import { Container, CssBaseline, Fab, Grid } from '@mui/material'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Container, CssBaseline, Grid } from '@mui/material'
+import dynamic from 'next/dynamic'
+import { useSearchParams } from 'next/navigation'
+import { useMemo } from 'react'
+import { NotistackProvider } from '~/app/_context/NotistackContext'
+import AddRecipeFab from '../AddRecipeFab'
 import AppAppBar from '../Blog/AppAppBar'
 import Footer from '../Blog/Footer'
 import Breadcrumb from '../Breadcrumb'
+import Recipe from '../Recipe'
 import Profile from './Profile'
 import RecipeList from './RecipeList'
-import Recipe from '../Recipe'
-import dynamic from 'next/dynamic'
-import { NotistackProvider } from '~/app/_context/NotistackContext'
-import { useSession } from 'next-auth/react'
-import { useMemo } from 'react'
 
 interface ChefProps {
   userID: string
@@ -24,9 +23,6 @@ const AppTheme = dynamic(() => import('../shared-theme/AppTheme'), {
 })
 
 export default function Chef(props: ChefProps) {
-  // Router
-  const router = useRouter()
-
   // Searchparams
   const searchParams = useSearchParams()
   const QEditing = searchParams.get('editing')
@@ -34,9 +30,6 @@ export default function Chef(props: ChefProps) {
     () => (QEditing === 'true' ? true : false),
     [QEditing],
   )
-
-  // Session
-  const { data: session } = useSession()
 
   const { userID, recipeID } = props
 
@@ -57,28 +50,7 @@ export default function Chef(props: ChefProps) {
               gap: 4,
             }}>
             <NotistackProvider>
-              {!isEditing && (
-                <Fab
-                  onClick={() => {
-                    if (!session) {
-                      router.push('/signin')
-                      return
-                    }
-
-                    router.push(`/chef/${userID}/recipe/new`)
-                  }}
-                  variant="extended"
-                  sx={{
-                    backgroundColor: '#FFFFFF',
-                    position: 'fixed',
-                    bottom: 16,
-                    right: 16,
-                    zIndex: 1000, // Ensure it's above other elements
-                  }}>
-                  <AddIcon sx={{ mr: 1 }} />
-                  เพิ่มสูตรของคุณ
-                </Fab>
-              )}
+              {!isEditing && <AddRecipeFab />}
               <Breadcrumb />
               {
                 <Grid container spacing={2}>

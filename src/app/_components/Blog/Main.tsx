@@ -8,6 +8,7 @@ import AppAppBar from './AppAppBar'
 import MainContent from './MainContent'
 import Footer from './Footer'
 import Breadcrumb from '../Breadcrumb'
+import AddRecipeFab from '../AddRecipeFab'
 
 export default function Blog(props: {
   disableCustomTheme?: boolean
@@ -16,6 +17,7 @@ export default function Blog(props: {
     <AppTheme {...props}>
       <>
         <CssBaseline />
+        <AddRecipeFab />
 
         <AppAppBar />
         <Container
