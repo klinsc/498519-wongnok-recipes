@@ -134,6 +134,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
       },
       {
         enabled: Boolean(props.recipeID),
+        refetchOnWindowFocus: false,
       },
     )
   // effect: set current recipe name
@@ -279,7 +280,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
   }, [pathName, recipe?.name, router])
 
   // Memo: image URL
-  const imageUrl = useMemo(() => {
+  const imageURL = useMemo(() => {
     if (currentRecipe?.image) {
       // Get current domain
       const currentDomain = window.location.origin
@@ -368,12 +369,12 @@ export default memo(function Recipe(props: RecipeMainProps) {
             </Stack>
           }
         />
-        {imageUrl && (
+        {imageURL && (
           <CardMedia
             loading="lazy"
             component="img"
             height="194"
-            image={imageUrl || ''}
+            image={imageURL || ''}
             alt="image of the recipe"
             sx={{
               objectFit: 'contain',

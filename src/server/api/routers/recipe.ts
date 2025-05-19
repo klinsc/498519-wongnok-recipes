@@ -45,6 +45,22 @@ export const recipeRouter = createTRPCRouter({
     return recipe
   }),
 
+  getPublisedByUserId: publicProcedure
+    .input(z.object({ userID: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const recipes = await ctx.db.recipe.findMany({
+        where: {
+          createdById: input.userID,
+          status: RecipeStatus.PUBLISHED,
+        },
+        include: {
+          createdBy: true,
+          difficulty: true,
+        },
+      })
+      return recipes
+    }),
+
   delete: protectedProcedure
     .input(z.object({ recipeId: z.string() }))
     .mutation(async ({ ctx, input }) => {

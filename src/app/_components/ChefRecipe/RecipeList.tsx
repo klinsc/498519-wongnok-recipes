@@ -1,13 +1,15 @@
+import { Grid, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
-import { useState } from 'react'
-import MyRecipeCard from './MyRecipeCard'
-import { api } from '~/trpc/react'
-import MyDraftRecipe from './MyDraftRecipe'
-import { Grid, Typography } from '@mui/material'
-import NewRecipe from './NewRecipe'
 import { useSession } from 'next-auth/react'
+import { useState } from 'react'
+import { api } from '~/trpc/react'
+import type { Ingrediants } from '../Recipe'
+import MyDraftRecipe from './MyDraftRecipe'
+import MyRecipeCard from './MyRecipeCard'
+import NewRecipe from './NewRecipe'
+import PublishedRecipe from './PublishedRecipe'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -87,11 +89,26 @@ export default function RecipeList({
 
   const [value, setValue] = useState(0)
 
-  // trpc: recipe get all
+  // trpc: recipe get all drafts
   const { data: drafts, refetch: refetchDrafts } =
     api.recipe.getMyDrafts.useQuery(undefined, {
       enabled: userID === session?.user.id,
+      refetchOnWindowFocus: false,
     })
+
+  // trpc: recipe get all published
+  const {
+    data: publishedRecipes,
+    refetch: refetchPublishedRecipes,
+  } = api.recipe.getPublisedByUserId.useQuery(
+    {
+      userID,
+    },
+    {
+      enabled: userID === session?.user.id,
+      refetchOnWindowFocus: false,
+    },
+  )
 
   const handleChange = (
     event: React.SyntheticEvent,
@@ -139,12 +156,37 @@ export default function RecipeList({
             สูตรที่เผยแพร่แล้ว
           </Typography>
         )}
-        <Grid container>
+        <Grid container spacing={1}>
           {RECIPE_SAMPLES.map((recipe) => (
             <Grid key={recipe.id}>
               <MyRecipeCard key={recipe.id} recipe={recipe} />
             </Grid>
           ))}
+          {publishedRecipes &&
+            publishedRecipes?.length > 0 &&
+            publishedRecipes?.map((recipe) => {
+              // Ensure ingredients is not null and is of correct type
+              // Ensure difficulty is not null (provide a fallback if needed)
+              const safeRecipe = {
+                ...recipe,
+                ingredients:
+                  (recipe.ingredients as Ingrediants) ?? {},
+                difficulty: recipe.difficulty ?? {
+                  name: 'Unknown',
+                  id: 'unknown',
+                  createdById: null,
+                  index: 0,
+                },
+              }
+              return (
+                <Grid key={recipe.id}>
+                  <PublishedRecipe
+                    key={recipe.id}
+                    recipe={safeRecipe}
+                  />
+                </Grid>
+              )
+            })}
         </Grid>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>

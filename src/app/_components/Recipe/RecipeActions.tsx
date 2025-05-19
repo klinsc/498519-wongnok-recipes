@@ -87,6 +87,7 @@ export default memo(function RecipeActions({
       },
       {
         enabled: !!session?.user.id,
+        refetchOnWindowFocus: false,
       },
     )
 
