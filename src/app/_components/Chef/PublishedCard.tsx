@@ -178,7 +178,11 @@ export default function PublishedCard(props: RecipeCardProps) {
           component="img"
           height="194"
           image={imageURL}
-          alt="Paella dish"
+          alt="recipe image"
+          sx={{
+            marginTop: 2,
+            marginBottom: 2,
+          }}
         />
         <CardContent>
           <Typography
