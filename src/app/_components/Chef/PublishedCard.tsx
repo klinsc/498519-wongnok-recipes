@@ -25,6 +25,7 @@ import {
   type MouseEvent,
 } from 'react'
 import type { RecipeWithCreatedBy } from '../Recipe'
+import LikeButton from '../LikeButton'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -117,6 +118,12 @@ export default function PublishedCard(props: RecipeCardProps) {
     return null
   }, [props.recipe?.createdById, props.recipe.id])
 
+  // Memo: isOwner
+  const isOwner = useMemo(
+    () => props.recipe?.createdById === session?.user.id,
+    [props.recipe?.createdById, session?.user.id],
+  )
+
   return (
     <>
       <Card sx={{ maxWidth: 345, backgroundColor: '#f5f5f5' }}>
@@ -200,9 +207,12 @@ export default function PublishedCard(props: RecipeCardProps) {
             marginBottom: 2,
           }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton aria-label="share">
-              <ShareIcon />
-            </IconButton>
+            <LikeButton
+              isOwner={isOwner}
+              currentRecipe={{
+                id: props.recipe.id,
+              }}
+            />
             <IconButton aria-label="share">
               <ShareIcon />
             </IconButton>
