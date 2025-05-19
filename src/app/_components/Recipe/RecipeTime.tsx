@@ -9,7 +9,7 @@ import { memo } from 'react'
 
 import { type RecipeWithCreatedBy } from '.'
 
-const TIME_SAMPLES_TH = [
+export const TIME_SAMPLES_TH = [
   { value: 0, label: 'ไม่ระบุ' },
   { value: 10, label: '5-10 นาที' },
   { value: 20, label: '11-30 นาที' },

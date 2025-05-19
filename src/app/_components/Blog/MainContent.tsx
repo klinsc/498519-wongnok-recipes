@@ -1,8 +1,16 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import { TablePagination } from '@mui/material'
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Select,
+  Stack,
+  TablePagination,
+} from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import Box from '@mui/material/Box'
@@ -19,9 +27,10 @@ import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import tz from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import * as React from 'react'
-import { useEffect, useMemo } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useMemo, useState, type MouseEvent } from 'react'
 import { api } from '~/trpc/react'
+import { TIME_SAMPLES_TH } from '../Recipe/RecipeTime'
 
 dayjs.extend(utc)
 dayjs.extend(tz)
@@ -262,7 +271,16 @@ function StyledRecipe(props: StyledRecipeProps) {
 }
 
 export default function MainContent() {
-  const [focusedCardIndex, setFocusedCardIndex] = React.useState<
+  // Navigation: Searchparams
+  const searchParams = useSearchParams()
+  const QTimeID = searchParams.get('timeID')
+  const QDifficultyID = searchParams.get('difficultyID')
+  const QSearch = searchParams.get('q')
+
+  // Navigation: Router
+  const router = useRouter()
+
+  const [focusedCardIndex, setFocusedCardIndex] = useState<
     number | null
   >(null)
 
@@ -275,7 +293,7 @@ export default function MainContent() {
   }
 
   // State: pagination
-  const [pagination, setPagination] = React.useState({
+  const [pagination, setPagination] = useState({
     page: 0,
     limit: 6,
     total: -1,
@@ -311,6 +329,27 @@ export default function MainContent() {
     return ''
   }, [])
 
+  // State: Menu
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  // Trpc: getAllDifficulties
+  const { data: allDifficulties } =
+    api.recipe.getDifficulties.useQuery(undefined, {
+      refetchOnWindowFocus: false,
+    })
+
+  // Trpc: getTime
+  const allTimes = useMemo(() => {
+    return [...TIME_SAMPLES_TH]
+  }, [])
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
@@ -330,19 +369,107 @@ export default function MainContent() {
           overflow: 'auto',
         }}>
         <FilterChips />
-        <TablePagination
-          component="div"
-          count={pagination.total}
-          page={pagination.page}
-          onPageChange={(_event, newPage: number) => {
-            setPagination((prev) => ({
-              ...prev,
-              page: newPage,
-            }))
-          }}
-          rowsPerPage={pagination.limit}
-          rowsPerPageOptions={[]}
-        />
+
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          display={{ xs: 'flex', md: 'flex' }}
+          alignItems={'center'}>
+          <IconButton
+            id="basic-button"
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}>
+            <FilterAltOutlinedIcon />
+          </IconButton>
+          {/* <Typography
+            variant="body2"
+            sx={{
+              display: { xs: 'none', md: 'block' },
+              ml: 1,
+              fontWeight: 500,
+            }}>
+            ตัวกรอง
+          </Typography> */}
+
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            slotProps={{
+              list: {
+                'aria-labelledby': 'basic-button',
+              },
+            }}>
+            <Select
+              onChange={(e) => {
+                // Set query params
+                const timeID = e.target.value
+                const difficultyID = QDifficultyID
+                const q = QSearch
+                void router.push(
+                  `?q=${q}&timeID=${timeID}&difficultyID=${difficultyID}`,
+                  {
+                    scroll: false,
+                  },
+                )
+              }}
+              label="เวลา"
+              size="small"
+              defaultValue="0"
+              sx={{ width: 'auto', mr: 1 }}
+              inputProps={{
+                'aria-label': 'Without label',
+              }}>
+              {allTimes.map((item) => (
+                <MenuItem key={item.value} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+            <Select
+              onChange={(e) => {
+                // Set query params
+                const timeID = QTimeID
+                const difficultyID = e.target.value
+                const q = QSearch
+                void router.push(
+                  `?q=${q}&timeID=${timeID}&difficultyID=${difficultyID}`,
+                  {
+                    scroll: false,
+                  },
+                )
+              }}
+              label="ความยาก"
+              size="small"
+              defaultValue="cmathzdqu00033fnwhhl8107r"
+              value={QDifficultyID || 'cmathzdqu00033fnwhhl8107r'}
+              sx={{ width: 'auto', mr: 1 }}
+              inputProps={{
+                'aria-label': 'Without label',
+              }}>
+              {allDifficulties?.map((item) => (
+                <MenuItem key={item.id} value={item.id}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Menu>
+          <TablePagination
+            component="div"
+            count={pagination.total}
+            page={pagination.page}
+            onPageChange={(_event, newPage: number) => {
+              setPagination((prev) => ({
+                ...prev,
+                page: newPage,
+              }))
+            }}
+            rowsPerPage={pagination.limit}
+            rowsPerPageOptions={[]}
+          />
+        </Stack>
       </Box>
 
       {/* One page take max 6 recipes */}
@@ -434,6 +561,7 @@ export default function MainContent() {
       </Grid>
 
       <TablePagination
+        size="small"
         component="div"
         count={pagination.total}
         page={pagination.page}
