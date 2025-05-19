@@ -2,7 +2,7 @@
 
 import PublicIcon from '@mui/icons-material/Public'
 import PublicOffIcon from '@mui/icons-material/PublicOff'
-import { Box, Grid, Stack, Tooltip } from '@mui/material'
+import { Box, Grid, Skeleton, Stack, Tooltip } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -99,6 +99,66 @@ interface RecipeMainProps {
   recipeID: string
 }
 
+const RecipeSkeleton = memo(function RecipeSkeleton() {
+  return (
+    <Card
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+      <CardHeader
+        avatar={
+          // <Avatar {...stringAvatar('User')} aria-label="recipe" />
+          <Skeleton
+            variant="circular"
+            width={40}
+            height={40}
+            sx={{
+              marginRight: 2,
+            }}
+          />
+        }
+        title={
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            fontSize="small">
+            {' '}
+            <Skeleton width={200} />{' '}
+          </Typography>
+        }
+      />
+      {/* <CardMedia
+        loading="lazy"
+        component="img"
+        height="194"
+        image="/images/recipe-placeholder.png"
+        alt="image of the recipe"
+      /> */}
+      <Skeleton
+        variant="rectangular"
+        width={'100%'}
+        height={194}
+        sx={{
+          marginBottom: 2,
+        }}
+      />
+      <CardContent>
+        <Skeleton
+          variant="text"
+          width={'100%'}
+          height={50}
+          sx={{
+            marginBottom: 2,
+          }}
+        />
+      </CardContent>
+    </Card>
+  )
+})
+
 export default memo(function Recipe(props: RecipeMainProps) {
   // navigation: Router
   const router = useRouter()
@@ -130,6 +190,8 @@ export default memo(function Recipe(props: RecipeMainProps) {
   const {
     data: recipe,
     refetch: refetchRecipe,
+    isLoading: isRecipeLoading,
+    isFetching: isRecipeFetching,
     error: recipeError,
   } = api.recipe.getById.useQuery(
     {
@@ -308,195 +370,212 @@ export default memo(function Recipe(props: RecipeMainProps) {
     return currentRecipe.status === RecipeStatus.PUBLISHED
   }, [currentRecipe])
 
+  // Memo: isRecipeLoading
+  const isLoading = useMemo(() => {
+    if (isRecipeLoading || isRecipeFetching) {
+      return true
+    }
+    return false
+  }, [isRecipeLoading, isRecipeFetching])
+
   return (
     <>
-      <Card>
-        <CardHeader
-          avatar={
-            <Avatar
-              {...stringAvatar(
-                currentRecipe?.createdBy?.name || 'User',
-              )}
-              aria-label="recipe"
+      {isLoading ? (
+        <RecipeSkeleton />
+      ) : (
+        <Card>
+          <CardHeader
+            avatar={
+              <Avatar
+                {...stringAvatar(
+                  currentRecipe?.createdBy?.name || 'User',
+                )}
+                aria-label="recipe"
+              />
+            }
+            action={
+              <>
+                {currentRecipe && (
+                  <RecipeActions
+                    handleDeleteRecipeDraft={handleDeleteRecipeDraft}
+                    handleSave={handleSave}
+                    handleCancel={handleCancel}
+                    isDeleteRecipeDraftPending={
+                      isDeleteRecipePending
+                    }
+                    isEditting={isEditting}
+                    currentRecipe={currentRecipe}
+                    refetchRecipe={refetchRecipe}
+                  />
+                )}
+              </>
+            }
+            title={
+              <RecipeTitle
+                currentRecipe={currentRecipe}
+                setCurrentRecipe={setCurrentRecipe}
+                isEditting={isEditting}
+                handleSave={handleSave}
+                handleCancel={handleCancel}
+              />
+            }
+            subheader={
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems={'center'}>
+                {isPublished ? (
+                  <Tooltip title="เผยแพร่แล้ว">
+                    <PublicIcon
+                      sx={{
+                        color: 'text.secondary',
+                        fontSize: 'small',
+                      }}
+                    />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="ฉบับร่าง">
+                    <PublicOffIcon
+                      sx={{
+                        color: 'text.secondary',
+                        fontSize: 'small',
+                      }}
+                    />
+                  </Tooltip>
+                )}
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontSize="small">
+                  {`${
+                    currentRecipe?.createdAt
+                      ? `สร้างเมื่อ: ${dayjs(currentRecipe.createdAt)
+                          .tz('Asia/Bangkok')
+                          .format('DD/MM/YYYY HH:mm:ss')}`
+                      : 'สร้างเมื่อ: '
+                  }`}
+                </Typography>
+              </Stack>
+            }
+          />
+          {imageURL && (
+            <CardMedia
+              loading="lazy"
+              component="img"
+              height="194"
+              image={imageURL || ''}
+              alt="image of the recipe"
+              sx={{
+                objectFit: 'contain',
+                padding: 2,
+              }}
             />
-          }
-          action={
-            <>
-              {currentRecipe && (
-                <RecipeActions
-                  handleDeleteRecipeDraft={handleDeleteRecipeDraft}
-                  handleSave={handleSave}
-                  handleCancel={handleCancel}
-                  isDeleteRecipeDraftPending={isDeleteRecipePending}
-                  isEditting={isEditting}
-                  currentRecipe={currentRecipe}
-                  refetchRecipe={refetchRecipe}
-                />
-              )}
-            </>
-          }
-          title={
-            <RecipeTitle
+          )}
+
+          {isEditting && (
+            <Box
+              sx={{
+                paddingTop: 2,
+                paddingBottom: 2,
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              height="194">
+              <ImageUploader
+                preparedFile={preparedFile}
+                setPreparedFile={setPreparedFile}
+                handleUpload={handleUpload}
+              />
+            </Box>
+          )}
+          <CardContent>
+            <Typography
+              sx={{
+                fontWeight: 'bold',
+                marginBottom: 1,
+              }}>
+              คำอธิบาย:
+            </Typography>
+            <RecipeDescription
               currentRecipe={currentRecipe}
               setCurrentRecipe={setCurrentRecipe}
               isEditting={isEditting}
               handleSave={handleSave}
               handleCancel={handleCancel}
             />
-          }
-          subheader={
-            <Stack direction="row" spacing={1} alignItems={'center'}>
-              {isPublished ? (
-                <Tooltip title="เผยแพร่แล้ว">
-                  <PublicIcon
-                    sx={{
-                      color: 'text.secondary',
-                      fontSize: 'small',
-                    }}
-                  />
-                </Tooltip>
-              ) : (
-                <Tooltip title="ฉบับร่าง">
-                  <PublicOffIcon
-                    sx={{
-                      color: 'text.secondary',
-                      fontSize: 'small',
-                    }}
-                  />
-                </Tooltip>
-              )}
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                fontSize="small">
-                {`${
-                  currentRecipe?.createdAt
-                    ? `สร้างเมื่อ: ${dayjs(currentRecipe.createdAt)
-                        .tz('Asia/Bangkok')
-                        .format('DD/MM/YYYY HH:mm:ss')}`
-                    : 'สร้างเมื่อ: '
-                }`}
-              </Typography>
-            </Stack>
-          }
-        />
-        {imageURL && (
-          <CardMedia
-            loading="lazy"
-            component="img"
-            height="194"
-            image={imageURL || ''}
-            alt="image of the recipe"
-            sx={{
-              objectFit: 'contain',
-              padding: 2,
-            }}
-          />
-        )}
+          </CardContent>
 
-        {isEditting && (
-          <Box
-            sx={{
-              paddingTop: 2,
-              paddingBottom: 2,
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            height="194">
-            <ImageUploader
-              preparedFile={preparedFile}
-              setPreparedFile={setPreparedFile}
-              handleUpload={handleUpload}
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid size={6}>
+                <Typography
+                  sx={{
+                    fontWeight: 'bold',
+                    marginBottom: 1,
+                  }}>
+                  ระยะเวลา:
+                </Typography>
+                <RecipeTime
+                  currentRecipe={currentRecipe}
+                  setCurrentRecipe={setCurrentRecipe}
+                  isEditting={isEditting}
+                  handleSave={handleSave}
+                  handleCancel={handleCancel}
+                />
+                <Typography
+                  sx={{
+                    fontWeight: 'bold',
+                    marginBottom: 1,
+                  }}>
+                  ความยาก:
+                </Typography>
+                <RecipeDifficulty
+                  currentRecipe={currentRecipe}
+                  setCurrentRecipe={setCurrentRecipe}
+                  isEditting={isEditting}
+                  handleSave={handleSave}
+                  handleCancel={handleCancel}
+                />
+              </Grid>
+              <Grid size={6}>
+                <Typography
+                  sx={{
+                    fontWeight: 'bold',
+                    marginBottom: 1,
+                  }}>
+                  วัตถุดิบ:
+                </Typography>
+                <RecipeIngredients
+                  currentRecipe={currentRecipe}
+                  setCurrentRecipe={setCurrentRecipe}
+                  isEditting={isEditting}
+                  handleSave={handleSave}
+                  handleCancel={handleCancel}
+                />
+              </Grid>
+            </Grid>
+          </CardContent>
+
+          <CardContent>
+            <Typography
+              sx={{
+                fontWeight: 'bold',
+                marginBottom: 1,
+              }}>
+              วิธีทำ:
+            </Typography>
+            <RecipeMethod
+              currentRecipe={currentRecipe}
+              setCurrentRecipe={setCurrentRecipe}
+              isEditting={isEditting}
+              handleSave={handleSave}
+              handleCancel={handleCancel}
             />
-          </Box>
-        )}
-        <CardContent>
-          <Typography
-            sx={{
-              fontWeight: 'bold',
-              marginBottom: 1,
-            }}>
-            คำอธิบาย:
-          </Typography>
-          <RecipeDescription
-            currentRecipe={currentRecipe}
-            setCurrentRecipe={setCurrentRecipe}
-            isEditting={isEditting}
-            handleSave={handleSave}
-            handleCancel={handleCancel}
-          />
-        </CardContent>
-
-        <CardContent>
-          <Grid container spacing={2}>
-            <Grid size={6}>
-              <Typography
-                sx={{
-                  fontWeight: 'bold',
-                  marginBottom: 1,
-                }}>
-                ระยะเวลา:
-              </Typography>
-              <RecipeTime
-                currentRecipe={currentRecipe}
-                setCurrentRecipe={setCurrentRecipe}
-                isEditting={isEditting}
-                handleSave={handleSave}
-                handleCancel={handleCancel}
-              />
-              <Typography
-                sx={{
-                  fontWeight: 'bold',
-                  marginBottom: 1,
-                }}>
-                ความยาก:
-              </Typography>
-              <RecipeDifficulty
-                currentRecipe={currentRecipe}
-                setCurrentRecipe={setCurrentRecipe}
-                isEditting={isEditting}
-                handleSave={handleSave}
-                handleCancel={handleCancel}
-              />
-            </Grid>
-            <Grid size={6}>
-              <Typography
-                sx={{
-                  fontWeight: 'bold',
-                  marginBottom: 1,
-                }}>
-                วัตถุดิบ:
-              </Typography>
-              <RecipeIngredients
-                currentRecipe={currentRecipe}
-                setCurrentRecipe={setCurrentRecipe}
-                isEditting={isEditting}
-                handleSave={handleSave}
-                handleCancel={handleCancel}
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-
-        <CardContent>
-          <Typography
-            sx={{
-              fontWeight: 'bold',
-              marginBottom: 1,
-            }}>
-            วิธีทำ:
-          </Typography>
-          <RecipeMethod
-            currentRecipe={currentRecipe}
-            setCurrentRecipe={setCurrentRecipe}
-            isEditting={isEditting}
-            handleSave={handleSave}
-            handleCancel={handleCancel}
-          />
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </>
   )
 })
