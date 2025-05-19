@@ -1,7 +1,7 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import * as React from 'react'
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import Box from '@mui/material/Box'
@@ -9,15 +9,13 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Chip from '@mui/material/Chip'
-import Grid from '@mui/material/Grid'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
 import FormControl from '@mui/material/FormControl'
+import Grid from '@mui/material/Grid'
 import InputAdornment from '@mui/material/InputAdornment'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded'
+import Typography from '@mui/material/Typography'
+import * as React from 'react'
 
 const defaultAuthos = [
   {
@@ -209,6 +207,60 @@ export function Search() {
   )
 }
 
+export function FilterChips() {
+  return (
+    <Box
+      sx={{
+        display: 'inline-flex',
+        flexDirection: 'row',
+        gap: 3,
+        overflow: 'auto',
+      }}>
+      <Chip
+        // onClick={handleClick}
+        size="medium"
+        label="รวมทั้งหมด"
+      />
+      <Chip
+        // onClick={handleClick}
+        size="medium"
+        label="อาหารคาว"
+        sx={{
+          backgroundColor: 'transparent',
+          border: 'none',
+        }}
+      />
+      <Chip
+        // onClick={handleClick}
+        size="medium"
+        label="ของหวาน"
+        sx={{
+          backgroundColor: 'transparent',
+          border: 'none',
+        }}
+      />
+      <Chip
+        // onClick={handleClick}
+        size="medium"
+        label="เครื่องดื่ม"
+        sx={{
+          backgroundColor: 'transparent',
+          border: 'none',
+        }}
+      />
+      <Chip
+        // onClick={handleClick}
+        size="medium"
+        label="ของว่าง"
+        sx={{
+          backgroundColor: 'transparent',
+          border: 'none',
+        }}
+      />
+    </Box>
+  )
+}
+
 export default function MainContent() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<
     number | null
@@ -222,10 +274,6 @@ export default function MainContent() {
     setFocusedCardIndex(null)
   }
 
-  const handleClick = () => {
-    console.info('You clicked the filter chip.')
-  }
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
@@ -236,19 +284,6 @@ export default function MainContent() {
       </div>
       <Box
         sx={{
-          display: { xs: 'flex', sm: 'none' },
-          flexDirection: 'row',
-          gap: 1,
-          width: { xs: '100%', md: 'fit-content' },
-          overflow: 'auto',
-        }}>
-        <Search />
-        <IconButton size="small" aria-label="RSS feed">
-          <RssFeedRoundedIcon />
-        </IconButton>
-      </Box>
-      <Box
-        sx={{
           display: 'flex',
           flexDirection: { xs: 'column-reverse', md: 'row' },
           width: '100%',
@@ -257,67 +292,7 @@ export default function MainContent() {
           gap: 4,
           overflow: 'auto',
         }}>
-        <Box
-          sx={{
-            display: 'inline-flex',
-            flexDirection: 'row',
-            gap: 3,
-            overflow: 'auto',
-          }}>
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="รวมทั้งหมด"
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="อาหารคาว"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="ของหวาน"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="เครื่องดื่ม"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-          <Chip
-            onClick={handleClick}
-            size="medium"
-            label="ของว่าง"
-            sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
-            }}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'flex' },
-            flexDirection: 'row',
-            gap: 1,
-            width: { xs: '100%', md: 'fit-content' },
-            overflow: 'auto',
-          }}>
-          <IconButton size="small" aria-label="RSS feed">
-            <RssFeedRoundedIcon />
-          </IconButton>
-        </Box>
+        <FilterChips />
       </Box>
       <Grid container spacing={2} columns={12}>
         <Grid size={{ xs: 12, md: 6 }}>
