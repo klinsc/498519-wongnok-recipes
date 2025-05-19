@@ -7,7 +7,6 @@ import { useState } from 'react'
 import { api } from '~/trpc/react'
 import type { Ingrediants } from '../Recipe'
 import MyDraftRecipe from './MyDraftRecipe'
-import MyRecipeCard from './MyRecipeCard'
 import NewRecipe from './NewRecipe'
 import PublishedRecipe from './PublishedRecipe'
 
@@ -157,11 +156,6 @@ export default function RecipeList({
           </Typography>
         )}
         <Grid container spacing={1}>
-          {RECIPE_SAMPLES.map((recipe) => (
-            <Grid key={recipe.id}>
-              <MyRecipeCard key={recipe.id} recipe={recipe} />
-            </Grid>
-          ))}
           {publishedRecipes &&
             publishedRecipes?.length > 0 &&
             publishedRecipes?.map((recipe) => {
