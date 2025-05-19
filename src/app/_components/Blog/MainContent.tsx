@@ -16,103 +16,14 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
+import tz from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import * as React from 'react'
 import { useMemo } from 'react'
 import { api } from '~/trpc/react'
-import tz from 'dayjs/plugin/timezone'
-import utc from 'dayjs/plugin/utc'
-import { Divider } from '@mui/material'
 
 dayjs.extend(utc)
 dayjs.extend(tz)
-
-const defaultAuthos = [
-  {
-    name: 'default author',
-    avatar: '/static/images/avatar/default.jpg',
-  },
-]
-
-const cardData = [
-  {
-    img: 'https://picsum.photos/800/450?random=1',
-    tag: 'Engineering',
-    title:
-      'Revolutionizing software development with cutting-edge tools',
-    description:
-      'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
-    authors: [
-      { name: 'Remy Sharp', avatar: '/static/images/avatar/1.jpg' },
-      {
-        name: 'Travis Howard',
-        avatar: '/static/images/avatar/2.jpg',
-      },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=2',
-    tag: 'Product',
-    title: 'Innovative product features that drive success',
-    description:
-      'Explore the key features of our latest product release that are helping businesses achieve their goals. From user-friendly interfaces to robust functionality, learn why our product stands out.',
-    authors: [
-      { name: 'Erica Johns', avatar: '/static/images/avatar/6.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=3',
-    tag: 'Design',
-    title: 'Designing for the future: trends and insights',
-    description:
-      'Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.',
-    authors: [
-      {
-        name: 'Kate Morrison',
-        avatar: '/static/images/avatar/7.jpg',
-      },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=4',
-    tag: 'Company',
-    title: "Our company's journey: milestones and achievements",
-    description:
-      "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
-    authors: [
-      { name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=45',
-    tag: 'Engineering',
-    title: 'Pioneering sustainable engineering solutions',
-    description:
-      "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
-    authors: [
-      {
-        name: 'Agnes Walker',
-        avatar: '/static/images/avatar/4.jpg',
-      },
-      {
-        name: 'Trevor Henderson',
-        avatar: '/static/images/avatar/5.jpg',
-      },
-    ],
-  },
-  {
-    img: 'https://picsum.photos/800/450?random=6',
-    tag: 'Product',
-    title: 'Maximizing efficiency with our latest product updates',
-    description:
-      'Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.',
-    authors: [
-      {
-        name: 'Travis Howard',
-        avatar: '/static/images/avatar/2.jpg',
-      },
-    ],
-  },
-]
 
 const SyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -274,6 +185,81 @@ export function FilterChips() {
   )
 }
 
+interface StyledRecipeProps {
+  index: number
+  publishedRecipes: {
+    id: string
+    name: string
+    description: string | undefined | null
+    method: string | undefined | null
+    image: string | undefined | null
+    createdBy: {
+      name: string | undefined | null
+    }
+    updatedAt: Date
+  }[]
+  focusedCardIndex: number | null
+  handleFocus: (index: number) => void
+  handleBlur: () => void
+  currentDomain: string
+  hideImage: boolean
+}
+
+function StyledRecipe(props: StyledRecipeProps) {
+  return (
+    <SyledCard
+      variant="outlined"
+      onFocus={() => props.handleFocus(props.index)}
+      onBlur={props.handleBlur}
+      tabIndex={props.index}
+      className={
+        props.focusedCardIndex === props.index ? 'Mui-focused' : ''
+      }>
+      {!props.hideImage && (
+        <CardMedia
+          component="img"
+          alt="recipe image"
+          image={`${props.currentDomain}/api/v1/image/${props.publishedRecipes[props.index]?.image}`}
+          sx={{
+            aspectRatio: '16 / 9',
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+          }}
+        />
+      )}
+      <SyledCardContent>
+        <Typography gutterBottom variant="caption" component="div">
+          {props.publishedRecipes[props.index]?.name}
+        </Typography>
+        <Typography gutterBottom variant="h6" component="div">
+          {props.publishedRecipes[props.index]?.description}
+        </Typography>
+        <StyledTypography
+          variant="body2"
+          color="text.secondary"
+          gutterBottom>
+          {props.publishedRecipes[props.index]?.method}
+        </StyledTypography>
+      </SyledCardContent>
+      <Author
+        authors={[
+          {
+            name:
+              props.publishedRecipes[props.index]?.createdBy.name ||
+              'default author',
+            avatar:
+              props.publishedRecipes[props.index]?.createdBy.name ||
+              '/static/images/avatar/default.jpg',
+            updatedAt:
+              props.publishedRecipes[props.index]?.updatedAt ||
+              new Date(),
+          },
+        ]}
+      />
+    </SyledCard>
+  )
+}
+
 export default function MainContent() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<
     number | null
@@ -332,234 +318,42 @@ export default function MainContent() {
       <Grid container spacing={2} columns={12}>
         <Grid size={{ xs: 12, md: 6 }}>
           {publishedRecipes && publishedRecipes[0] && (
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(0)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={
-                focusedCardIndex === 0 ? 'Mui-focused' : ''
-              }>
-              <CardMedia
-                component="img"
-                alt="recipe image"
-                image={`${currentDomain}/api/v1/image/${publishedRecipes[0]?.image}`}
-                sx={{
-                  aspectRatio: '16 / 9',
-                  borderBottom: '1px solid',
-                  borderColor: 'divider',
-                }}
-              />
-              <SyledCardContent>
-                <Typography
-                  gutterBottom
-                  variant="caption"
-                  component="div">
-                  {publishedRecipes[0]?.name}
-                </Typography>
-                <Typography
-                  gutterBottom
-                  variant="h6"
-                  component="div">
-                  {publishedRecipes[0]?.description}
-                </Typography>
-                <StyledTypography
-                  variant="body2"
-                  color="text.secondary"
-                  gutterBottom>
-                  {publishedRecipes[0]?.method}
-                </StyledTypography>
-              </SyledCardContent>
-              <Author
-                authors={[
-                  {
-                    name:
-                      publishedRecipes[0]?.createdBy.name ||
-                      'default author',
-                    avatar:
-                      publishedRecipes[0]?.createdBy.name ||
-                      '/static/images/avatar/default.jpg',
-                    updatedAt: publishedRecipes[0]?.updatedAt,
-                  },
-                ]}
-              />
-            </SyledCard>
+            <StyledRecipe
+              index={0}
+              publishedRecipes={publishedRecipes}
+              focusedCardIndex={focusedCardIndex}
+              handleFocus={handleFocus}
+              handleBlur={handleBlur}
+              currentDomain={currentDomain}
+              hideImage={false}
+            />
           )}
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           {publishedRecipes && publishedRecipes[1] && (
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(1)}
-              onBlur={handleBlur}
-              tabIndex={1}
-              className={
-                focusedCardIndex === 1 ? 'Mui-focused' : ''
-              }>
-              <CardMedia
-                component="img"
-                alt="recipe image"
-                image={`${currentDomain}/api/v1/image/${publishedRecipes[1]?.image}`}
-                sx={{
-                  aspectRatio: '16 / 9',
-                  borderBottom: '1px solid',
-                  borderColor: 'divider',
-                }}
-              />
-              <SyledCardContent>
-                <Typography
-                  gutterBottom
-                  variant="caption"
-                  component="div">
-                  {publishedRecipes[1]?.name}
-                </Typography>
-                <Typography
-                  gutterBottom
-                  variant="h6"
-                  component="div">
-                  {publishedRecipes[1]?.description}
-                </Typography>
-                <StyledTypography
-                  variant="body2"
-                  color="text.secondary"
-                  gutterBottom>
-                  {publishedRecipes[1]?.method}
-                </StyledTypography>
-              </SyledCardContent>
-              <Author
-                authors={[
-                  {
-                    name:
-                      publishedRecipes[1]?.createdBy.name ||
-                      'default author',
-                    avatar:
-                      publishedRecipes[1]?.createdBy.name ||
-                      '/static/images/avatar/default.jpg',
-                    updatedAt: publishedRecipes[1]?.updatedAt,
-                  },
-                ]}
-              />
-            </SyledCard>
+            <StyledRecipe
+              index={1}
+              publishedRecipes={publishedRecipes}
+              focusedCardIndex={focusedCardIndex}
+              handleFocus={handleFocus}
+              handleBlur={handleBlur}
+              currentDomain={currentDomain}
+              hideImage={false}
+            />
           )}
         </Grid>
-
-        <Divider />
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(0)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 0 ? 'Mui-focused' : ''}>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[0]?.img}
-              sx={{
-                aspectRatio: '16 / 9',
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
-            <SyledCardContent>
-              <Typography
-                gutterBottom
-                variant="caption"
-                component="div">
-                {cardData[0]?.tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[0]?.title}
-              </Typography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom>
-                {cardData[0]?.description}
-              </StyledTypography>
-            </SyledCardContent>
-            <Author
-              authors={cardData[0]?.authors || defaultAuthos}
-            />
-          </SyledCard>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(1)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 1 ? 'Mui-focused' : ''}>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[1]?.img}
-              aspect-ratio="16 / 9"
-              sx={{
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
-            <SyledCardContent>
-              <Typography
-                gutterBottom
-                variant="caption"
-                component="div">
-                {cardData[1]?.tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[1]?.title}
-              </Typography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom>
-                {cardData[1]?.description}
-              </StyledTypography>
-            </SyledCardContent>
-            <Author
-              authors={cardData[1]?.authors || defaultAuthos}
-            />
-          </SyledCard>
-        </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(2)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 2 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[2]?.img}
-              sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
-              }}
+          {publishedRecipes && publishedRecipes[2] && (
+            <StyledRecipe
+              index={2}
+              publishedRecipes={publishedRecipes}
+              focusedCardIndex={focusedCardIndex}
+              handleFocus={handleFocus}
+              handleBlur={handleBlur}
+              currentDomain={currentDomain}
+              hideImage={false}
             />
-            <SyledCardContent>
-              <Typography
-                gutterBottom
-                variant="caption"
-                component="div">
-                {cardData[2]?.tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[2]?.title}
-              </Typography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom>
-                {cardData[2]?.description}
-              </StyledTypography>
-            </SyledCardContent>
-            <Author
-              authors={cardData[2]?.authors || defaultAuthos}
-            />
-          </SyledCard>
+          )}
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
           <Box
@@ -569,124 +363,42 @@ export default function MainContent() {
               gap: 2,
               height: '100%',
             }}>
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(3)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 3 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}>
-              <SyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}>
-                <div>
-                  <Typography
-                    gutterBottom
-                    variant="caption"
-                    component="div">
-                    {cardData[3]?.tag}
-                  </Typography>
-                  <Typography
-                    gutterBottom
-                    variant="h6"
-                    component="div">
-                    {cardData[3]?.title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom>
-                    {cardData[3]?.description}
-                  </StyledTypography>
-                </div>
-              </SyledCardContent>
-              <Author
-                authors={cardData[3]?.authors || defaultAuthos}
+            {publishedRecipes && publishedRecipes[3] && (
+              <StyledRecipe
+                index={3}
+                publishedRecipes={publishedRecipes}
+                focusedCardIndex={focusedCardIndex}
+                handleFocus={handleFocus}
+                handleBlur={handleBlur}
+                currentDomain={currentDomain}
+                hideImage={true}
               />
-            </SyledCard>
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(4)}
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 4 ? 'Mui-focused' : ''}
-              sx={{ height: '100%' }}>
-              <SyledCardContent
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                }}>
-                <div>
-                  <Typography
-                    gutterBottom
-                    variant="caption"
-                    component="div">
-                    {cardData[4]?.tag}
-                  </Typography>
-                  <Typography
-                    gutterBottom
-                    variant="h6"
-                    component="div">
-                    {cardData[4]?.title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom>
-                    {cardData[4]?.description}
-                  </StyledTypography>
-                </div>
-              </SyledCardContent>
-              <Author
-                authors={cardData[4]?.authors || defaultAuthos}
+            )}
+            {publishedRecipes && publishedRecipes[4] && (
+              <StyledRecipe
+                index={4}
+                publishedRecipes={publishedRecipes}
+                focusedCardIndex={focusedCardIndex}
+                handleFocus={handleFocus}
+                handleBlur={handleBlur}
+                currentDomain={currentDomain}
+                hideImage={true}
               />
-            </SyledCard>
+            )}
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(5)}
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 5 ? 'Mui-focused' : ''}
-            sx={{ height: '100%' }}>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image={cardData[5]?.img}
-              sx={{
-                height: { sm: 'auto', md: '50%' },
-                aspectRatio: { sm: '16 / 9', md: '' },
-              }}
+          {publishedRecipes && publishedRecipes[5] && (
+            <StyledRecipe
+              index={5}
+              publishedRecipes={publishedRecipes}
+              focusedCardIndex={focusedCardIndex}
+              handleFocus={handleFocus}
+              handleBlur={handleBlur}
+              currentDomain={currentDomain}
+              hideImage={false}
             />
-            <SyledCardContent>
-              <Typography
-                gutterBottom
-                variant="caption"
-                component="div">
-                {cardData[5]?.tag}
-              </Typography>
-              <Typography gutterBottom variant="h6" component="div">
-                {cardData[5]?.title}
-              </Typography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom>
-                {cardData[5]?.description}
-              </StyledTypography>
-            </SyledCardContent>
-            <Author
-              authors={cardData[5]?.authors || defaultAuthos}
-            />
-          </SyledCard>
+          )}
         </Grid>
       </Grid>
     </Box>
