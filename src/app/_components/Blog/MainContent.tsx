@@ -29,6 +29,8 @@ import utc from 'dayjs/plugin/utc'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Fragment,
+  memo,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -49,7 +51,7 @@ const SyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: (theme.vars || theme).palette.background.paper,
   '&:hover': {
     backgroundColor: 'transparent',
-    // cursor: 'pointer',
+    cursor: 'pointer',
   },
   '&:focus-visible': {
     outline: '3px solid',
@@ -77,11 +79,28 @@ const StyledTypography = styled(Typography)({
   textOverflow: 'ellipsis',
 })
 
-function Author({
-  authors,
+const Author = memo(function Author({
+  author,
 }: {
-  authors: { name: string; avatar: string; updatedAt: Date }[]
+  author: {
+    id: string
+    name: string
+    avatar: string
+    updatedAt: Date
+  }
 }) {
+  // Router
+  const router = useRouter()
+
+  // Handle click
+  const handleClick = useCallback(
+    (authorID: string) => {
+      // Navigate to author page
+      void router.push(`/chef/${authorID}/recipe/all`)
+    },
+    [router],
+  )
+
   return (
     <Box
       sx={{
@@ -100,27 +119,40 @@ function Author({
           alignItems: 'center',
         }}>
         <AvatarGroup max={3}>
-          {authors.map((author, index) => (
+          {author && (
             <Avatar
-              key={index}
+              onClick={() => {
+                // Handle click
+                void handleClick(author.id)
+              }}
               alt={author.name}
               src={author.avatar}
-              sx={{ width: 24, height: 24 }}
+              sx={{ width: 24, height: 24, cursor: 'pointer' }}
             />
-          ))}
+          )}
         </AvatarGroup>
-        <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
+        <Typography
+          variant="caption"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            fontWeight: 500,
+          }}
+          onClick={() => void handleClick(author.id)}>
+          {author.name}
         </Typography>
       </Box>
-      <Typography variant="caption">
-        {dayjs(authors[0]?.updatedAt || new Date())
+      <Typography
+        variant="caption"
+        sx={{
+          cursor: 'default !important',
+        }}>
+        {dayjs(author?.updatedAt || new Date())
           .tz('Asia/Bangkok')
           .format('MMMM D, YYYY')}
       </Typography>
     </Box>
   )
-}
+})
 
 export function Search() {
   return (
@@ -210,6 +242,7 @@ interface StyledRecipeProps {
     method: string | undefined | null
     image: string | undefined | null
     createdBy: {
+      id: string | undefined | null
       name: string | undefined | null
     }
     updatedAt: Date
@@ -222,6 +255,20 @@ interface StyledRecipeProps {
 }
 
 function StyledRecipe(props: StyledRecipeProps) {
+  // Router
+  const router = useRouter()
+
+  // Callback: handle click
+  const handleClick = useCallback(() => {
+    // Navigate to recipe page
+    void router.push(
+      `/chef/${props.publishedRecipes[props.index]?.createdBy.id}/recipe/${props.publishedRecipes[props.index]?.id}`,
+      {
+        // scroll: false,
+      },
+    )
+  }, [props, router])
+
   return (
     <SyledCard
       variant="outlined"
@@ -233,6 +280,7 @@ function StyledRecipe(props: StyledRecipeProps) {
       }>
       {!props.hideImage && (
         <CardMedia
+          onClick={() => handleClick()}
           component="img"
           alt="recipe image"
           image={props.publishedRecipes[props.index]?.image || ''}
@@ -244,13 +292,22 @@ function StyledRecipe(props: StyledRecipeProps) {
         />
       )}
       <SyledCardContent>
-        <Typography gutterBottom variant="caption" component="div">
+        <Typography
+          onClick={() => handleClick()}
+          gutterBottom
+          variant="caption"
+          component="div">
           {props.publishedRecipes[props.index]?.name}
         </Typography>
-        <Typography gutterBottom variant="h6" component="div">
+        <Typography
+          onClick={() => handleClick()}
+          gutterBottom
+          variant="h6"
+          component="div">
           {props.publishedRecipes[props.index]?.description}
         </Typography>
         <StyledTypography
+          onClick={() => handleClick()}
           variant="body2"
           color="text.secondary"
           gutterBottom>
@@ -258,19 +315,20 @@ function StyledRecipe(props: StyledRecipeProps) {
         </StyledTypography>
       </SyledCardContent>
       <Author
-        authors={[
-          {
-            name:
-              props.publishedRecipes[props.index]?.createdBy.name ||
-              'default author',
-            avatar:
-              props.publishedRecipes[props.index]?.createdBy.name ||
-              '/static/images/avatar/default.jpg',
-            updatedAt:
-              props.publishedRecipes[props.index]?.updatedAt ||
-              new Date(),
-          },
-        ]}
+        author={{
+          id:
+            props.publishedRecipes[props.index]?.createdBy.id ||
+            'default id',
+          name:
+            props.publishedRecipes[props.index]?.createdBy.name ||
+            'default author',
+          avatar:
+            props.publishedRecipes[props.index]?.createdBy.name ||
+            '/static/images/avatar/default.jpg',
+          updatedAt:
+            props.publishedRecipes[props.index]?.updatedAt ||
+            new Date(),
+        }}
       />
     </SyledCard>
   )
@@ -331,6 +389,7 @@ export default function MainContent() {
       method: string | undefined | null
       image: string | undefined | null
       createdBy: {
+        id: string | undefined | null
         name: string | undefined | null
       }
       updatedAt: Date
