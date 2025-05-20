@@ -18,7 +18,6 @@ import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import AppAvatar from '../AppAvatar'
 import Hamburger, { MENU_ITEMS } from '../Hamburger'
-import SearchBar from '../SearchBar'
 import SiteIcon from '../SiteIcon'
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -82,9 +81,9 @@ export default function AppAppBar() {
             <SiteIcon />
             <Box
               sx={{
-                display: { xs: 'flex', md: 'flex' },
+                display: { xs: 'none', md: 'flex' },
                 flexGrow: 1,
-                justifyContent: 'space-between',
+                justifyContent: 'flex-start',
                 paddingLeft: 2,
                 paddingRight: 2,
               }}>
@@ -93,12 +92,14 @@ export default function AppAppBar() {
                 color="info"
                 size="small"
                 onClick={() => router.push('/')}
-                sx={{
-                  // '&:hover': {
-                  //   backgroundColor: 'transparent',
-                  // },
-                  minWidth: '69px',
-                }}>
+                sx={
+                  {
+                    // '&:hover': {
+                    //   backgroundColor: 'transparent',
+                    // },
+                    // minWidth: '69px',
+                  }
+                }>
                 หน้าหลัก
               </Button>
               <Button
@@ -110,15 +111,17 @@ export default function AppAppBar() {
                     `/chef/${session?.user?.id}/recipe/all`,
                   )
                 }
-                sx={{
-                  // '&:hover': {
-                  //   backgroundColor: 'transparent',
-                  // },
-                  minWidth: '85px',
-                }}>
+                sx={
+                  {
+                    // '&:hover': {
+                    //   backgroundColor: 'transparent',
+                    // },
+                    // minWidth: '85px',
+                  }
+                }>
                 สูตรของฉัน
               </Button>
-              <SearchBar />
+              {/* <SearchBar /> */}
             </Box>
           </Box>
           <Box
