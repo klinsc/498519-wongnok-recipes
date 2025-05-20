@@ -49,7 +49,7 @@ const SyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: (theme.vars || theme).palette.background.paper,
   '&:hover': {
     backgroundColor: 'transparent',
-    cursor: 'pointer',
+    // cursor: 'pointer',
   },
   '&:focus-visible': {
     outline: '3px solid',
