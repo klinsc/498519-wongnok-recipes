@@ -11,7 +11,6 @@ import {
   Stack,
 } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
-import AvatarGroup from '@mui/material/AvatarGroup'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -39,6 +38,7 @@ import {
 import { useInView } from 'react-intersection-observer'
 import { api } from '~/trpc/react'
 import { TIME_SAMPLES_TH } from '../Recipe/RecipeTime'
+import { stringAvatar } from '../AppAvatar'
 
 dayjs.extend(utc)
 dayjs.extend(tz)
@@ -118,19 +118,16 @@ const Author = memo(function Author({
           gap: 1,
           alignItems: 'center',
         }}>
-        <AvatarGroup max={3}>
-          {author && (
-            <Avatar
-              onClick={() => {
-                // Handle click
-                void handleClick(author.id)
-              }}
-              alt={author.name}
-              src={author.avatar}
-              sx={{ width: 24, height: 24, cursor: 'pointer' }}
-            />
-          )}
-        </AvatarGroup>
+        {author && (
+          <Avatar
+            onClick={() => void handleClick(author.id)}
+            alt={author.name}
+            src={author.avatar}
+            style={{ width: 24, height: 24 }}
+            {...stringAvatar(author.name || 'default')}
+          />
+        )}
+
         <Typography
           variant="caption"
           sx={{
