@@ -66,13 +66,6 @@ export default function AppAvatar() {
 
   return (
     <Stack direction="row" spacing={2}>
-      {/* <NotiAlert
-        open={notistack.open}
-        message={notistack.message}
-        severity={notistack.severity}
-        handleClose={handleCloseNotistack}
-      /> */}
-
       <Menu
         id="menu-appbar"
         anchorEl={anchorEl}
