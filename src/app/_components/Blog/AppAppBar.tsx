@@ -88,40 +88,36 @@ export default function AppAppBar() {
                 paddingLeft: 2,
                 paddingRight: 2,
               }}>
-              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <Button
-                  variant="text"
-                  color="info"
-                  size="small"
-                  onClick={() => router.push('/')}
-                  sx={
-                    {
-                      // '&:hover': {
-                      //   backgroundColor: 'transparent',
-                      // },
-                    }
-                  }>
-                  หน้าหลัก
-                </Button>
-                <Button
-                  variant="text"
-                  color="info"
-                  size="small"
-                  onClick={() =>
-                    router.push(
-                      `/chef/${session?.user?.id}/recipe/all`,
-                    )
-                  }
-                  sx={
-                    {
-                      // '&:hover': {
-                      //   backgroundColor: 'transparent',
-                      // },
-                    }
-                  }>
-                  สูตรของฉัน
-                </Button>
-              </Box>
+              <Button
+                variant="text"
+                color="info"
+                size="small"
+                onClick={() => router.push('/')}
+                sx={{
+                  // '&:hover': {
+                  //   backgroundColor: 'transparent',
+                  // },
+                  minWidth: '69px',
+                }}>
+                หน้าหลัก
+              </Button>
+              <Button
+                variant="text"
+                color="info"
+                size="small"
+                onClick={() =>
+                  router.push(
+                    `/chef/${session?.user?.id}/recipe/all`,
+                  )
+                }
+                sx={{
+                  // '&:hover': {
+                  //   backgroundColor: 'transparent',
+                  // },
+                  minWidth: '85px',
+                }}>
+                สูตรของฉัน
+              </Button>
               <SearchBar />
             </Box>
           </Box>
