@@ -94,11 +94,13 @@ export default function AppAppBar() {
                   color="info"
                   size="small"
                   onClick={() => router.push('/')}
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                    },
-                  }}>
+                  sx={
+                    {
+                      // '&:hover': {
+                      //   backgroundColor: 'transparent',
+                      // },
+                    }
+                  }>
                   หน้าหลัก
                 </Button>
                 <Button
@@ -110,11 +112,13 @@ export default function AppAppBar() {
                       `/chef/${session?.user?.id}/recipe/all`,
                     )
                   }
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                    },
-                  }}>
+                  sx={
+                    {
+                      // '&:hover': {
+                      //   backgroundColor: 'transparent',
+                      // },
+                    }
+                  }>
                   สูตรของฉัน
                 </Button>
               </Box>
