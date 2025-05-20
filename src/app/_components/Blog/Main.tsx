@@ -10,9 +10,13 @@ import Footer from './Footer'
 import Breadcrumb from '../Breadcrumb'
 import AddRecipeFab from '../AddRecipeFab'
 
-export default function Blog(props: {
+interface BlogProps {
+  userID?: string
+  recipeID?: string
   disableCustomTheme?: boolean
-}) {
+}
+
+export default function Blog(props: BlogProps) {
   return (
     <AppTheme {...props}>
       <>
@@ -29,7 +33,10 @@ export default function Blog(props: {
             my: 16,
             gap: 4,
           }}>
-          <Breadcrumb />
+          <Breadcrumb
+            userID={props.userID}
+            recipeID={props.recipeID}
+          />
           <MainContent />
         </Container>
         <Footer />

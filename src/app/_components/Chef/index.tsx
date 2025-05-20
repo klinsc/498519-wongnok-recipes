@@ -51,7 +51,7 @@ export default function Chef(props: ChefProps) {
             }}>
             <NotistackProvider>
               {!isEditing && <AddRecipeFab />}
-              <Breadcrumb />
+              <Breadcrumb userID={userID} recipeID={recipeID} />
               {
                 <Grid container spacing={2}>
                   {Boolean(

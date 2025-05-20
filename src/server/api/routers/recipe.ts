@@ -363,4 +363,23 @@ export const recipeRouter = createTRPCRouter({
         },
       })
     }),
+
+  getNameById: publicProcedure
+    .input(z.object({ recipeId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const recipe = await ctx.db.recipe.findUnique({
+        where: {
+          id: input.recipeId,
+        },
+        select: {
+          name: true,
+        },
+      })
+
+      if (!recipe) {
+        throw new Error('Recipe not found')
+      }
+
+      return recipe.name
+    }),
 })
