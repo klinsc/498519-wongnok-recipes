@@ -15,7 +15,7 @@ export default function SearchBar() {
 
   return (
     <FormControl
-      sx={{ width: { xs: '60%', md: '60%' } }}
+      sx={{ width: { xs: '100%', md: '100%' } }}
       variant="outlined">
       <OutlinedInput
         onChange={(e) => {
