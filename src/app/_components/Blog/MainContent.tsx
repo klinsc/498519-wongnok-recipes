@@ -28,7 +28,13 @@ import dayjs from 'dayjs'
 import tz from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useState, type MouseEvent } from 'react'
+import {
+  Fragment,
+  useEffect,
+  useMemo,
+  useState,
+  type MouseEvent,
+} from 'react'
 import { api } from '~/trpc/react'
 import { TIME_SAMPLES_TH } from '../Recipe/RecipeTime'
 
@@ -300,7 +306,7 @@ export default function MainContent() {
   })
 
   // Trpc: getAllPublisheds
-  const { data: allPublisheds } =
+  const { data: allPublisheds, isFetching } =
     api.recipe.getAllPublisheds.useQuery(pagination, {
       refetchOnWindowFocus: false,
     })
@@ -313,12 +319,35 @@ export default function MainContent() {
       }))
     }
   }, [allPublisheds])
-  // Memo: publishedRecipes
-  const publishedRecipes = useMemo(() => {
+  // // Memo: publishedRecipes
+  // const publishedRecipes = useMemo(() => {
+  //   if (allPublisheds) {
+  //     return allPublisheds.recipes
+  //   }
+  //   return []
+  // }, [allPublisheds])
+
+  // State: publishedRecipes
+  const [publishedRecipes, setPublishedRecipes] = useState<
+    {
+      id: string
+      name: string
+      description: string | undefined | null
+      method: string | undefined | null
+      image: string | undefined | null
+      createdBy: {
+        name: string | undefined | null
+      }
+      updatedAt: Date
+    }[]
+  >([])
+  useEffect(() => {
     if (allPublisheds) {
-      return allPublisheds.recipes
+      setPublishedRecipes((prev) => [
+        ...prev,
+        ...allPublisheds.recipes,
+      ])
     }
-    return []
   }, [allPublisheds])
 
   // Memo: Get current domain
@@ -461,90 +490,106 @@ export default function MainContent() {
 
       {/* One page take max 6 recipes */}
       <Grid container spacing={2} columns={12}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          {publishedRecipes && publishedRecipes[0] && (
-            <StyledRecipe
-              index={0}
-              publishedRecipes={publishedRecipes}
-              focusedCardIndex={focusedCardIndex}
-              handleFocus={handleFocus}
-              handleBlur={handleBlur}
-              currentDomain={currentDomain}
-              hideImage={false}
-            />
+        {pagination.page >= 0 &&
+          Array.from({ length: pagination.page + 1 }).map(
+            (_, index) => {
+              const gridIndex0 = index * 6 + 0
+              const gridIndex1 = index * 6 + 1
+              const gridIndex2 = index * 6 + 2
+              const gridIndex3 = index * 6 + 3
+              const gridIndex4 = index * 6 + 4
+              const gridIndex5 = index * 6 + 5
+
+              return (
+                <Fragment key={index}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    {publishedRecipes?.[gridIndex0] && (
+                      <StyledRecipe
+                        index={gridIndex0}
+                        publishedRecipes={publishedRecipes}
+                        focusedCardIndex={focusedCardIndex}
+                        handleFocus={handleFocus}
+                        handleBlur={handleBlur}
+                        currentDomain={currentDomain}
+                        hideImage={false}
+                      />
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    {publishedRecipes?.[gridIndex1] && (
+                      <StyledRecipe
+                        index={gridIndex1}
+                        publishedRecipes={publishedRecipes}
+                        focusedCardIndex={focusedCardIndex}
+                        handleFocus={handleFocus}
+                        handleBlur={handleBlur}
+                        currentDomain={currentDomain}
+                        hideImage={false}
+                      />
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    {publishedRecipes?.[gridIndex2] && (
+                      <StyledRecipe
+                        index={gridIndex2}
+                        publishedRecipes={publishedRecipes}
+                        focusedCardIndex={focusedCardIndex}
+                        handleFocus={handleFocus}
+                        handleBlur={handleBlur}
+                        currentDomain={currentDomain}
+                        hideImage={false}
+                      />
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        height: '100%',
+                      }}>
+                      {publishedRecipes?.[gridIndex3] && (
+                        <StyledRecipe
+                          index={gridIndex3}
+                          publishedRecipes={publishedRecipes}
+                          focusedCardIndex={focusedCardIndex}
+                          handleFocus={handleFocus}
+                          handleBlur={handleBlur}
+                          currentDomain={currentDomain}
+                          hideImage={true}
+                        />
+                      )}
+                      {publishedRecipes?.[gridIndex4] && (
+                        <StyledRecipe
+                          index={gridIndex4}
+                          publishedRecipes={publishedRecipes}
+                          focusedCardIndex={focusedCardIndex}
+                          handleFocus={handleFocus}
+                          handleBlur={handleBlur}
+                          currentDomain={currentDomain}
+                          hideImage={true}
+                        />
+                      )}
+                    </Box>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    {publishedRecipes?.[gridIndex5] && (
+                      <StyledRecipe
+                        index={gridIndex5}
+                        publishedRecipes={publishedRecipes}
+                        focusedCardIndex={focusedCardIndex}
+                        handleFocus={handleFocus}
+                        handleBlur={handleBlur}
+                        currentDomain={currentDomain}
+                        hideImage={false}
+                      />
+                    )}
+                  </Grid>
+                </Fragment>
+              )
+            },
           )}
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          {publishedRecipes && publishedRecipes[1] && (
-            <StyledRecipe
-              index={1}
-              publishedRecipes={publishedRecipes}
-              focusedCardIndex={focusedCardIndex}
-              handleFocus={handleFocus}
-              handleBlur={handleBlur}
-              currentDomain={currentDomain}
-              hideImage={false}
-            />
-          )}
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          {publishedRecipes && publishedRecipes[2] && (
-            <StyledRecipe
-              index={2}
-              publishedRecipes={publishedRecipes}
-              focusedCardIndex={focusedCardIndex}
-              handleFocus={handleFocus}
-              handleBlur={handleBlur}
-              currentDomain={currentDomain}
-              hideImage={false}
-            />
-          )}
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-              height: '100%',
-            }}>
-            {publishedRecipes && publishedRecipes[3] && (
-              <StyledRecipe
-                index={3}
-                publishedRecipes={publishedRecipes}
-                focusedCardIndex={focusedCardIndex}
-                handleFocus={handleFocus}
-                handleBlur={handleBlur}
-                currentDomain={currentDomain}
-                hideImage={true}
-              />
-            )}
-            {publishedRecipes && publishedRecipes[4] && (
-              <StyledRecipe
-                index={4}
-                publishedRecipes={publishedRecipes}
-                focusedCardIndex={focusedCardIndex}
-                handleFocus={handleFocus}
-                handleBlur={handleBlur}
-                currentDomain={currentDomain}
-                hideImage={true}
-              />
-            )}
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          {publishedRecipes && publishedRecipes[5] && (
-            <StyledRecipe
-              index={5}
-              publishedRecipes={publishedRecipes}
-              focusedCardIndex={focusedCardIndex}
-              handleFocus={handleFocus}
-              handleBlur={handleBlur}
-              currentDomain={currentDomain}
-              hideImage={false}
-            />
-          )}
-        </Grid>
       </Grid>
 
       <TablePagination
