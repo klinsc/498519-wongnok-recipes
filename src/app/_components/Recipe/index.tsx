@@ -374,10 +374,7 @@ export default memo(function Recipe(props: RecipeMainProps) {
   // Memo: image URL
   const imageURL = useMemo(() => {
     if (currentRecipe?.image) {
-      // Get current domain
-      const currentDomain = window.location.origin
-
-      return `${currentDomain}/api/v1/image/${currentRecipe?.image}`
+      return currentRecipe?.image
     }
     return null
   }, [currentRecipe?.image])

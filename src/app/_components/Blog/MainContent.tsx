@@ -229,7 +229,7 @@ function StyledRecipe(props: StyledRecipeProps) {
         <CardMedia
           component="img"
           alt="recipe image"
-          image={`${props.currentDomain}/api/v1/image/${props.publishedRecipes[props.index]?.image}`}
+          image={props.publishedRecipes[props.index]?.image || ''}
           sx={{
             aspectRatio: '16 / 9',
             borderBottom: '1px solid',

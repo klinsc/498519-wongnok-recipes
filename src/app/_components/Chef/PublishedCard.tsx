@@ -92,10 +92,7 @@ export default function PublishedCard(props: RecipeCardProps) {
   // Memo: image URL
   const imageURL = useMemo(() => {
     if (props.recipe?.image) {
-      // Get current domain
-      const currentDomain = window.location.origin
-
-      return `${currentDomain}/api/v1/image/${props.recipe?.image}`
+      return props.recipe?.image
     }
     return 'no image'
   }, [props.recipe?.image])

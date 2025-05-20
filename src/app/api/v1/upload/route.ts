@@ -1,6 +1,5 @@
-import fs from 'fs/promises'
-import path from 'path'
 import { db } from '~/server/db'
+import { firebaseAdminStorage } from '~/server/firebaseAdmin'
 
 export const POST = async (req: Request) => {
   try {
@@ -27,27 +26,45 @@ export const POST = async (req: Request) => {
     console.log('Received recipe ID:', recipeId)
     console.log('Received file extension:', fileExtension)
 
-    const filePath = path.join(
-      process.cwd(),
-      'src',
-      'assets',
-      'uploads',
-      newFileName,
-    )
-
     // Read file as buffer
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Write file to disk
-    await fs.writeFile(filePath, buffer)
+    // Upload file to Firebase Storage
+    const bucket = firebaseAdminStorage.bucket()
+    const fileRef = bucket.file(newFileName)
+
+    // Using async/await with file.save()
+    await fileRef.save(buffer, {
+      metadata: {
+        contentType: file.type,
+      },
+    })
+
+    console.log('File uploaded to Firebase Storage:', newFileName)
+
+    // Make the file publicly accessible
+    await fileRef.makePublic()
+
+    // Get the public URL of the file
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${newFileName}`
+    console.log('Public URL:', publicUrl)
 
     // Save file path to the database
-    await saveFilePathToDatabase(recipeId, newFileName)
+    await saveFilePathToDatabase(recipeId, publicUrl)
 
-    return new Response('File uploaded and saved successfully', {
-      status: 200,
-    })
+    return new Response(
+      JSON.stringify({
+        message: 'File uploaded successfully',
+        url: publicUrl,
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
   } catch (err) {
     console.error('Error in upload handler:', err)
     return new Response('Internal server error', { status: 500 })
