@@ -1,31 +1,19 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import {
-  IconButton,
-  Menu,
-  MenuItem,
-  Select,
-  Stack,
-} from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Chip from '@mui/material/Chip'
-import FormControl from '@mui/material/FormControl'
 import Grid from '@mui/material/Grid'
-import InputAdornment from '@mui/material/InputAdornment'
-import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import tz from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import {
   Fragment,
   memo,
@@ -33,12 +21,11 @@ import {
   useEffect,
   useMemo,
   useState,
-  type MouseEvent,
 } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { api } from '~/trpc/react'
-import { TIME_SAMPLES_TH } from '../Recipe/RecipeTime'
 import { stringAvatar } from '../AppAvatar'
+import Search from '../Search'
 
 dayjs.extend(utc)
 dayjs.extend(tz)
@@ -150,31 +137,6 @@ const Author = memo(function Author({
     </Box>
   )
 })
-
-export function Search() {
-  return (
-    <FormControl
-      sx={{ width: { xs: '100%', md: '25ch' } }}
-      variant="outlined">
-      <OutlinedInput
-        size="small"
-        id="search"
-        placeholder="Search…"
-        sx={{ flexGrow: 1 }}
-        startAdornment={
-          <InputAdornment
-            position="start"
-            sx={{ color: 'text.primary' }}>
-            <SearchRoundedIcon fontSize="small" />
-          </InputAdornment>
-        }
-        inputProps={{
-          'aria-label': 'search',
-        }}
-      />
-    </FormControl>
-  )
-}
 
 export function FilterChips() {
   return (
@@ -332,15 +294,6 @@ function StyledRecipe(props: StyledRecipeProps) {
 }
 
 export default function MainContent() {
-  // Navigation: Searchparams
-  const searchParams = useSearchParams()
-  const QTimeID = searchParams.get('timeID')
-  const QDifficultyID = searchParams.get('difficultyID')
-  const QSearch = searchParams.get('q')
-
-  // Navigation: Router
-  const router = useRouter()
-
   const [focusedCardIndex, setFocusedCardIndex] = useState<
     number | null
   >(null)
@@ -413,27 +366,6 @@ export default function MainContent() {
     return ''
   }, [])
 
-  // State: Menu
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-  // Trpc: getAllDifficulties
-  const { data: allDifficulties } =
-    api.recipe.getDifficulties.useQuery(undefined, {
-      refetchOnWindowFocus: false,
-    })
-
-  // Trpc: getTime
-  const allTimes = useMemo(() => {
-    return [...TIME_SAMPLES_TH]
-  }, [])
-
   const { ref, inView } = useInView({
     threshold: 0.1, // 10% visible
     triggerOnce: true,
@@ -458,6 +390,16 @@ export default function MainContent() {
       </div>
       <Box
         sx={{
+          display: { xs: 'flex', sm: 'none' },
+          flexDirection: 'row',
+          gap: 1,
+          width: { xs: '100%', md: 'fit-content' },
+          overflow: 'auto',
+        }}>
+        <Search />
+      </Box>
+      <Box
+        sx={{
           display: 'flex',
           flexDirection: { xs: 'column-reverse', md: 'row' },
           width: '100%',
@@ -467,94 +409,16 @@ export default function MainContent() {
           overflow: 'auto',
         }}>
         <FilterChips />
-
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          display={{ xs: 'flex', md: 'flex' }}
-          alignItems={'center'}>
-          <IconButton
-            id="basic-button"
-            aria-controls={open ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}>
-            <FilterAltOutlinedIcon />
-          </IconButton>
-          {/* <Typography
-            variant="body2"
-            sx={{
-              display: { xs: 'none', md: 'block' },
-              ml: 1,
-              fontWeight: 500,
-            }}>
-            ตัวกรอง
-          </Typography> */}
-
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            slotProps={{
-              list: {
-                'aria-labelledby': 'basic-button',
-              },
-            }}>
-            <Select
-              onChange={(e) => {
-                // Set query params
-                const timeID = e.target.value
-                const difficultyID = QDifficultyID
-                const q = QSearch
-                void router.push(
-                  `?q=${q}&timeID=${timeID}&difficultyID=${difficultyID}`,
-                  {
-                    scroll: false,
-                  },
-                )
-              }}
-              label="เวลา"
-              size="small"
-              defaultValue="0"
-              sx={{ width: 'auto', mr: 1 }}
-              inputProps={{
-                'aria-label': 'Without label',
-              }}>
-              {allTimes.map((item) => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
-            <Select
-              onChange={(e) => {
-                // Set query params
-                const timeID = QTimeID
-                const difficultyID = e.target.value
-                const q = QSearch
-                void router.push(
-                  `?q=${q}&timeID=${timeID}&difficultyID=${difficultyID}`,
-                  {
-                    scroll: false,
-                  },
-                )
-              }}
-              label="ความยาก"
-              size="small"
-              defaultValue="cmathzdqu00033fnwhhl8107r"
-              value={QDifficultyID || 'cmathzdqu00033fnwhhl8107r'}
-              sx={{ width: 'auto', mr: 1 }}
-              inputProps={{
-                'aria-label': 'Without label',
-              }}>
-              {allDifficulties?.map((item) => (
-                <MenuItem key={item.id} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </Menu>
-        </Stack>
+        <Box
+          sx={{
+            display: { xs: 'none', sm: 'flex' },
+            flexDirection: 'row',
+            gap: 1,
+            width: { xs: '100%', md: 'fit-content' },
+            overflow: 'auto',
+          }}>
+          <Search />
+        </Box>
       </Box>
 
       {/* One page take max 6 recipes */}
