@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import tz from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Fragment,
   memo,
@@ -294,6 +294,12 @@ function StyledRecipe(props: StyledRecipeProps) {
 }
 
 export default function MainContent() {
+  // Navigation: Searchparams
+  const searchParams = useSearchParams()
+  const QTimeID = searchParams.get('timeID')
+  const QDifficultyID = searchParams.get('difficultyID')
+  const QSearch = searchParams.get('q')
+
   const [focusedCardIndex, setFocusedCardIndex] = useState<
     number | null
   >(null)
@@ -312,23 +318,25 @@ export default function MainContent() {
     limit: 6,
     // total: -1,
   })
-  // // State: total
-  // const [total, setTotal] = useState(-1)
 
   // Trpc: getAllPublisheds
   const {
     data: allPublisheds,
     isFetching,
     isFetched,
-  } = api.recipe.getAllPublisheds.useQuery(pagination, {
-    refetchOnWindowFocus: false,
-  })
-  // // Effect: set pagination on data change
-  // useEffect(() => {
-  //   if (allPublisheds?.total) {
-  //     setTotal(allPublisheds.total)
-  //   }
-  // }, [allPublisheds?.total])
+  } = api.recipe.getAllPublisheds.useQuery(
+    {
+      filter: {
+        timeID: QTimeID,
+        difficultyID: QDifficultyID,
+        q: QSearch,
+      },
+      pagination,
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  )
 
   // State: publishedRecipes
   const [publishedRecipes, setPublishedRecipes] = useState<

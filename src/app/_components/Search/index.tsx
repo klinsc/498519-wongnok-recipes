@@ -54,6 +54,18 @@ export default memo(function Search() {
         sx={{ width: { xs: '100%', md: '25ch' } }}
         variant="outlined">
         <OutlinedInput
+          onChange={(e) => {
+            const timeID = QTimeID
+            const difficultyID = QDifficultyID
+            const q = e.target.value
+
+            void router.push(
+              `?q=${q}&timeID=${timeID}&difficultyID=${difficultyID}`,
+              {
+                scroll: false,
+              },
+            )
+          }}
           size="small"
           id="search"
           placeholder="Search…"

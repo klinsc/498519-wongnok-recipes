@@ -88,11 +88,51 @@ export const recipeRouter = createTRPCRouter({
   }),
 
   getAllPublisheds: publicProcedure
-    .input(z.object({ page: z.number(), limit: z.number() }))
+    .input(
+      z.object({
+        pagination: z.object({
+          page: z.number().min(0),
+          limit: z.number().min(1).max(100),
+        }),
+        filter: z.object({
+          timeID: z.string().optional().nullish(),
+          difficultyID: z.string().optional().nullish(),
+          q: z.string().optional().nullish(),
+        }),
+      }),
+    )
     .query(async ({ ctx, input }) => {
+      const q =
+        input.filter.q && input.filter.q !== 'null'
+          ? input.filter.q
+          : undefined
+      const timeID =
+        input.filter.timeID && input.filter.timeID !== '0'
+          ? input.filter.timeID
+          : undefined
+      const difficultyID =
+        input.filter.difficultyID &&
+        input.filter.difficultyID !== '0'
+          ? input.filter.difficultyID
+          : undefined
+
       const recipes = await ctx.db.recipe.findMany({
         where: {
           status: RecipeStatus.PUBLISHED,
+
+          // If q, then use q to query
+          AND: [
+            q
+              ? {
+                  OR: [
+                    { name: { contains: q } },
+                    // { description: { contains: input.filter.q } },
+                  ],
+                }
+              : {},
+            timeID ? { time: timeID } : {},
+            difficultyID ? { difficultyId: difficultyID } : {},
+          ],
         },
         include: {
           createdBy: true,
@@ -102,8 +142,8 @@ export const recipeRouter = createTRPCRouter({
           updatedAt: 'desc',
         },
         // page start from 0
-        skip: input.page * input.limit,
-        take: input.limit,
+        skip: input.pagination.page * input.pagination.limit,
+        take: input.pagination.limit,
       })
 
       const total = await ctx.db.recipe.count({
@@ -112,7 +152,12 @@ export const recipeRouter = createTRPCRouter({
         },
       })
 
-      return { recipes, total, page: input.page, limit: input.limit }
+      return {
+        recipes,
+        total,
+        page: input.pagination.page,
+        limit: input.pagination.limit,
+      }
     }),
 
   getById: publicProcedure
