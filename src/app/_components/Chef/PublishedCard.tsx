@@ -129,6 +129,7 @@ export default function PublishedCard(props: RecipeCardProps) {
           action={
             <>
               <IconButton
+                disabled={!isOwner}
                 id="draft-settings-button"
                 aria-controls={
                   open ? 'draft-settings-menu' : undefined
