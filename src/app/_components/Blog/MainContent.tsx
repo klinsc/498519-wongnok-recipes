@@ -359,8 +359,8 @@ export default function MainContent() {
     limit: 6,
     // total: -1,
   })
-  // State: total
-  const [total, setTotal] = useState(-1)
+  // // State: total
+  // const [total, setTotal] = useState(-1)
 
   // Trpc: getAllPublisheds
   const {
@@ -370,12 +370,12 @@ export default function MainContent() {
   } = api.recipe.getAllPublisheds.useQuery(pagination, {
     refetchOnWindowFocus: false,
   })
-  // Effect: set pagination on data change
-  useEffect(() => {
-    if (allPublisheds?.total) {
-      setTotal(allPublisheds.total)
-    }
-  }, [allPublisheds?.total])
+  // // Effect: set pagination on data change
+  // useEffect(() => {
+  //   if (allPublisheds?.total) {
+  //     setTotal(allPublisheds.total)
+  //   }
+  // }, [allPublisheds?.total])
 
   // State: publishedRecipes
   const [publishedRecipes, setPublishedRecipes] = useState<
@@ -659,6 +659,57 @@ export default function MainContent() {
               )
             },
           )}
+
+        {/* Display 3 skeleton grid when fetching */}
+        {isFetching &&
+          Array.from({ length: 3 }).map((_, index) => (
+            <Grid
+              key={index}
+              size={{ xs: 12, md: 4 }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                height: '100%',
+              }}>
+              <SyledCard
+                variant="outlined"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: 0,
+                  height: '100%',
+                  backgroundColor: (theme) =>
+                    theme.palette.background.paper,
+                }}>
+                <Box
+                  sx={{
+                    aspectRatio: '16 / 9',
+                    backgroundColor: (theme) =>
+                      theme.palette.background.default,
+                  }}
+                />
+                <SyledCardContent>
+                  <Typography
+                    variant="caption"
+                    component="div"
+                    sx={{ bgcolor: 'background.default' }}
+                  />
+                  <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{ bgcolor: 'background.default' }}
+                  />
+                  <StyledTypography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                    sx={{ bgcolor: 'background.default' }}
+                  />
+                </SyledCardContent>
+              </SyledCard>
+            </Grid>
+          ))}
       </Grid>
 
       {!isFetching && !inView && <Box ref={ref}></Box>}
