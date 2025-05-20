@@ -91,7 +91,7 @@ export default function Profile({ userID }: { userID: string }) {
               color: '#666',
             }}>
             {isOwner
-              ? 'เรามาอวดสูตรอาหารของคุณดีกว่า'
+              ? 'มาอวดสูตรอาหารของคุณดีกว่า'
               : 'มาดูสูตรอาหารของเชฟกันเถอะ'}
           </Typography>
         </>
