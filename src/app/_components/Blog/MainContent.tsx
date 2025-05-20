@@ -319,13 +319,6 @@ export default function MainContent() {
       }))
     }
   }, [allPublisheds])
-  // // Memo: publishedRecipes
-  // const publishedRecipes = useMemo(() => {
-  //   if (allPublisheds) {
-  //     return allPublisheds.recipes
-  //   }
-  //   return []
-  // }, [allPublisheds])
 
   // State: publishedRecipes
   const [publishedRecipes, setPublishedRecipes] = useState<
