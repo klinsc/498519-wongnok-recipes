@@ -9,7 +9,6 @@ import {
   MenuItem,
   Select,
   Stack,
-  TablePagination,
 } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
@@ -35,6 +34,7 @@ import {
   useState,
   type MouseEvent,
 } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { api } from '~/trpc/react'
 import { TIME_SAMPLES_TH } from '../Recipe/RecipeTime'
 
@@ -302,23 +302,25 @@ export default function MainContent() {
   const [pagination, setPagination] = useState({
     page: 0,
     limit: 6,
-    total: -1,
+    // total: -1,
   })
+  // State: total
+  const [total, setTotal] = useState(-1)
 
   // Trpc: getAllPublisheds
-  const { data: allPublisheds, isFetching } =
-    api.recipe.getAllPublisheds.useQuery(pagination, {
-      refetchOnWindowFocus: false,
-    })
+  const {
+    data: allPublisheds,
+    isFetching,
+    isFetched,
+  } = api.recipe.getAllPublisheds.useQuery(pagination, {
+    refetchOnWindowFocus: false,
+  })
   // Effect: set pagination on data change
   useEffect(() => {
-    if (allPublisheds) {
-      setPagination((prev) => ({
-        ...prev,
-        total: allPublisheds.total,
-      }))
+    if (allPublisheds?.total) {
+      setTotal(allPublisheds.total)
     }
-  }, [allPublisheds])
+  }, [allPublisheds?.total])
 
   // State: publishedRecipes
   const [publishedRecipes, setPublishedRecipes] = useState<
@@ -335,13 +337,17 @@ export default function MainContent() {
     }[]
   >([])
   useEffect(() => {
-    if (allPublisheds) {
+    if (isFetched && allPublisheds?.recipes) {
       setPublishedRecipes((prev) => [
         ...prev,
         ...allPublisheds.recipes,
       ])
     }
-  }, [allPublisheds])
+  }, [allPublisheds, isFetched])
+  // Log: publishedRecipes
+  useEffect(() => {
+    console.log('publishedRecipes', publishedRecipes)
+  }, [publishedRecipes])
 
   // Memo: Get current domain
   const currentDomain = useMemo(() => {
@@ -371,6 +377,20 @@ export default function MainContent() {
   const allTimes = useMemo(() => {
     return [...TIME_SAMPLES_TH]
   }, [])
+
+  const { ref, inView } = useInView({
+    threshold: 0.1, // 10% visible
+    triggerOnce: true,
+  })
+
+  useEffect(() => {
+    if (inView) {
+      setPagination((prev) => ({
+        ...prev,
+        page: prev.page + 1,
+      }))
+    }
+  }, [inView])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -585,20 +605,7 @@ export default function MainContent() {
           )}
       </Grid>
 
-      <TablePagination
-        size="small"
-        component="div"
-        count={pagination.total}
-        page={pagination.page}
-        onPageChange={(_event, newPage: number) => {
-          setPagination((prev) => ({
-            ...prev,
-            page: newPage,
-          }))
-        }}
-        rowsPerPage={pagination.limit}
-        rowsPerPageOptions={[]}
-      />
+      {!isFetching && !inView && <Box ref={ref}></Box>}
     </Box>
   )
 }
