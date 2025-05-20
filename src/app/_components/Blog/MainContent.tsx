@@ -456,19 +456,6 @@ export default function MainContent() {
               ))}
             </Select>
           </Menu>
-          <TablePagination
-            component="div"
-            count={pagination.total}
-            page={pagination.page}
-            onPageChange={(_event, newPage: number) => {
-              setPagination((prev) => ({
-                ...prev,
-                page: newPage,
-              }))
-            }}
-            rowsPerPage={pagination.limit}
-            rowsPerPageOptions={[]}
-          />
         </Stack>
       </Box>
 
