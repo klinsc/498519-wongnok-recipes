@@ -376,7 +376,7 @@ export default function MainContent() {
   } = api.recipe.getAllPublisheds.useMutation({
     onSuccess: (data) => {
       if (data?.recipes) {
-        if (data.isChanged) {
+        if (data.reset) {
           setPublishedRecipes(data.recipes)
         } else {
           setPublishedRecipes((prev) => {
@@ -457,7 +457,7 @@ export default function MainContent() {
   useEffect(() => {
     void handleSearch(page)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page])
+  }, [page, searchQ])
 
   // Memo: Get current domain
   const currentDomain = useMemo(() => {

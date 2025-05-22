@@ -165,7 +165,7 @@ export const recipeRouter = createTRPCRouter({
 
       // Check if there are more recipes
       const isMore = input.reset
-        ? recipes.length > takeCount
+        ? recipes.length > takeCount - 1
         : recipes.length > limit
       if (isMore) {
         recipes.pop()
@@ -176,7 +176,8 @@ export const recipeRouter = createTRPCRouter({
         isMore,
         page: input.filters.page,
         limit: limit,
-        isChanged: input.filters.isChanged,
+        // isChanged: input.filters.isChanged,
+        reset: input.reset,
       }
     }),
 
