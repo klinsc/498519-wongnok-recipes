@@ -195,18 +195,20 @@ export default function AppAppBar() {
                     <Divider sx={{ my: 3 }} />
                     <MenuItem>
                       <Button
+                        onClick={handleSignUp}
                         color="primary"
                         variant="contained"
                         fullWidth>
-                        Sign up
+                        สมัครสมาชิก
                       </Button>
                     </MenuItem>
                     <MenuItem>
                       <Button
+                        onClick={handleSignIn}
                         color="primary"
                         variant="outlined"
                         fullWidth>
-                        Sign in
+                        ลงชื่อเข้าใช้
                       </Button>
                     </MenuItem>
                   </>
