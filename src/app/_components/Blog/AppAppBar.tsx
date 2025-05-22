@@ -121,7 +121,6 @@ export default function AppAppBar() {
                 }>
                 สูตรของฉัน
               </Button>
-              {/* <SearchBar /> */}
             </Box>
           </Box>
           <Box
