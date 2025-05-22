@@ -149,11 +149,9 @@ export default function AppAppBar() {
                 </Button>
               </>
             )}
-            {/* <ColorModeIconDropdown /> */}
             <Hamburger session={session} />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
-            {/* <ColorModeIconDropdown size="medium" /> */}
             <AppAvatar />
             <IconButton
               aria-label="Menu button"
