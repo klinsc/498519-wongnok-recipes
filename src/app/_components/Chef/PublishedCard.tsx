@@ -26,6 +26,7 @@ import {
 } from 'react'
 import type { RecipeWithCreatedBy } from '../Recipe'
 import LikeButton from '../LikeButton'
+import { api } from '~/trpc/react'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -60,6 +61,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 export interface RecipeCardProps {
   recipe: RecipeWithCreatedBy
+  refetchPublishedCards: () => void
 }
 
 export default function PublishedCard(props: RecipeCardProps) {
@@ -121,6 +123,37 @@ export default function PublishedCard(props: RecipeCardProps) {
     [props.recipe?.createdById, session?.user.id],
   )
 
+  // TRPC: delete recipe name
+  const {
+    mutateAsync: deleteRecipeDraft,
+    isPending: isDeleteRecipeDraftPending,
+  } = api.recipe.delete.useMutation({
+    onSuccess: () => {
+      console.log('Delete recipe published success')
+      props.refetchPublishedCards()
+    },
+    onError: (error) => {
+      console.error('Delete recipe published error', error)
+    },
+  })
+
+  // Callback: delete recipe name
+  const handleDeleteRecipeDraft = useCallback(async () => {
+    try {
+      const windowConfirm = window.confirm(
+        'คุณต้องการลบสูตรอาหารนี้หรือไม่?',
+      )
+      if (!windowConfirm) {
+        return
+      }
+
+      await deleteRecipeDraft({ recipeId: props.recipe.id })
+      console.log('Recipe published deleted successfully')
+    } catch (error) {
+      console.error('Error deleting recipe published:', error)
+    }
+  }, [deleteRecipeDraft, props.recipe.id])
+
   return (
     <>
       <Card sx={{ maxWidth: 345, backgroundColor: '#f5f5f5' }}>
@@ -151,6 +184,11 @@ export default function PublishedCard(props: RecipeCardProps) {
                 }}>
                 <MenuItem onClick={handleEditRecipeDraft}>
                   แก้ไขสูตร
+                </MenuItem>
+                <MenuItem
+                  disabled={isDeleteRecipeDraftPending}
+                  onClick={handleDeleteRecipeDraft}>
+                  ลบ
                 </MenuItem>
               </Menu>
             </>

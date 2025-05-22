@@ -96,18 +96,16 @@ export default function RecipeList({
     })
 
   // trpc: recipe get all published
-  const {
-    data: PublishedCards,
-    // refetch: refetchPublishedCards,
-  } = api.recipe.getPublisedByUserId.useQuery(
-    {
-      userID,
-    },
-    {
-      enabled: !!userID && !!recipeID,
-      refetchOnWindowFocus: false,
-    },
-  )
+  const { data: PublishedCards, refetch: refetchPublishedCards } =
+    api.recipe.getPublisedByUserId.useQuery(
+      {
+        userID,
+      },
+      {
+        enabled: !!userID && !!recipeID,
+        refetchOnWindowFocus: false,
+      },
+    )
 
   const handleChange = (
     event: React.SyntheticEvent,
@@ -200,6 +198,7 @@ export default function RecipeList({
                   <PublishedCard
                     key={recipe.id}
                     recipe={safeRecipe}
+                    refetchPublishedCards={refetchPublishedCards}
                   />
                 </Grid>
               )
