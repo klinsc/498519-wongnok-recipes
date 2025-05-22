@@ -1,29 +1,61 @@
-# Create T3 App
+# 498519-wongnok-recipes
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## Online Demo: [https://wongnok.chatbordin.com/](https://wongnok.chatbordin.com/)
 
-## What's next? How do I make an app with this?
+### ขั้นตอนการติดตั้ง
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+1. โคลน Repository:
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+```bash
+git clone https://github.com/klinsc/498519-wongnok-recipes
+cd 498519-wongnok-recipes
+```
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+2. ติดตั้ง Dependencies:
 
-## Learn More
+```bash
+pnpm install
+```
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+3. สร้างไฟล์ `.env` จาก `.env.example`:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+```bash
+cp .env.example .env
+```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+4. หากต้องการสร้างฐานข้อมูลที่ Docker บนเครืองของคุณเอง ให้ใช้คำสั่ง: (ต้องติดตั้ง Docker ก่อน)
 
-## How do I deploy this?
+5. ตั้งค่า Environment Variables ในไฟล์ `.env` ให้ครบถ้วน
+   - `DATABASE_URL` สำหรับการเชื่อมต่อกับฐานข้อมูล MySQL
+   - `FIREBASE_STORAGE_BUCKET` สำหรับการเชื่อมต่อกับ Firebase Storage
+   - `AUTH_SECRET` สำหรับการเข้ารหัสข้อมูล
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+```bash
+start-database.sh
+npx prisma db push
+```
+
+6. ทำการสร้างไฟล์ build และเริ่มเซิร์ฟเวอร์:
+
+```bash
+pnpm build
+pnpm start
+```
+
+7. เปิดเบราว์เซอร์และไปที่ [http://localhost:3000](http://localhost:3000) เพื่อดูแอปพลิเคชัน
+8. หากต้องการให้แอปพลิเคชันทำงานตลอดเวลา สามารถใช้คำสั่ง `pm2` หรือ `forever` เพื่อรันแอปพลิเคชันในพื้นหลังได้
+
+```bash
+npm install -g pm2
+pm2 start build/index.js --name "wongnok-recipes"
+```
+
+### การใช้งาน
+
+- เข้าสู่ระบบด้วยอีเมลและรหัสผ่าน
+- ค้นหาสูตรอาหารที่สนใจ
+- สร้างและจัดการสูตรอาหารของคุณเอง
+- แชร์สูตรอาหารกับผู้ใช้คนอื่น
+- แสดงความคิดเห็นและให้คะแนนสูตรอาหาร
+- บันทึกสูตรอาหารที่คุณชื่นชอบ
+- ดูสูตรอาหารที่ได้รับความนิยม
