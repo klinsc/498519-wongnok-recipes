@@ -1,3 +1,4 @@
+import { Divider, Link } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard from '@mui/material/Card'
@@ -8,13 +9,12 @@ import Stack from '@mui/material/Stack'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import AppTheme from '../shared-theme/AppTheme'
-import { SitemarkIcon } from './CustomIcons'
+import { useRouter } from 'next/navigation'
+import { useCallback, useState, type FormEvent } from 'react'
 import { api } from '~/trpc/react'
 import NotiAlert from '../NotiAlert'
-import { useCallback, useState, type FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
-import { Divider, Link } from '@mui/material'
+import AppTheme from '../shared-theme/AppTheme'
+import SiteIcon from '../SiteIcon'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -196,7 +196,7 @@ export default function SignUp(props: {
         direction="column"
         justifyContent="space-between">
         <Card variant="outlined">
-          <SitemarkIcon />
+          <SiteIcon />
           <Typography
             component="h1"
             variant="h4"
