@@ -26,6 +26,7 @@ import {
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 import Search from '../Search'
+import { TIME_SAMPLES_TH } from '../Recipe/RecipeTime'
 
 dayjs.extend(utc)
 dayjs.extend(tz)
@@ -232,6 +233,32 @@ const StyledRecipe = memo(function StyledRecipe(
     )
   }, [props, router])
 
+  // Memo: get time name
+  const timeName = useMemo(() => {
+    if (props.publishedRecipes[props.index]?.time) {
+      return TIME_SAMPLES_TH.find(
+        (item) =>
+          item.value ===
+          Number(props.publishedRecipes[props.index]?.time),
+      )?.label
+    }
+    return 'ไม่ระบุเวลา'
+  }, [props.publishedRecipes, props.index])
+
+  // Trpc: getDifficultyName
+  const difficultyName = api.recipe.getDifficultyById.useQuery(
+    {
+      difficultyId:
+        props.publishedRecipes[props.index]?.difficultyId || '',
+    },
+    {
+      enabled: Boolean(
+        props.publishedRecipes[props.index]?.difficultyId,
+      ),
+      refetchOnWindowFocus: false,
+    },
+  )
+
   return (
     <SyledCard
       variant="outlined"
@@ -288,7 +315,7 @@ const StyledRecipe = memo(function StyledRecipe(
                 color: 'text.secondary',
               }}
               onClick={() => handleClick()}>
-              {`ใช้เวลา: ${props.publishedRecipes[props.index]?.time}`}
+              {`ใช้เวลา: ${timeName}`}
             </Typography>
             <Typography
               variant="caption"
@@ -299,7 +326,7 @@ const StyledRecipe = memo(function StyledRecipe(
                 color: 'text.secondary',
               }}
               onClick={() => handleClick()}>
-              {`ระดับ: ${props.publishedRecipes[props.index]?.difficultyId}`}
+              {`ระดับ: ${difficultyName?.data?.name || 'ไม่ระบุระดับ'}`}
             </Typography>
           </Box>
         </Box>

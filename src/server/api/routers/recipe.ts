@@ -265,6 +265,25 @@ export const recipeRouter = createTRPCRouter({
     return difficulties
   }),
 
+  getDifficultyById: publicProcedure
+    .input(z.object({ difficultyId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const difficulty = await ctx.db.recipeDifficulty.findUnique({
+        where: {
+          id: input.difficultyId,
+        },
+        select: {
+          name: true,
+        },
+      })
+
+      if (!difficulty) {
+        throw new Error('Difficulty not found')
+      }
+
+      return difficulty
+    }),
+
   getPublicDifficulties: publicProcedure.query(async ({ ctx }) => {
     const difficulties = await ctx.db.recipeDifficulty.findMany({
       // Get difficulties those created by me or null
