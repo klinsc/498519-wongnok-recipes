@@ -121,6 +121,7 @@ const Author = memo(function Author({
           sx={{
             display: { xs: 'none', md: 'block' },
             fontWeight: 500,
+            cursor: 'pointer',
           }}
           onClick={() => void handleClick(author.id)}>
           {author.name}
