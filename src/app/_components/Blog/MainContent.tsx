@@ -1,6 +1,7 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import { Button } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -13,7 +14,11 @@ import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import tz from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { useRouter, useSearchParams } from 'next/navigation'
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
 import {
   Fragment,
   memo,
@@ -22,7 +27,6 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useInView } from 'react-intersection-observer'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 import Search from '../Search'
@@ -294,11 +298,46 @@ function StyledRecipe(props: StyledRecipeProps) {
 }
 
 export default function MainContent() {
+  // Router
+  const router = useRouter()
+
+  // Pathname
+  const pathname = usePathname()
+
   // Navigation: Searchparams
   const searchParams = useSearchParams()
   const QTimeID = searchParams.get('timeID')
   const QDifficultyID = searchParams.get('difficultyID')
   const QSearch = searchParams.get('q')
+  const Qpage = searchParams.get('page')
+
+  const timeID = useMemo(() => {
+    if (QTimeID) {
+      return QTimeID
+    }
+    return ''
+  }, [QTimeID])
+  const difficultyID = useMemo(() => {
+    if (QDifficultyID) {
+      return QDifficultyID
+    }
+    return ''
+  }, [QDifficultyID])
+  const searchQ = useMemo(() => {
+    if (QSearch) {
+      return QSearch
+    }
+    return ''
+  }, [QSearch])
+  // const page = useMemo(() => {
+  //   if (Qpage) {
+  //     return Number(Qpage)
+  //   }
+  //   return 0
+  // }, [Qpage])
+
+  // State: page
+  const [page, setPage] = useState<number>(0)
 
   const [focusedCardIndex, setFocusedCardIndex] = useState<
     number | null
@@ -311,32 +350,6 @@ export default function MainContent() {
   const handleBlur = () => {
     setFocusedCardIndex(null)
   }
-
-  // State: pagination
-  const [pagination, setPagination] = useState({
-    page: 0,
-    limit: 6,
-    // total: -1,
-  })
-
-  // Trpc: getAllPublisheds
-  const {
-    data: allPublisheds,
-    isFetching,
-    isFetched,
-  } = api.recipe.getAllPublisheds.useQuery(
-    {
-      filter: {
-        timeID: QTimeID,
-        difficultyID: QDifficultyID,
-        q: QSearch,
-      },
-      pagination,
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  )
 
   // State: publishedRecipes
   const [publishedRecipes, setPublishedRecipes] = useState<
@@ -352,19 +365,89 @@ export default function MainContent() {
       }
       updatedAt: Date
     }[]
-  >([])
-  useEffect(() => {
-    if (isFetched && allPublisheds?.recipes) {
-      setPublishedRecipes((prev) => [
-        ...prev,
-        ...allPublisheds.recipes,
-      ])
-    }
-  }, [allPublisheds, isFetched])
+  >()
+
+  // Trpc: getAllPublisheds
+  const {
+    mutateAsync: getAllPublisheds,
+    isPending,
+    data: recipesResult,
+  } = api.recipe.getAllPublisheds.useMutation({
+    onSuccess: (data) => {
+      if (data?.recipes) {
+        if (data.isChanged) {
+          setPublishedRecipes(data.recipes)
+        } else {
+          setPublishedRecipes((prev) => {
+            if (prev) {
+              return [...prev, ...data.recipes]
+            }
+            return data.recipes
+          })
+        }
+      }
+    },
+  })
+
+  // Callback: handleSearch
+  const handleSearch = useCallback(
+    async (newPage: number) => {
+      const OldDifficultyID =
+        localStorage.getItem('old-difficultyID') || ''
+      const OldTimeID = localStorage.getItem('old-timeID') || ''
+      const Oldq = localStorage.getItem('old-q') || ''
+
+      debugger
+
+      const isChanged =
+        searchQ !== Oldq ||
+        timeID !== OldTimeID ||
+        difficultyID !== OldDifficultyID
+
+      if (!isChanged) {
+        localStorage.setItem('old-difficultyID', difficultyID || '')
+        localStorage.setItem('old-timeID', timeID || '')
+        localStorage.setItem('old-q', searchQ || '')
+
+        await getAllPublisheds({
+          filters: {
+            q: searchQ,
+            timeID: timeID,
+            difficultyID: difficultyID,
+            page: newPage,
+            isChanged: false,
+          },
+        })
+
+        return
+      }
+
+      localStorage.setItem('old-difficultyID', difficultyID || '')
+      localStorage.setItem('old-timeID', timeID || '')
+      localStorage.setItem('old-q', searchQ || '')
+
+      await getAllPublisheds({
+        filters: {
+          q: searchQ,
+          timeID: timeID,
+          difficultyID: difficultyID,
+          page: 0,
+          isChanged: true,
+        },
+      })
+    },
+    [difficultyID, getAllPublisheds, searchQ, timeID],
+  )
+
   // Log: publishedRecipes
   useEffect(() => {
     console.log('publishedRecipes', publishedRecipes)
   }, [publishedRecipes])
+
+  // Effect: Initial fetch
+  useEffect(() => {
+    void handleSearch(0)
+  }, [])
 
   // Memo: Get current domain
   const currentDomain = useMemo(() => {
@@ -374,21 +457,12 @@ export default function MainContent() {
     return ''
   }, [])
 
-  // Hook: useInView
-  const { ref, inView } = useInView({
-    threshold: 0.1, // 10% visible
-    triggerOnce: true,
-  })
-
-  // Effect: when inView, set pagination
-  useEffect(() => {
-    if (inView) {
-      setPagination((prev) => ({
-        ...prev,
-        page: prev.page + 1,
-      }))
-    }
-  }, [inView])
+  // // Effect: Reset search params
+  // useEffect(() => {
+  //   // This removes all search parameters
+  //   router.replace(window.location.pathname)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -433,109 +507,107 @@ export default function MainContent() {
 
       {/* One page take max 6 recipes */}
       <Grid container spacing={2} columns={12}>
-        {pagination.page >= 0 &&
-          Array.from({ length: pagination.page + 1 }).map(
-            (_, index) => {
-              const gridIndex0 = index * 6 + 0
-              const gridIndex1 = index * 6 + 1
-              const gridIndex2 = index * 6 + 2
-              const gridIndex3 = index * 6 + 3
-              const gridIndex4 = index * 6 + 4
-              const gridIndex5 = index * 6 + 5
+        {page >= 0 &&
+          Array.from({ length: page + 1 }).map((_, index) => {
+            const gridIndex0 = index * 6 + 0
+            const gridIndex1 = index * 6 + 1
+            const gridIndex2 = index * 6 + 2
+            const gridIndex3 = index * 6 + 3
+            const gridIndex4 = index * 6 + 4
+            const gridIndex5 = index * 6 + 5
 
-              return (
-                <Fragment key={index}>
-                  <Grid size={{ xs: 12, md: 6 }}>
-                    {publishedRecipes?.[gridIndex0] && (
+            return (
+              <Fragment key={index}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  {publishedRecipes?.[gridIndex0] && (
+                    <StyledRecipe
+                      index={gridIndex0}
+                      publishedRecipes={publishedRecipes}
+                      focusedCardIndex={focusedCardIndex}
+                      handleFocus={handleFocus}
+                      handleBlur={handleBlur}
+                      currentDomain={currentDomain}
+                      hideImage={false}
+                    />
+                  )}
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  {publishedRecipes?.[gridIndex1] && (
+                    <StyledRecipe
+                      index={gridIndex1}
+                      publishedRecipes={publishedRecipes}
+                      focusedCardIndex={focusedCardIndex}
+                      handleFocus={handleFocus}
+                      handleBlur={handleBlur}
+                      currentDomain={currentDomain}
+                      hideImage={false}
+                    />
+                  )}
+                </Grid>
+                <Grid size={{ xs: 12, md: 4 }}>
+                  {publishedRecipes?.[gridIndex2] && (
+                    <StyledRecipe
+                      index={gridIndex2}
+                      publishedRecipes={publishedRecipes}
+                      focusedCardIndex={focusedCardIndex}
+                      handleFocus={handleFocus}
+                      handleBlur={handleBlur}
+                      currentDomain={currentDomain}
+                      hideImage={false}
+                    />
+                  )}
+                </Grid>
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                      height: '100%',
+                    }}>
+                    {publishedRecipes?.[gridIndex3] && (
                       <StyledRecipe
-                        index={gridIndex0}
+                        index={gridIndex3}
                         publishedRecipes={publishedRecipes}
                         focusedCardIndex={focusedCardIndex}
                         handleFocus={handleFocus}
                         handleBlur={handleBlur}
                         currentDomain={currentDomain}
-                        hideImage={false}
+                        hideImage={true}
                       />
                     )}
-                  </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
-                    {publishedRecipes?.[gridIndex1] && (
+                    {publishedRecipes?.[gridIndex4] && (
                       <StyledRecipe
-                        index={gridIndex1}
+                        index={gridIndex4}
                         publishedRecipes={publishedRecipes}
                         focusedCardIndex={focusedCardIndex}
                         handleFocus={handleFocus}
                         handleBlur={handleBlur}
                         currentDomain={currentDomain}
-                        hideImage={false}
+                        hideImage={true}
                       />
                     )}
-                  </Grid>
-                  <Grid size={{ xs: 12, md: 4 }}>
-                    {publishedRecipes?.[gridIndex2] && (
-                      <StyledRecipe
-                        index={gridIndex2}
-                        publishedRecipes={publishedRecipes}
-                        focusedCardIndex={focusedCardIndex}
-                        handleFocus={handleFocus}
-                        handleBlur={handleBlur}
-                        currentDomain={currentDomain}
-                        hideImage={false}
-                      />
-                    )}
-                  </Grid>
-                  <Grid size={{ xs: 12, md: 4 }}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
-                        height: '100%',
-                      }}>
-                      {publishedRecipes?.[gridIndex3] && (
-                        <StyledRecipe
-                          index={gridIndex3}
-                          publishedRecipes={publishedRecipes}
-                          focusedCardIndex={focusedCardIndex}
-                          handleFocus={handleFocus}
-                          handleBlur={handleBlur}
-                          currentDomain={currentDomain}
-                          hideImage={true}
-                        />
-                      )}
-                      {publishedRecipes?.[gridIndex4] && (
-                        <StyledRecipe
-                          index={gridIndex4}
-                          publishedRecipes={publishedRecipes}
-                          focusedCardIndex={focusedCardIndex}
-                          handleFocus={handleFocus}
-                          handleBlur={handleBlur}
-                          currentDomain={currentDomain}
-                          hideImage={true}
-                        />
-                      )}
-                    </Box>
-                  </Grid>
-                  <Grid size={{ xs: 12, md: 4 }}>
-                    {publishedRecipes?.[gridIndex5] && (
-                      <StyledRecipe
-                        index={gridIndex5}
-                        publishedRecipes={publishedRecipes}
-                        focusedCardIndex={focusedCardIndex}
-                        handleFocus={handleFocus}
-                        handleBlur={handleBlur}
-                        currentDomain={currentDomain}
-                        hideImage={false}
-                      />
-                    )}
-                  </Grid>
-                </Fragment>
-              )
-            },
-          )}
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, md: 4 }}>
+                  {publishedRecipes?.[gridIndex5] && (
+                    <StyledRecipe
+                      index={gridIndex5}
+                      publishedRecipes={publishedRecipes}
+                      focusedCardIndex={focusedCardIndex}
+                      handleFocus={handleFocus}
+                      handleBlur={handleBlur}
+                      currentDomain={currentDomain}
+                      hideImage={false}
+                    />
+                  )}
+                </Grid>
+              </Fragment>
+            )
+          })}
 
         {/* Display 3 skeleton grid when fetching */}
-        {isFetching &&
+        {isPending &&
           Array.from({ length: 3 }).map((_, index) => (
             <Grid
               key={index}
@@ -586,7 +658,33 @@ export default function MainContent() {
           ))}
       </Grid>
 
-      {!isFetching && !inView && <Box ref={ref}></Box>}
+      {recipesResult?.isMore && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}>
+          <Button
+            fullWidth
+            variant="contained"
+            size="large"
+            onClick={() => {
+              // void router.push(
+              //   `?q=${searchQ}&timeID=${timeID}&difficultyID=${difficultyID}&page=${
+              //     page + 1
+              //   }`,
+              //   {
+              //     scroll: false,
+              //   },
+              // )
+              setPage(page + 1)
+              void handleSearch(page + 1)
+            }}>
+            ดูเพิ่มเติม
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }
