@@ -1,6 +1,7 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+import { Button } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -13,11 +14,7 @@ import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import tz from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import {
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Fragment,
   memo,
@@ -26,11 +23,9 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useInView } from 'react-intersection-observer'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 import Search from '../Search'
-import { Button } from '@mui/material'
 
 dayjs.extend(utc)
 dayjs.extend(tz)
@@ -301,9 +296,6 @@ function StyledRecipe(props: StyledRecipeProps) {
 export default function MainContent() {
   // Router
   const router = useRouter()
-
-  // Pathname
-  const pathname = usePathname()
 
   // Navigation: Searchparams
   const searchParams = useSearchParams()

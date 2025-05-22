@@ -127,9 +127,11 @@ export const recipeRouter = createTRPCRouter({
           ? input.filters.difficultyID
           : undefined
 
-      const isSkipped = input.reset ? 0 : input.filters.page * limit
+      const isChanged = input.filters.isChanged || input.reset
 
-      const takeCount = input.reset
+      const isSkipped = isChanged ? 0 : input.filters.page * limit
+
+      const takeCount = isChanged
         ? input.filters.page * limit + limit + 1
         : limit + 1
 
@@ -164,7 +166,7 @@ export const recipeRouter = createTRPCRouter({
       })
 
       // Check if there are more recipes
-      const isMore = input.reset
+      const isMore = isChanged
         ? recipes.length > takeCount - 1
         : recipes.length > limit
       if (isMore) {
@@ -177,7 +179,7 @@ export const recipeRouter = createTRPCRouter({
         page: input.filters.page,
         limit: limit,
         // isChanged: input.filters.isChanged,
-        reset: input.reset,
+        reset: isChanged,
       }
     }),
 
