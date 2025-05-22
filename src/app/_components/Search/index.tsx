@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import {
+  Button,
   FormControl,
   IconButton,
   InputAdornment,
@@ -13,6 +14,7 @@ import {
 import { memo, useMemo, useState, type MouseEvent } from 'react'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
+import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import { api } from '~/trpc/react'
 import { TIME_SAMPLES_TH } from '../Recipe/RecipeTime'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -47,6 +49,17 @@ export default memo(function Search() {
   const allTimes = useMemo(() => {
     return [...TIME_SAMPLES_TH]
   }, [])
+
+  // Memo: isFiltering
+  const isFiltering = useMemo(() => {
+    return (
+      QTimeID !== '0' ||
+      Boolean(
+        QDifficultyID !== '0' &&
+          QDifficultyID !== 'cmathzdqu00033fnwhhl8107r',
+      )
+    )
+  }, [QTimeID, QDifficultyID])
 
   return (
     <>
@@ -89,17 +102,32 @@ export default memo(function Search() {
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
           onClick={handleClick}>
-          <FilterAltOutlinedIcon />
+          {isFiltering ? (
+            <FilterAltIcon />
+          ) : (
+            <FilterAltOutlinedIcon />
+          )}
         </IconButton>
-        {/* <Typography
-            variant="body2"
-            sx={{
-              display: { xs: 'none', md: 'block' },
-              ml: 1,
-              fontWeight: 500,
-            }}>
-            ตัวกรอง
-          </Typography> */}
+        <Button
+          variant="text"
+          size="small"
+          onClick={() => {
+            const timeID = '0'
+            const difficultyID = '0'
+            const q = QSearch
+            void router.push(
+              `?q=${q}&timeID=${timeID}&difficultyID=${difficultyID}`,
+              {
+                scroll: false,
+              },
+            )
+          }}
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            minWidth: '85px',
+          }}>
+          ล้างตัวกรอง
+        </Button>
 
         <Menu
           id="basic-menu"
