@@ -39,7 +39,7 @@ export default memo(function Search() {
 
   // Trpc: getAllDifficulties
   const { data: allDifficulties } =
-    api.recipe.getDifficulties.useQuery(undefined, {
+    api.recipe.getPublicDifficulties.useQuery(undefined, {
       refetchOnWindowFocus: false,
     })
 

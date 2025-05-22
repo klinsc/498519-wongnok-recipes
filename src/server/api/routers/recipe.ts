@@ -90,30 +90,40 @@ export const recipeRouter = createTRPCRouter({
   getAllPublisheds: publicProcedure
     .input(
       z.object({
-        pagination: z.object({
-          page: z.number().min(0),
-          limit: z.number().min(1).max(100),
-        }),
-        filter: z.object({
+        // pagination: z.object({
+        //   page: z.number().min(0),
+        // }),
+        filters: z.object({
           timeID: z.string().optional().nullish(),
           difficultyID: z.string().optional().nullish(),
           q: z.string().optional().nullish(),
+          isChanged: z.boolean(),
+          page: z.number().min(0),
         }),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const limit = 6
+
       const q =
-        input.filter.q && input.filter.q !== 'null'
-          ? input.filter.q
+        input.filters.q && input.filters.q !== 'null'
+          ? input.filters.q
           : undefined
       const timeID =
-        input.filter.timeID && input.filter.timeID !== '0'
-          ? input.filter.timeID
+        input.filters.timeID &&
+        !Boolean(
+          input.filters.timeID === '0' ||
+            input.filters.timeID === 'null',
+        )
+          ? input.filters.timeID
           : undefined
       const difficultyID =
-        input.filter.difficultyID &&
-        input.filter.difficultyID !== '0'
-          ? input.filter.difficultyID
+        input.filters.difficultyID &&
+        !Boolean(
+          input.filters.difficultyID === '0' ||
+            input.filters.difficultyID === 'null',
+        )
+          ? input.filters.difficultyID
           : undefined
 
       const recipes = await ctx.db.recipe.findMany({
@@ -142,21 +152,22 @@ export const recipeRouter = createTRPCRouter({
           updatedAt: 'desc',
         },
         // page start from 0
-        skip: input.pagination.page * input.pagination.limit,
-        take: input.pagination.limit,
+        skip: input.filters.page * limit,
+        take: limit + 1,
       })
 
-      const total = await ctx.db.recipe.count({
-        where: {
-          status: RecipeStatus.PUBLISHED,
-        },
-      })
+      // Check if there are more recipes
+      const isMore = recipes.length > limit
+      if (isMore) {
+        recipes.pop()
+      }
 
       return {
         recipes,
-        total,
-        page: input.pagination.page,
-        limit: input.pagination.limit,
+        isMore,
+        page: input.filters.page,
+        limit: limit,
+        isChanged: input.filters.isChanged,
       }
     }),
 
@@ -228,6 +239,27 @@ export const recipeRouter = createTRPCRouter({
         OR: [
           {
             createdById: ctx.session.user.id,
+          },
+          {
+            createdById: null,
+          },
+        ],
+      },
+      orderBy: {
+        index: 'asc',
+      },
+    })
+
+    return difficulties
+  }),
+
+  getPublicDifficulties: publicProcedure.query(async ({ ctx }) => {
+    const difficulties = await ctx.db.recipeDifficulty.findMany({
+      // Get difficulties those created by me or null
+      where: {
+        OR: [
+          {
+            createdById: ctx.session?.user.id,
           },
           {
             createdById: null,
