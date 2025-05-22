@@ -1,7 +1,7 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import { Button, Stack } from '@mui/material'
+import { Button } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
