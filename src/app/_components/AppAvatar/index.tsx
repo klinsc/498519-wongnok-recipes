@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-
-import { Menu, MenuItem } from '@mui/material'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import { IconButton, Menu, MenuItem } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
 import { signOut, useSession } from 'next-auth/react'
@@ -53,6 +52,11 @@ export default function AppAvatar() {
 
   // callback: my recipe
   const handleMyRecipe = useCallback(() => {
+    if (!session?.user?.id) {
+      router.push('/signin')
+      return
+    }
+
     void router.push(`/chef/${session?.user?.id}/recipe/all`)
     handleClose()
   }, [router, session?.user?.id])
@@ -83,13 +87,31 @@ export default function AppAvatar() {
         <MenuItem onClick={handleMyRecipe}>สูตรของฉัน</MenuItem>
         <MenuItem onClick={handleSignOut}>ลงชื่อออก</MenuItem>
       </Menu>
-      <Avatar
-        onClick={handleMenu}
-        aria-label="account of current user"
-        aria-controls="menu-appbar"
-        aria-haspopup="true"
-        {...stringAvatar(session?.user?.name || 'User Name')}
-      />
+      {session?.user?.name ? (
+        <Avatar
+          onClick={handleMenu}
+          aria-label="account of current user"
+          aria-controls="menu-appbar"
+          aria-haspopup="true"
+          {...stringAvatar(session?.user?.name || 'User Name')}
+        />
+      ) : (
+        <IconButton
+          onClick={() => router.push('/signin')}
+          aria-label="account of current user"
+          aria-controls="menu-appbar"
+          aria-haspopup="true"
+          sx={{
+            border: 'none',
+            color: 'text.primary',
+            backgroundColor: 'background.paper',
+            '&:hover': {
+              backgroundColor: 'background.default',
+            },
+          }}>
+          <AccountCircleIcon />
+        </IconButton>
+      )}
     </Stack>
   )
 }
