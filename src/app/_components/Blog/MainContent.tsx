@@ -1,7 +1,7 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import { Button } from '@mui/material'
+import { Button, Stack } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -200,6 +200,8 @@ interface StyledRecipeProps {
     description: string | undefined | null
     method: string | undefined | null
     image: string | undefined | null
+    time: string | undefined | null
+    difficultyId: string | undefined | null
     createdBy: {
       id: string | undefined | null
       name: string | undefined | null
@@ -251,13 +253,50 @@ function StyledRecipe(props: StyledRecipeProps) {
         />
       )}
       <SyledCardContent>
-        <Typography
-          onClick={() => handleClick()}
-          gutterBottom
-          variant="caption"
-          component="div">
-          {props.publishedRecipes[props.index]?.name}
-        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Typography
+            onClick={() => handleClick()}
+            gutterBottom
+            variant="caption"
+            component="div">
+            {props.publishedRecipes[props.index]?.name}
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 1,
+              alignItems: 'center',
+            }}>
+            <Typography
+              variant="caption"
+              sx={{
+                display: { xs: 'none', md: 'block' },
+                fontWeight: 500,
+                cursor: 'default !important',
+                color: 'text.secondary',
+              }}
+              onClick={() => handleClick()}>
+              {`ใช้เวลา: ${props.publishedRecipes[props.index]?.time}`}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                display: { xs: 'none', md: 'block' },
+                fontWeight: 500,
+                cursor: 'default !important',
+                color: 'text.secondary',
+              }}
+              onClick={() => handleClick()}>
+              {`ระดับ: ${props.publishedRecipes[props.index]?.difficultyId}`}
+            </Typography>
+          </Box>
+        </Box>
         <Typography
           onClick={() => handleClick()}
           gutterBottom
@@ -352,6 +391,8 @@ export default function MainContent() {
       description: string | undefined | null
       method: string | undefined | null
       image: string | undefined | null
+      time: string | undefined | null
+      difficultyId: string | undefined | null
       createdBy: {
         id: string | undefined | null
         name: string | undefined | null
@@ -390,7 +431,7 @@ export default function MainContent() {
       const OldTimeID = localStorage.getItem('old-timeID') || ''
       const Oldq = localStorage.getItem('old-q') || ''
 
-      debugger
+      // debugger
 
       const isChanged =
         searchQ !== Oldq ||
@@ -449,7 +490,7 @@ export default function MainContent() {
   useEffect(() => {
     void handleSearch(page)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, searchQ])
+  }, [page, searchQ, timeID, difficultyID])
 
   // Memo: Get current domain
   const currentDomain = useMemo(() => {
