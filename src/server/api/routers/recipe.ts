@@ -100,6 +100,7 @@ export const recipeRouter = createTRPCRouter({
           isChanged: z.boolean(),
           page: z.number().min(0),
         }),
+        reset: z.boolean().default(false),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -125,6 +126,12 @@ export const recipeRouter = createTRPCRouter({
         )
           ? input.filters.difficultyID
           : undefined
+
+      const isSkipped = input.reset ? 0 : input.filters.page * limit
+
+      const takeCount = input.reset
+        ? input.filters.page * limit + limit + 1
+        : limit + 1
 
       const recipes = await ctx.db.recipe.findMany({
         where: {
@@ -152,12 +159,14 @@ export const recipeRouter = createTRPCRouter({
           updatedAt: 'desc',
         },
         // page start from 0
-        skip: input.filters.page * limit,
-        take: limit + 1,
+        skip: isSkipped,
+        take: takeCount,
       })
 
       // Check if there are more recipes
-      const isMore = recipes.length > limit
+      const isMore = input.reset
+        ? recipes.length > takeCount
+        : recipes.length > limit
       if (isMore) {
         recipes.pop()
       }

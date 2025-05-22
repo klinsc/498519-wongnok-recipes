@@ -1,7 +1,6 @@
 'use client'
 
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import { Button } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -27,9 +26,11 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { api } from '~/trpc/react'
 import { stringAvatar } from '../AppAvatar'
 import Search from '../Search'
+import { Button } from '@mui/material'
 
 dayjs.extend(utc)
 dayjs.extend(tz)
@@ -329,15 +330,15 @@ export default function MainContent() {
     }
     return ''
   }, [QSearch])
-  // const page = useMemo(() => {
-  //   if (Qpage) {
-  //     return Number(Qpage)
-  //   }
-  //   return 0
-  // }, [Qpage])
+  const page = useMemo(() => {
+    if (Qpage) {
+      return Number(Qpage)
+    }
+    return 0
+  }, [Qpage])
 
-  // State: page
-  const [page, setPage] = useState<number>(0)
+  // // State: page
+  // const [page, setPage] = useState<number>(0)
 
   const [focusedCardIndex, setFocusedCardIndex] = useState<
     number | null
@@ -417,6 +418,7 @@ export default function MainContent() {
             page: newPage,
             isChanged: false,
           },
+          reset: publishedRecipes ? false : true,
         })
 
         return
@@ -434,9 +436,16 @@ export default function MainContent() {
           page: 0,
           isChanged: true,
         },
+        reset: publishedRecipes ? false : true,
       })
     },
-    [difficultyID, getAllPublisheds, searchQ, timeID],
+    [
+      difficultyID,
+      getAllPublisheds,
+      publishedRecipes,
+      searchQ,
+      timeID,
+    ],
   )
 
   // Log: publishedRecipes
@@ -446,8 +455,9 @@ export default function MainContent() {
 
   // Effect: Initial fetch
   useEffect(() => {
-    void handleSearch(0)
-  }, [])
+    void handleSearch(page)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   // Memo: Get current domain
   const currentDomain = useMemo(() => {
@@ -670,16 +680,16 @@ export default function MainContent() {
             variant="contained"
             size="large"
             onClick={() => {
-              // void router.push(
-              //   `?q=${searchQ}&timeID=${timeID}&difficultyID=${difficultyID}&page=${
-              //     page + 1
-              //   }`,
-              //   {
-              //     scroll: false,
-              //   },
-              // )
-              setPage(page + 1)
-              void handleSearch(page + 1)
+              void router.push(
+                `?q=${searchQ}&timeID=${timeID}&difficultyID=${difficultyID}&page=${
+                  page + 1
+                }`,
+                {
+                  scroll: false,
+                },
+              )
+              // setPage(page + 1)
+              // void handleSearch(page + 1)
             }}>
             ดูเพิ่มเติม
           </Button>
