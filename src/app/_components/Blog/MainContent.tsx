@@ -38,7 +38,7 @@ const SyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: (theme.vars || theme).palette.background.paper,
   '&:hover': {
     backgroundColor: 'transparent',
-    cursor: 'pointer',
+    // cursor: 'pointer',
   },
   '&:focus-visible': {
     outline: '3px solid',
@@ -215,7 +215,9 @@ interface StyledRecipeProps {
   hideImage: boolean
 }
 
-function StyledRecipe(props: StyledRecipeProps) {
+const StyledRecipe = memo(function StyledRecipe(
+  props: StyledRecipeProps,
+) {
   // Router
   const router = useRouter()
 
@@ -249,6 +251,7 @@ function StyledRecipe(props: StyledRecipeProps) {
             aspectRatio: '16 / 9',
             borderBottom: '1px solid',
             borderColor: 'divider',
+            cursor: 'pointer',
           }}
         />
       )}
@@ -263,7 +266,10 @@ function StyledRecipe(props: StyledRecipeProps) {
             onClick={() => handleClick()}
             gutterBottom
             variant="caption"
-            component="div">
+            component="div"
+            sx={{
+              cursor: 'pointer',
+            }}>
             {props.publishedRecipes[props.index]?.name}
           </Typography>
           <Box
@@ -301,13 +307,19 @@ function StyledRecipe(props: StyledRecipeProps) {
           onClick={() => handleClick()}
           gutterBottom
           variant="h6"
-          component="div">
+          component="div"
+          sx={{
+            cursor: 'pointer',
+          }}>
           {props.publishedRecipes[props.index]?.description}
         </Typography>
         <StyledTypography
           onClick={() => handleClick()}
           variant="body2"
           color="text.secondary"
+          sx={{
+            cursor: 'default !important',
+          }}
           gutterBottom>
           {props.publishedRecipes[props.index]?.method}
         </StyledTypography>
@@ -330,7 +342,7 @@ function StyledRecipe(props: StyledRecipeProps) {
       />
     </SyledCard>
   )
-}
+})
 
 export default function MainContent() {
   // Router
