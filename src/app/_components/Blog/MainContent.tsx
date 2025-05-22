@@ -374,11 +374,13 @@ export default function MainContent() {
     return ''
   }, [])
 
+  // Hook: useInView
   const { ref, inView } = useInView({
     threshold: 0.1, // 10% visible
     triggerOnce: true,
   })
 
+  // Effect: when inView, set pagination
   useEffect(() => {
     if (inView) {
       setPagination((prev) => ({
